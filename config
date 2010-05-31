@@ -1,0 +1,5 @@
+nick: BotsNickname
+username: NickservUsername
+password: NickservPassword
+network: irc.NETWORK.com
+channels: #bots #bbot
