@@ -12,15 +12,6 @@ network=cline.split('network: ')[-1][0:-1]
 print('Connecting to: %s' % network)
 cline=config.readline()
 autojoin=cline.split('channels: ')[-1].split(' ')
-
-
-
-#mynick='BBot'#nick name
-#username='bbot'#nickserv username
-#password='bbotis314159'
-#password='bbotis314159'#nickserv password
-#network = 'irc.bikcmp.com'#IRC network
-#autojoin=['#bots']#What channels to join on Start?
 port = 6667
 
 import socket
