@@ -13,13 +13,16 @@ print('Connecting to: %s' % network)
 cline=config.readline()
 autojoin=cline.split('channels: ')[-1].split(' ')
 port = 6667
+proxyscan=1
 
 import socket
 import re
 import time
 import sqlite3
-#import nmap
+import nmap #Can be found at: http://xael.org/norman/python/python-nmap/
 from random import randint
+import urllib
+import thread
 
 class que_class():
 	def append(self,data):
@@ -44,25 +47,31 @@ class que_class():
 	def mode(self,nick,channel,mode):
 		self.que.append('MODE '+channel+' '+mode+' '+nick)
 que=que_class()	
-class BBot:
+class BBot():
 	database=sqlite3.connect('newdatabase.sql')
 	def go(self,nick,data,channel):
 		ldata=data.lower()
-		if re.search(':(bbot|BBot|Bbot): (hi|hello)[^a-zA-Z ]',ldata):
+		if ldata.find('network/')!=-1:
+			if ldata.find('raw')!=-1:
+				irc.send(data.split('raw ')[-1])
+		if re.search(':'+mynick.lower()+'(:|,) (hi|hello)[^a-zA-Z ]',ldata):
 			print('HI')
 			que.append((channel,'Hi '+nick+'!'))
 		if data.find('?')!=-1:
 			if data.find('?ping')!=-1:
 				que.append((channel,'PONG'))
+			elif data.find('?goog ')!=-1:
+				words=data.split('?goog ')[-1]
+				que.append((channel,'http://www.google.com/search?q=%s' % words))
 			elif data.find('?toast')!=-1:
 				que.append((channel,'Your toast will be done soon :D'))
 			elif data.find(':?source')!=-1:
-				que.append((channel,nick+': My soruce code is written in Python and can be found at: http://github.com/aj00200/BBot'))
+				que.append((channel,nick+': My source code is written in Python and can be found at: http://github.com/aj00200/BBot'))
 			elif data.find('?kick ')!=-1:
 				words=data.split('?kick ')[-1]
-				if words.lower().find('bbot')!=-1:
+				if words.lower().find(mynick)!=-1:
 					words=nick
-				que.append((channel,'BBot kicks '+words))
+				que.append((channel,'/me kicks '+words))
 			elif ldata.find(':?about')!=-1:
 				que.append((channel,nick+': Im a bot by aj00200. v0.9.0'))
 			elif ldata.find(':?aj00200')!=-1:
@@ -104,36 +113,34 @@ class BlockBot():
 		#	print (ip,channel,nick)
 		#	print 'MODE '+channel+' +v '+nick+'\r\n'
 		#	irc.send('MODE '+channel+' +v '+nick+'\r\n')
+		if proxyscan:
+			thread.start_new_thread(self.scan, (ip,channel,nick))
 	def scan(self,ip,channel,nick):
-		self.safe=1
-		host=ip
-	
+		scansafe=1
+		host=ip	
 		try:
 			print('Scanning '+ip)
 			nm=nmap.PortScanner()
 			#80, 8080, 1080, 3246
 			nm.scan(ip,'808,23,1080,110,29505,8080,3246','-T5')
-			print 'Scan Done...'
-			print '----------'
 			for each in nm.all_hosts():
 				print each+':::'
 				lport = nm[each]['tcp'].keys()
 				print lport
 				if 808 in lport or 23 in lport or 110 in lport or 1080 in lport or 29505 in lport or 80 in lport or 8080 in lports or 3246 in lports:
-					self.safe=0
+					scansafe=0
 					print 'DRONE'
-	#		lport.sort()
-	#		for port in lport:
-	#		print 'port : %s\tstate : %s' % (port, nm[ip]['tcp'][port]['state'])
-	#		if 'proxy' in nm[ip]['tcp'][port]['name'] or 'telnet' in nm[ip]['tcp'][port]['name']:
-		#		if nm[ip]['tcp'][808]['state']==u'open' or nm[ip]['tcp'][23]['state']==u'open':
-	#				print(ip+' is most likely a DRONE')
-	#				self.safe=0
+			#if 'proxy' in nm[ip]['tcp'][port]['name'] or 'telnet' in nm[ip]['tcp'][port]['name']:
+			#	if nm[ip]['tcp'][808]['state']==u'open' or nm[ip]['tcp'][23]['state']==u'open':
+			#		print(ip+' is most likely a DRONE')
+			#		scansafe=0
 				#que.append((channel,'NOTICE: '+ip+' is most likely a drone!'))
 			del nm
+			if scansafe:
+				que.mode(nick,channel,'+v')
+			print 'Scan Done...'
 		except:
-			print 'CRASH'
-		#
+			print 'PYTHON NMAP CRASH'
 	def dec2hex(self,n):
 		return "%X" % n
 	def hex2dec(self,s):
@@ -236,12 +243,9 @@ class Firefox():
 		
 #===============HANDLERS=====
 bb=BlockBot()
-handlers=[bb,BBot(),Firefox()]#Run on msg
-#handlers=[]
+handlers=[bb,BBot()]#Run on msg
 jhandlers=[bb]#Run on Join
-#jhandlers=[]
 lhandlers=[]#Run every loop
-#nhandlers=[BlockBot()]#run on notice
 nhandlers=[bb]
 continuepgm=1
 def PONG(data):
@@ -255,14 +259,9 @@ print irc.recv ( 4096 )
 print 'NICK'
 irc.send('NICK '+mynick+'\r\n')
 needping=1
-print 'USER'
-irc.send ( 'USER BBot BBot BBot :BBot\r\n' )
+irc.send ( 'USER '+mynick+' '+mynick+' '+mynick+' :'+mynick+'\r\n' )
 while needping:
 	data=irc.recv(4096)
-#	ndata=data.split('\r\n')
-#	for each in ndata:
-#		que.radd(each)
-#	data=que.read()
 	if data.find('PING')!=-1:
 		PONG(data)
 		print 'IDENTIFY'
@@ -280,12 +279,7 @@ while continuepgm:
 	if data.find('!kill')!=-1:
 		continuepgm=0
 	elif data.find ( 'PING' ) != -1:
-#		irc.send ( 'PONG ' + data.split() [ 1 ] + '\r\n' ) #Return the PING to the server
 		PONG(data)
-
-		print('PONGING')
-
-
 	elif data.find('INVITE '+mynick+' :#')!=-1:
 		newchannel=data.split(mynick+' :')[-1]
 		irc.send('JOIN '+newchannel+'\r\n')
