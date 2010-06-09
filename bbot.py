@@ -1,5 +1,6 @@
 #this bot is licensed under the GNU GPL v3.0
 #http://www.gnu.org/licenses/gpl.html
+version='v0.95'
 config=open('config','r')
 cline=config.readline()
 mynick=cline.split('nick: ')[-1][0:-1]
@@ -13,13 +14,14 @@ print('Connecting to: %s' % network)
 cline=config.readline()
 autojoin=cline.split('channels: ')[-1].split(' ')
 port = 6667
-proxyscan=1
+proxyscan=0
 
 import socket
 import re
 import time
 import sqlite3
-import nmap #Can be found at: http://xael.org/norman/python/python-nmap/
+if proxyscan:
+	import nmap #Can be found at: http://xael.org/norman/python/python-nmap/
 from random import randint
 import urllib
 import thread
@@ -50,6 +52,8 @@ que=que_class()
 class BBot():
 	database=sqlite3.connect('newdatabase.sql')
 	def go(self,nick,data,channel):
+		if channel.find('#')==-1:
+			channel=nick.lower()
 		ldata=data.lower()
 		if ldata.find('network/')!=-1:
 			if ldata.find('raw')!=-1:
@@ -73,7 +77,7 @@ class BBot():
 					words=nick
 				que.append((channel,'/me kicks '+words))
 			elif ldata.find(':?about')!=-1:
-				que.append((channel,nick+': Im a bot by aj00200. v0.9.0'))
+				que.append((channel,nick+': Im a bot by aj00200. %s' % version))
 			elif ldata.find(':?aj00200')!=-1:
 				que.append((channel,nick+': aj00200 is the bots creator. aj0020020@live.com. He knows all.'))
 			elif data.find(':?sqltest ')!=-1:
@@ -149,6 +153,8 @@ class BlockBot():
 		except:
 			return 'error'
 	def go(self,nick,data,channel):
+		host=data.split(' PRIVMSG ')[0].split('@')[-1]
+		ident=data.split(' PRIVMSG ')[0].split('@')[0][1:]
 		ldata=data.lower()
 		self.oolastmsg=(self.olastmsg[:])
 		self.olastmsg=(self.lastmsg[:])
