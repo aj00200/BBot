@@ -1,6 +1,6 @@
-nick: BotsNickname
-username: NickservUsername
-password: NickservPassword
-network: irc.NETWORK.com
-channels: #bots #bbot
-super-user: YOUR-HOST-HERE SECOND-HOST-HERE
+nick: Locobot
+username: bbot
+password: bbotispi
+network: irc.bikcmp.com
+channels: #bots #bbot #spam
+super-user: /network/dev staff/ #comment
