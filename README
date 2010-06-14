@@ -1,2 +1,5 @@
 ===BBot===
-To run, edit the config file, and run bbot.py in python 2.6
+To run, edit the config file, and run bbot.py in Python 2.6 or Python 2.5
+
+Feel free to report bugs
+
