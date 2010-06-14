@@ -222,40 +222,6 @@ class BlockBot():
 		self.wait=1.5
 	def nicklist(self,channel,data):
 		words=data.split(mynick)[-1]
-class Ubuntu():
-	def go(self,nick,data,channel):
-		ldata=data.lower()
-		if data.find(' | '):
-			self.to=1
-			self.name=data.split(' | ')[-1]
-			self.actor=data.split(' | ')[0]
-		else:
-			self.actor=ldata
-	#===HELP===
-		if ldata.find(':!u help')!=-1:
-			que.append((nick,': !u samba'))
-	#===REGULAR===
-		if ldata.find(':!u smb')!=-1 or ldata.find(':!u samba')!=-1:
-			self.msg='Samba (https://help.ubuntu.com/9.10/serverguide/C/windows-networking.html) is a program that allows file and printer sharing between Ubuntu and Windows.'
-			if self.to==1:
-				que.append((channel,self.name+': '+self.msg))
-			if self.to==2:
-				que.send((self.name,self.msg))
-			else:
-				que.append((channel,self.msg))
-#		elif data.
-class Firefox():
-	def go(self,nick,data,channel):
-		msgtype=0
-		if data.find(' | '):
-			msgtype=1
-		if data.find(':?f ')!=-1:
-			words=data.split('?f ')[-1][0:-2]
-			if words.find('download')!=-1:
-				self.send(nick,channel,msgtype,'You can download Firefox at: www.firefox.com')
-	def send(self,nick,channel,type,data):
-		if type==0:
-			que.append((channel, nick+': '+data))
 		
 #===============HANDLERS=====
 bb=BlockBot()
@@ -285,22 +251,23 @@ while needping:
 		needping=0
 	print data
 time.sleep(1.7)
-data = irc.recv ( 4096 )
-PONG(data)
+
 print 'JOIN'
 for each in autojoin:
 	irc.send('JOIN '+each+'\r\n')
 while continuepgm:
 	data = irc.recv ( 4096 )
-	if data.find('!kill')!=-1:
-		continuepgm=0
-	elif data.find ( 'PING' ) != -1:
-		PONG(data)
-	elif data.find('INVITE '+mynick+' :#')!=-1:
+	PONG(data)
+	if data.find('INVITE '+mynick+' :#')!=-1:
 		newchannel=data.split(mynick+' :')[-1]
 		irc.send('JOIN '+newchannel+'\r\n')
 		del newchannel
-
+	elif data.find(' NOTICE ')!=-1:
+		nick=data.split('!')[0][1:]
+		channel=data.split(' NOTICE ')[1].split(' :')[0]
+		words=data.split('NOTICE')[1].split(':')[1]
+		for handler in nhandlers:
+			handler.notice(nick,channel,words)
 	elif data.find('PRIVMSG ')!=-1:
 		channel=data.split('PRIVMSG ')[-1]
 		channel=channel.split(' :')[0]
@@ -318,12 +285,7 @@ while continuepgm:
 				jhandler.join(nick, channel, ip, user)
 		else:
 			irc.send('MODE '+channel+' +v '+nick+'\r\n')
-	elif data.find(' NOTICE ')!=-1:
-		nick=data.split('!')[0][1:]
-		channel=data.split(' NOTICE ')[1].split(' :')[0]
-		words=data.split('NOTICE')[1].split(':')[1]
-		for handler in nhandlers:
-			handler.notice(nick,channel,words)
+
 	for handler in lhandlers:
 		handler.loop()
 	if que.get_length()>0:
