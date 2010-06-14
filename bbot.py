@@ -63,7 +63,7 @@ class BBot():
 		for su in superusers:
 			if host.find(su)!=-1:
 				print 'welcome su'
-				if ldata.find('raw')!=-1:
+				if ldata.find('raw ')!=-1:
 					irc.send(data.split('raw ')[-1])
 				elif ldata.find('leave')!=-1:
 					words=ldata.split('leave ')
@@ -240,8 +240,8 @@ irc.connect ( ( network, port ) )
 print irc.recv ( 4096 )
 print 'NICK'
 irc.send('NICK '+mynick+'\r\n')
-needping=1
 irc.send ( 'USER '+mynick+' '+mynick+' '+mynick+' :'+mynick+'\r\n' )
+needping=1
 while needping:
 	data=irc.recv(4096)
 	if data.find('PING')!=-1:
