@@ -13,8 +13,11 @@ network=cline.split('network: ')[-1][0:-1]
 print('Connecting to: %s' % network)
 cline=config.readline()
 autojoin=cline.split('channels: ')[-1].split(' ')
+cline=config.readline()
+superusers=cline.split('super-user: ')[-1].split(' ')
+
 port = 6667
-proxyscan=0
+proxyscan=1
 
 import socket
 import re
@@ -52,12 +55,19 @@ que=que_class()
 class BBot():
 	database=sqlite3.connect('newdatabase.sql')
 	def go(self,nick,data,channel):
+		host=data.split(' PRIVMSG')[0].split('@')[-1]
+		print host
 		if channel.find('#')==-1:
 			channel=nick.lower()
 		ldata=data.lower()
-		if ldata.find('network/')!=-1:
-			if ldata.find('raw')!=-1:
-				irc.send(data.split('raw ')[-1])
+		for su in superusers:
+			if host.find(su)!=-1:
+				print 'welcome su'
+				if ldata.find('raw')!=-1:
+					irc.send(data.split('raw ')[-1])
+				elif ldata.find('leave')!=-1:
+					words=ldata.split('leave ')
+					irc.send('PART %s' % words)
 		if re.search(':'+mynick.lower()+'(:|,) (hi|hello)[^a-zA-Z ]',ldata):
 			print('HI')
 			que.append((channel,'Hi '+nick+'!'))
@@ -73,9 +83,9 @@ class BBot():
 				que.append((channel,nick+': My source code is written in Python and can be found at: http://github.com/aj00200/BBot'))
 			elif data.find('?kick ')!=-1:
 				words=data.split('?kick ')[-1]
-				if words.lower().find(mynick)!=-1:
+				if words.lower().find(mynick.lower())!=-1:
 					words=nick
-				que.append((channel,'/me kicks '+words))
+				que.append((channel,u'\x01ACTION kicks %s\x01'%words))
 			elif ldata.find(':?about')!=-1:
 				que.append((channel,nick+': Im a bot by aj00200. %s' % version))
 			elif ldata.find(':?aj00200')!=-1:
