@@ -245,7 +245,7 @@ class statusbot():
 			except:
 				que.append((channel,nick+': %s hasn\'t left a status.'%words))
 		elif data.find('?notify ')!=-1:
-			words=data.split('?notify ')[-1].strip('\r\n')
+			words=data.split('?notify ')[-1].strip('\r\n').strip('#')
 			que.append((words,'Just letting you know, %s is looking for you in %s' % (nick,channel)))
 #===============HANDLERS=====
 bb=BlockBot()
