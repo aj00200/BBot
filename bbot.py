@@ -15,20 +15,19 @@ cline=config.readline()
 autojoin=cline.split('channels: ')[-1].split(' ')
 cline=config.readline()
 superusers=cline.split('super-user: ')[-1].split(' ')
-
+config.close()
+del config
 port = 6667
-proxyscan=1
 
 import socket
 import re
 import time
 import sqlite3
-if proxyscan:
-	import nmap #Can be found at: http://xael.org/norman/python/python-nmap/
 from random import randint
 import urllib
 import thread
 
+proxyscan=0
 class que_class():
 	def append(self,data):
 		self.que.append('PRIVMSG '+data[0]+' :'+data[1])
@@ -51,6 +50,10 @@ class que_class():
 		self.que.append('NOTICE '+data[0]+' :'+data[1])
 	def mode(self,nick,channel,mode):
 		self.que.append('MODE '+channel+' '+mode+' '+nick)
+	def kill(self,nick):#Must be IRCOP
+		self.que.append('KILL %s' % nick)
+	def kline(self,host,time,reason):#Must be IRCOP
+		self.que.append('KLINE %s %s :%s'%(host,time,reason))
 que=que_class()	
 class BBot():
 	database=sqlite3.connect('newdatabase.sql')
@@ -215,7 +218,14 @@ class BlockBot():
 				que.kick(nick,channel)
 	def __init__(self):
 		self.jlist={}
-		self.findlist=['for all your irc needs','gnaa','bycycle computers he','i can never be klined','autistic status','dubkat here,']
+		self.config=open('blockbot-config','r')
+		self.findlist=self.config.readline().split('spam-strings: ')[-1].split('#')[0].split('^^^@@@^^^')
+		self.proxyscan=0
+		if self.config.readline().lower().split('#')[0].find('yes')!=-1:
+			self.proxyscan=1
+			proxyscan=1
+		if self.proxyscan==1:
+			import nmap #Can be found at: http://xael.org/norman/python/python-nmap/
 		self.lastmsg=('BBot',time.time(),'hi')
 		self.lastnot=('BBot',time.time(),'sdkljfls')
 		self.olastmsg=('BBot',time.time(),'clear')
