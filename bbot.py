@@ -179,7 +179,6 @@ class BlockBot():
 			if (self.lastmsg[1]-self.oolastmsg[1])<self.wait:
 				que.kick(nick,channel)
 		if data.find('network/')!=-1 or data.find('staff/')!=-1:
-			print 'HI Staff/Developer'
 			if ldata.find('?;')!=-1:
 				self.findlist.append(data.split('?; ')[-1][0:-2])
 			elif ldata.find('?faster')!=-1:
@@ -232,10 +231,25 @@ class BlockBot():
 		self.wait=1.5
 	def nicklist(self,channel,data):
 		words=data.split(mynick)[-1]
-		
+class statusbot():
+	def __init__(self):
+		self.statuses={}
+	def go(self,nick,data,channel):
+		if data.find('?status ')!=-1:
+			words=data.split('?status')[-1].strip('\r\n')
+			self.statuses[nick]=words[:]
+		elif data.find('?whereis ')!=-1:
+			try:
+				words=data.split('?whereis ')[-1].strip('\r\n')
+				que.append((channel,nick+': %s is: '%words+self.statuses[words]))
+			except:
+				que.append((channel,nick+': %s hasn\'t left a status.'%words))
+		elif data.find('?notify ')!=-1:
+			words=data.split('?notify ')[-1].strip('\r\n')
+			que.append((words,'Just letting you know, %s is looking for you in %s' % (nick,channel)))
 #===============HANDLERS=====
 bb=BlockBot()
-handlers=[bb,BBot()]#Run on msg
+handlers=[bb,BBot(),statusbot()]#Run on msg
 jhandlers=[bb]#Run on Join
 lhandlers=[]#Run every loop
 nhandlers=[bb]
@@ -273,6 +287,7 @@ while continuepgm:
 		irc.send('JOIN '+newchannel+'\r\n')
 		del newchannel
 	elif data.find(' NOTICE ')!=-1:
+		print data
 		nick=data.split('!')[0][1:]
 		channel=data.split(' NOTICE ')[1].split(' :')[0]
 		words=data.split('NOTICE')[1].split(':')[1]
