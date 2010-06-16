@@ -1,6 +1,6 @@
 #this bot is licensed under the GNU GPL v3.0
 #http://www.gnu.org/licenses/gpl.html
-version='v0.96'
+version='1.00 LTS'
 proxyscan=1#Scan for open proxies on join? 1=yes,0=no. Requires nmap and python-namp: http://nmap.org  http://xael.org/norman/python/python-nmap/
 globals=[]
 config=open('config','r')
@@ -61,6 +61,8 @@ class queue_class():
 		self.queue.append('KILL %s :%s' % (nick,reason))
 	def kline(self,host,time,reason):#Must be IRCOP
 		self.queue.append('KLINE %s %s :%s'%(host,time,reason))
+	def raw(self,data):
+		self.queue.append(data)
 queue=queue_class()	
 class BBot():
 	#database=sqlite3.connect('newdatabase.sql')
