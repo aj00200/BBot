@@ -1,6 +1,6 @@
 #this bot is licensed under the GNU GPL v3.0
 #http://www.gnu.org/licenses/gpl.html
-version='v0.95'
+version='v0.96'
 proxyscan=1#Scan for open proxies on join? 1=yes,0=no. Requires nmap and python-namp: http://nmap.org  http://xael.org/norman/python/python-nmap/
 globals=[]
 config=open('config','r')
@@ -33,6 +33,7 @@ from random import randint
 import urllib
 import thread
 import blockbotlib#some functions required for BlockBot(). Delete this like if you remove BlockBot()
+import api#BBot API Functions
 
 class queue_class():
 	def append(self,data):
@@ -71,7 +72,6 @@ class BBot():
 		ldata=data.lower()
 		for su in superusers:
 			if host.find(su)!=-1:
-				print 'welcome su'
 				if ldata.find('raw ')!=-1:
 					irc.send(data.split('raw ')[-1])
 				elif ldata.find('leave')!=-1:
@@ -123,6 +123,7 @@ class BBot():
 				pass
 class BlockBot():
 	def __init__(self):
+		self.ignore_users_on_su_list=1#Don't kick users if they are on the superusers list
 		self.jlist={}
 		self.config=open('blockbot-config','r')
 		self.findlist=self.config.readline().split('spam-strings: ')[-1].split('#')[0].split('^^^@@@^^^')
@@ -180,22 +181,11 @@ class BlockBot():
 		except:
 			print 'PYTHON NMAP CRASH'
 	def go(self,nick,data,channel):
-		host=data.split(' PRIVMSG ')[0].split('@')[-1]
-		ident=data.split(' PRIVMSG ')[0].split('@')[0][1:]
 		ldata=data.lower()
-		self.oolastmsg=(self.olastmsg[:])
-		self.olastmsg=(self.lastmsg[:])
-		self.lastmsg=(nick,time.time(),data[data.find(channel):])
-		for each in self.findlist:
-			if ldata.find(each)!=-1:
-				queue.kick(nick,channel)
-		if self.olastmsg[0]==self.lastmsg[0]==self.oolastmsg[0]:
-			if (self.lastmsg[1]-self.oolastmsg[1])<self.wait:
-				queue.kick(nick,channel)
-		if (self.lastmsg[2]==self.olastmsg[2]) and (self.lastmsg[1]-self.olastmsg[1]<10):
-			queue.kick(nick,channel)
-			queue.kick(self.olastmsg[0],channel)
-		if data.find('network/')!=-1 or data.find('staff/')!=-1:
+		if self.ignore_users_on_su_list:
+			self.superuser=api.checkIfSuperUser(data,superusers)
+			print self.superuser
+		if self.superuser:
 			if ldata.find(':?;')!=-1:
 				self.findlist.append(data.split(':?; ')[-1][0:-2])
 			elif ldata.find(':?faster')!=-1:
@@ -221,6 +211,25 @@ class BlockBot():
 						queue.kick(self.jlist.pop())
 				except:
 					pass
+		elif not self.superuser:
+			self.checkforspam(nick,data,channel)
+	def checkforspam(self,nick,data,channel):
+		host=data.split(' PRIVMSG ')[0].split('@')[-1]
+		ident=data.split(' PRIVMSG ')[0].split('@')[0][1:]
+		ldata=data.lower()
+		self.oolastmsg=(self.olastmsg[:])
+		self.olastmsg=(self.lastmsg[:])
+		self.lastmsg=(nick,time.time(),data[data.find(channel):])
+		for each in self.findlist:
+			if ldata.find(each)!=-1:
+				queue.kick(nick,channel)
+		if self.olastmsg[0]==self.lastmsg[0]==self.oolastmsg[0]:
+			if (self.lastmsg[1]-self.oolastmsg[1])<self.wait:
+				queue.kick(nick,channel)
+		if (self.lastmsg[2]==self.olastmsg[2]) and (self.lastmsg[1]-self.olastmsg[1]<10):
+			queue.kick(nick,channel)
+			queue.kick(self.olastmsg[0],channel)
+
 	def notice(self,nick,channel,data):
 		print time.time()
 		ldata=data.lower()
