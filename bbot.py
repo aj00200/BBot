@@ -185,13 +185,16 @@ class BlockBot():
 		ldata=data.lower()
 		self.oolastmsg=(self.olastmsg[:])
 		self.olastmsg=(self.lastmsg[:])
-		self.lastmsg=(nick,time.time(),data)
+		self.lastmsg=(nick,time.time(),data[data.find(channel):])
 		for each in self.findlist:
 			if ldata.find(each)!=-1:
 				queue.kick(nick,channel)
 		if self.olastmsg[0]==self.lastmsg[0]==self.oolastmsg[0]:
 			if (self.lastmsg[1]-self.oolastmsg[1])<self.wait:
 				queue.kick(nick,channel)
+		if (self.lastmsg[2]==self.olastmsg[2]) and (self.lastmsg[1]-self.olastmsg[1]<10):
+			queue.kick(nick,channel)
+			queue.kick(self.olastmsg[0],channel)
 		if data.find('network/')!=-1 or data.find('staff/')!=-1:
 			if ldata.find(':?;')!=-1:
 				self.findlist.append(data.split(':?; ')[-1][0:-2])
