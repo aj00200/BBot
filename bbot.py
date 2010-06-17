@@ -1,6 +1,6 @@
 #this bot is licensed under the GNU GPL v3.0
 #http://www.gnu.org/licenses/gpl.html
-version='1.00 LTS'
+version='1.00p1 LTS'
 proxyscan=1#Scan for open proxies on join? 1=yes,0=no. Requires nmap and python-namp: http://nmap.org  http://xael.org/norman/python/python-nmap/
 globals=[]
 config=open('config','r')
@@ -88,8 +88,6 @@ class BBot():
 			elif data.find(':?goog ')!=-1:
 				words=data.split(':?goog ')[-1]
 				queue.append((channel,'http://www.google.com/search?q=%s' % words))
-			elif data.find(':?toast')!=-1:
-				queue.append((channel,'Your toast will be done soon :D'))
 			elif data.find(':?source')!=-1:
 				queue.append((channel,nick+': My source code is written in Python and can be found at: http://github.com/aj00200/BBot'))
 			elif data.find(':?kick ')!=-1:
@@ -101,13 +99,6 @@ class BBot():
 				queue.append((channel,nick+': Im a bot by aj00200. %s' % version))
 			elif ldata.find(':?aj00200')!=-1:
 				queue.append((channel,nick+': aj00200 is the bots creator. aj0020020@live.com. He knows all.'))
-			elif data.find(':?sqltest ')!=-1:
-				print data.split(':sqltest ')[-1]
-				sqldata=BBot.database.cursor()
-				sqldata.execute(data.split('sqltest ')[-1])
-				for row in sqldata:
-					print '* '+str(row)
-					queue.append((channel,str(row)))
 			elif ldata.find(':?help')!=-1:
 				if ldata.find(':?help ')!=-1:
 					words=ldata.split(':?help ')[-1]
