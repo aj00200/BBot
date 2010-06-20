@@ -137,15 +137,12 @@ class BlockBot():
 			queue.mode(nick,channel,'+v')
 		#user=user.replace('~','')
 		webchat=(str(blockbotlib.hex2dec('0x'+str(user[1:3])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[3:5])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[5:7])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[7:9]))))
-		#queue.append(('aj00200',nick+': '+webchat))
-		#self.jlist[channel[1:]].append(nick)
-		
-		#self.scan(ip, channel, nick)
+		try:
+			self.jlist[channel[1:]].append(nick)
+		except:
+			print 'Err! Making channel var'
+			self.jlist[channel[1:]]=[]
 		#print 'in JOIN, scan DONE... Running...'
-		#if self.safe:
-		#	print (ip,channel,nick)
-		#	print 'MODE '+channel+' +v '+nick+'\r\n'
-		#	irc.send('MODE '+channel+' +v '+nick+'\r\n')
 		if proxyscan:
 			thread.start_new_thread(self.scan, (ip,channel,nick))
 	def scan(self,ip,channel,nick):
@@ -191,20 +188,19 @@ class BlockBot():
 				self.wait=float(data.split('?setspeed ')[-1][0:-2])
 			elif ldata.find(':?rehash')!=-1:
 				self.__init__()
+			elif ldata.find(':?ekill')!=-1:
+				irc.send('QUIT')
+				continuepgm=0
 			elif ldata.find(':?protect')!=-1:
 				queue.mode('',channel,'+mz')
-			elif ldata.find('?:kl')!=-1:
+			elif ldata.find(':?kl')!=-1:
 				times=1
 				if data.find('?kl ')!=-1:
-					times=ldata.split('?kl ')[-1][0:-2]
-					times=int(times)
-					print 'times: '+times
-				try:
-					for each in range(0,times):
-						queue.kick(self.jlist.pop())
-				except:
-					pass
-		elif not self.superuser:
+					t=ldata.split('?kl ')[-1][0:-2]
+					t=int(times)
+					for each in range(t):
+						queue.kick(self.jlist[channel[1:]].pop(),channel)
+	       	elif not self.superuser:
 			self.checkforspam(nick,data,channel)
 	def checkforspam(self,nick,data,channel):
 		host=data.split(' PRIVMSG ')[0].split('@')[-1]
