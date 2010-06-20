@@ -1,6 +1,6 @@
 #this bot is licensed under the GNU GPL v3.0
 #http://www.gnu.org/licenses/gpl.html
-version='1.00p1 LTS'
+version='1.1'
 proxyscan=1#Scan for open proxies on join? 1=yes,0=no. Requires nmap and python-namp: http://nmap.org  http://xael.org/norman/python/python-nmap/
 globals=[]
 config=open('config','r')
@@ -42,9 +42,10 @@ class queue_class():
 		return self.queue.pop()
 	def join(self, channel):
 		self.queue.append('JOIN '+channel)
+	def part(self, channel, message=''):
+		self.queue.append('PART %s :%s'%(channel,message))
 	def __init__(self):
 		self.queue=[]
-		self.rqueue=[]
 	def kick(self,nick,channel):
 		self.queue.append('KICK '+channel+' '+nick+' :BBot Rulez!')
 	def get_length(self):
@@ -52,7 +53,8 @@ class queue_class():
 	def voice(self,nick,channel):
 		self.queue.append('MODE '+channel+' +v '+nick)
 	def nick(self,nick):
-		self.queue.append('NICK '+nick)
+		self.queue.append('NICK %s'%nick)
+                mynick=nick[:]
 	def notice(self,data):
 		self.queue.append('NOTICE '+data[0]+' :'+data[1])
 	def mode(self,nick,channel,mode):
@@ -198,8 +200,11 @@ class BlockBot():
 				if data.find('?kl ')!=-1:
 					t=ldata.split('?kl ')[-1][0:-2]
 					t=int(times)
-					for each in range(t):
-						queue.kick(self.jlist[channel[1:]].pop(),channel)
+					try:
+						for each in range(t):
+							queue.kick(self.jlist[channel[1:]].pop(),channel)
+					except:
+						que.append((nick,'Kicking that many people has caused an error!'))
 	       	elif not self.superuser:
 			self.checkforspam(nick,data,channel)
 	def checkforspam(self,nick,data,channel):
