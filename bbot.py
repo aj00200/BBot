@@ -93,7 +93,7 @@ class BBot():
 			elif data.find(':?source')!=-1:
 				queue.append((channel,nick+': My source code is written in Python and can be found at: http://github.com/aj00200/BBot'))
 			elif data.find(':?kick ')!=-1:
-				words=data.split(':?kick ')[-1]
+				words=data.split(':?kick ')[-1].strip('\r\n')
 				if words.lower().find(mynick.lower())!=-1:
 					words=nick
 				queue.append((channel,u'\x01ACTION kicks %s\x01'%words))
