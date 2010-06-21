@@ -128,12 +128,14 @@ class BlockBot():
 			proxyscan=1
 		if self.proxyscan==1:
 			import nmap #Can be found at: http://xael.org/norman/python/python-nmap/
-		self.lastmsg=('BBot',time.time(),'hi')
+		self.repeatlimit=3
+		self.repeat_time=2
+		self.repeat_1word=4
+		self.msglist=[]
 		self.lastnot=('BBot',time.time(),'sdkljfls')
-		self.olastmsg=('BBot',time.time(),'clear')
 		self.wait=1.5
-	def nicklist(self,channel,data):
-		words=data.split(mynick)[-1]
+	def checkForRepeatSpam(self,nick,data,channel):
+		pass
 	def join(self,nick,channel,ip,user):
 		if ip.find('/')!=-1:
 			queue.mode(nick,channel,'+v')
@@ -161,11 +163,6 @@ class BlockBot():
 				if 808 in lport or 23 in lport or 110 in lport or 1080 in lport or 29505 in lport or 80 in lport or 8080 in lports or 3246 in lports:
 					scansafe=0
 					print 'DRONE'
-			#if 'proxy' in nm[ip]['tcp'][port]['name'] or 'telnet' in nm[ip]['tcp'][port]['name']:
-			#	if nm[ip]['tcp'][808]['state']==u'open' or nm[ip]['tcp'][23]['state']==u'open':
-			#		print(ip+' is most likely a DRONE')
-			#		scansafe=0
-				#queue.append((channel,'NOTICE: '+ip+' is most likely a drone!'))
 			del nm
 			if scansafe:
 				queue.mode(nick,channel,'+v')
@@ -208,22 +205,23 @@ class BlockBot():
 	       	elif not self.superuser:
 			self.checkforspam(nick,data,channel)
 	def checkforspam(self,nick,data,channel):
-		host=data.split(' PRIVMSG ')[0].split('@')[-1]
+		self.msglist.insert(0,(nick,time.time(),data))
+		if len(self.msglist)>7:
+			 self.msglist.pop()
 		ident=data.split(' PRIVMSG ')[0].split('@')[0][1:]
 		ldata=data.lower()
-		self.oolastmsg=(self.olastmsg[:])
-		self.olastmsg=(self.lastmsg[:])
-		self.lastmsg=(nick,time.time(),data[data.find(channel):])
 		for each in self.findlist:
 			if ldata.find(each)!=-1:
 				queue.kick(nick,channel)
-		if self.olastmsg[0]==self.lastmsg[0]==self.oolastmsg[0]:
-			if (self.lastmsg[1]-self.oolastmsg[1])<self.wait:
-				queue.kick(nick,channel)
-		if (self.lastmsg[2]==self.olastmsg[2]) and (self.lastmsg[1]-self.olastmsg[1]<10):
-			queue.kick(nick,channel)
-			queue.kick(self.olastmsg[0],channel)
-
+		try:
+			if self.msglist[0][0]==self.msglist[1][0]==self.msglist[2][0]:
+				if (self.msglist[0][1]-self.msglist[2][1])<self.wait:
+					queue.kick(nick,channel,'No Flooding!')
+		       	if (self.msglist[0][2]==self.msglist[1][2]) and (self.msglist[0][1]-self.olastmsg[0][1]<self.repeat_time):
+						queue.kick(nick,channel,'Please do not repeat yourself')
+						queue.kick(self.olastmsg[0],channel,'Please do not repeat yourself')
+		except:
+			pass
 	def notice(self,nick,channel,data):
 		print time.time()
 		ldata=data.lower()
@@ -272,19 +270,21 @@ def PONG(data):
 
 irc = socket.socket ( socket.AF_INET, socket.SOCK_STREAM )
 irc.connect ( ( network, port ) )
-print irc.recv ( 4096 )
 print 'NICK'
 irc.send('NICK '+mynick+'\r\n')
 irc.send ( 'USER '+mynick+' '+mynick+' '+mynick+' :'+mynick+'\r\n' )
 needping=1
+ts=time.time()
 while needping:
-	data=irc.recv(4096)
+	data=irc.recv(512)
 	if data.find('PING')!=-1:
 		PONG(data)
 		print 'IDENTIFY'
 		irc.send('PRIVMSG NickServ :IDENTIFY '+username+' '+password+'\r\n')
 		needping=0
 	print data
+	if time.time()-ts>5:
+		needpin=0
 time.sleep(sleep_after_join)
 
 print 'JOIN'
@@ -292,6 +292,7 @@ for each in autojoin:
 	irc.send('JOIN '+each+'\r\n')
 while continuepgm:
 	data = irc.recv ( 4096 )
+	print(data)
 	PONG(data)
 	if data.find('INVITE '+mynick+' :#')!=-1:
 		newchannel=data.split(mynick+' :')[-1]
@@ -305,7 +306,7 @@ while continuepgm:
 		for handler in nhandlers:
 			handler.notice(nick,channel,words)
 	elif data.find('PRIVMSG ')!=-1:
-		channel=data.split('PRIVMSG ')[-1]
+		channel=data.split(' PRIVMSG ')[1]
 		channel=channel.split(' :')[0]
 		nick=data.split('!')[0][1:]
 		for handler in handlers:
@@ -328,5 +329,4 @@ while continuepgm:
 		send=queue.pop()
 		print(send)
 		irc.send(send+'\r\n')
-	print data
 irc.send('QUIT :BBot Rulez\r\n')
