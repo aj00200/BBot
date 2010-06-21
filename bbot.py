@@ -87,9 +87,6 @@ class BBot():
 		if data.find('?')!=-1:
 			if data.find(':?ping')!=-1:
 				queue.append((channel,'PONG'))
-			elif data.find(':?goog ')!=-1:
-				words=data.split(':?goog ')[-1]
-				queue.append((channel,'http://www.google.com/search?q=%s' % words))
 			elif data.find(':?source')!=-1:
 				queue.append((channel,nick+': My source code is written in Python and can be found at: http://github.com/aj00200/BBot'))
 			elif data.find(':?kick ')!=-1:
@@ -256,9 +253,20 @@ class statusbot():
 				del self.statuses[words]
 			except:
 				pass
+class searchbot():
+	def __init__(self):
+		self.goog='http://google.com/search?q=%s'
+		self.wiki='http://en.wikipedia.org/wiki/%s'
+	def go(self,nick,data,channel):
+		if data.find(':?goog ')!=-1:
+			w=data.split(':?goog ')[-1].replace(' ','+')
+			queue.append((channel,self.goog%w))
+		elif data.find(':?wiki ')!=-1:
+			w=data.split(':?wiki ')[-1].replace(' ','+')
+			queue.append((channel,self.wiki%w))
 #===============HANDLERS=====
 bb=BlockBot()
-handlers=[bb,BBot(),statusbot()]#Run on msg
+handlers=[bb,BBot(),statusbot(),searchbot()]#Run on msg
 jhandlers=[bb]#Run on Join
 lhandlers=[]#Run every loop
 nhandlers=[bb]
