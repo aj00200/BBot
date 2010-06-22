@@ -54,7 +54,7 @@ class queue_class():
 		self.queue.append('MODE '+channel+' +v '+nick)
 	def nick(self,nick):
 		self.queue.append('NICK %s'%nick)
-                mynick=nick[:]
+		mynick=nick[:]
 	def notice(self,data):
 		self.queue.append('NOTICE '+data[0]+' :'+data[1])
 	def mode(self,nick,channel,mode):
@@ -199,12 +199,12 @@ class BlockBot():
 							queue.kick(self.jlist[channel[1:]].pop(),channel)
 					except:
 						que.append((nick,'Kicking that many people has caused an error!'))
-	       	elif not self.superuser:
-			self.checkforspam(nick,data,channel)
+			elif not self.superuser:
+				self.checkforspam(nick,data,channel)
 	def checkforspam(self,nick,data,channel):
 		self.msglist.insert(0,(nick,time.time(),data))
 		if len(self.msglist)>7:
-			 self.msglist.pop()
+			self.msglist.pop()
 		ident=data.split(' PRIVMSG ')[0].split('@')[0][1:]
 		ldata=data.lower()
 		for each in self.findlist:
@@ -214,7 +214,7 @@ class BlockBot():
 			if self.msglist[0][0]==self.msglist[1][0]==self.msglist[2][0]:
 				if (self.msglist[0][1]-self.msglist[2][1])<self.wait:
 					queue.kick(nick,channel,'No Flooding!')
-		       	if (self.msglist[0][2]==self.msglist[1][2]) and (self.msglist[0][1]-self.olastmsg[0][1]<self.repeat_time):
+				if (self.msglist[0][2]==self.msglist[1][2]) and (self.msglist[0][1]-self.olastmsg[0][1]<self.repeat_time):
 						queue.kick(nick,channel,'Please do not repeat yourself')
 						queue.kick(self.olastmsg[0],channel,'Please do not repeat yourself')
 		except:
