@@ -54,7 +54,7 @@ class queue_class():
 		self.queue.append('MODE '+channel+' +v '+nick)
 	def nick(self,nick):
 		self.queue.append('NICK %s'%nick)
-                mynick=nick[:]
+		mynick=nick[:]
 	def notice(self,data):
 		self.queue.append('NOTICE '+data[0]+' :'+data[1])
 	def mode(self,nick,channel,mode):
