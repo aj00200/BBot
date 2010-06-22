@@ -46,8 +46,8 @@ class queue_class():
 		self.queue.append('PART %s :%s'%(channel,message))
 	def __init__(self):
 		self.queue=[]
-	def kick(self,nick,channel):
-		self.queue.append('KICK '+channel+' '+nick+' :BBot Rulez!')
+	def kick(self,nick,channel,message=''):
+		self.queue.append('KICK %s %s :%s!'%(channel,nick,message))
 	def get_length(self):
 		return len(self.queue)
 	def voice(self,nick,channel):
@@ -70,7 +70,6 @@ class BBot():
 	#database=sqlite3.connect('newdatabase.sql')
 	def go(self,nick,data,channel):
 		host=data.split(' PRIVMSG')[0].split('@')[-1]
-		print host
 		if channel.find('#')==-1:
 			channel=nick.lower()
 		ldata=data.lower()
@@ -170,7 +169,6 @@ class BlockBot():
 		ldata=data.lower()
 		if self.ignore_users_on_su_list:
 			self.superuser=api.checkIfSuperUser(data,superusers)
-			print self.superuser
 		if self.superuser:
 			if ldata.find(':?;')!=-1:
 				self.findlist.append(data.split(':?; ')[-1][0:-2])
@@ -203,7 +201,7 @@ class BlockBot():
 			self.checkforspam(nick,data,channel)
 	def checkforspam(self,nick,data,channel):
 		self.msglist.insert(0,(nick,time.time(),data))
-		if len(self.msglist)>7:
+		if len(self.msglist)>5:
 			 self.msglist.pop()
 		ident=data.split(' PRIVMSG ')[0].split('@')[0][1:]
 		ldata=data.lower()
@@ -214,10 +212,9 @@ class BlockBot():
 			if self.msglist[0][0]==self.msglist[1][0]==self.msglist[2][0]:
 				if (self.msglist[0][1]-self.msglist[2][1])<self.wait:
 					queue.kick(nick,channel,'No Flooding!')
-		       	if (self.msglist[0][2]==self.msglist[1][2]) and (self.msglist[0][1]-self.olastmsg[0][1]<self.repeat_time):
-						queue.kick(nick,channel,'Please do not repeat yourself')
-						queue.kick(self.olastmsg[0],channel,'Please do not repeat yourself')
-		except:
+		       	if (self.msglist[0][2]==self.msglist[1][2]) and (self.msglist[0][1]-self.msglist[1][1]<self.repeat_time):
+						queue.kick(nick,channel,'Please do not repeat!')
+		except IndexError:
 			pass
 	def notice(self,nick,channel,data):
 		print time.time()
