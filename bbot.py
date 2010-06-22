@@ -198,7 +198,7 @@ class BlockBot():
 						for each in range(t):
 							queue.kick(self.jlist[channel[1:]].pop(),channel)
 					except:
-						que.append((nick,'Kicking that many people has caused an error!'))
+						queue.append((nick,'Kicking that many people has caused an error!'))
 	       	elif not self.superuser:
 			self.checkforspam(nick,data,channel)
 	def checkforspam(self,nick,data,channel):
@@ -313,7 +313,7 @@ while continuepgm:
 		words=data.split('NOTICE')[1].split(':')[1]
 		for handler in nhandlers:
 			handler.notice(nick,channel,words)
-	elif data.find('PRIVMSG ')!=-1:
+	elif data.find(' PRIVMSG ')!=-1:
 		channel=data.split(' PRIVMSG ')[1]
 		channel=channel.split(' :')[0]
 		nick=data.split('!')[0][1:]
