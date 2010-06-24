@@ -197,12 +197,12 @@ class BlockBot():
 							queue.kick(self.jlist[channel[1:]].pop(),channel)
 					except:
 						queue.append((nick,'Kicking that many people has caused an error!'))
-	       	elif not self.superuser:
-			self.checkforspam(nick,data,channel)
+			elif not self.superuser:
+				self.checkforspam(nick,data,channel)
 	def checkforspam(self,nick,data,channel):
 		self.msglist.insert(0,(nick,time.time(),data))
 		if len(self.msglist)>5:
-			 self.msglist.pop()
+			self.msglist.pop()
 		ident=data.split(' PRIVMSG ')[0].split('@')[0][1:]
 		ldata=data.lower()
 		for each in self.findlist:
@@ -212,7 +212,7 @@ class BlockBot():
 			if self.msglist[0][0]==self.msglist[1][0]==self.msglist[2][0]:
 				if (self.msglist[0][1]-self.msglist[2][1])<self.wait:
 					queue.kick(nick,channel,'No Flooding!')
-		       	if (self.msglist[0][2]==self.msglist[1][2]) and (self.msglist[0][1]-self.msglist[1][1]<self.repeat_time):
+				if (self.msglist[0][2]==self.msglist[1][2]) and (self.msglist[0][1]-self.msglist[1][1]<self.repeat_time):
 						queue.kick(nick,channel,'Please do not repeat!')
 		except IndexError:
 			pass
@@ -227,7 +227,27 @@ class BlockBot():
 		for each in self.findlist:
 			if ldata.find(each)!=-1:
 				queue.kick(nick,channel)
-
+class trekbot():
+	def go(self,nick,data,channel):
+		ldata=data.lower()
+		self.superuser=api.checkIfSuperUser(data,superusers)
+		if self.superuser:
+			if ldata.find('?op')!=-1:
+				if ldata.find('?op ')!=-1:
+					nick=ldata[ldata.find('?op')+4:].strip('\r\n')
+				queue.mode(nick,channel,'+o')
+			if ldata.find('?deop')!=-1:
+				if ldata.find('?deop ')!=-1:
+					nick=ldata[ldata.find('?deop ')+6:].strip('\r\n')
+				queue.mode(nick,channel,'-o')
+			if ldata.find('?voice')!=-1:
+				if ldata.find('?voice ')!=-1:
+					nick=ldata[ldata.find('?voice ')+7:].strip('\r\n')
+				queue.mode(nick,channel,'+v')
+			if ldata.find('?devoice')!=-1:
+				if ldata.find('?devoice ')!=-1:
+					nick=ldata[ldata.find('?devoice ')+9:].strip('\r\n')
+				queue.mode(nick,channel,'-v')
 class statusbot():
 	def __init__(self):
 		self.statuses={}
@@ -272,7 +292,7 @@ class searchbot():
 
 #===============HANDLERS=====
 bb=BlockBot()
-handlers=[bb,BBot(),statusbot(),searchbot()]#Run on msg
+handlers=[bb,BBot(),statusbot(),searchbot(),trekbot()]#Run on msg
 jhandlers=[bb]#Run on Join
 lhandlers=[]#Run every loop
 nhandlers=[bb]
