@@ -132,8 +132,6 @@ class BlockBot():
 		self.msglist=[]
 		self.lastnot=('BBot',time.time(),'sdkljfls')
 		self.wait=1.5
-	def checkForRepeatSpam(self,nick,data,channel):
-		pass
 	def join(self,nick,channel,ip,user):
 		if ip.find('/')!=-1:
 			queue.mode(nick,channel,'+v')
@@ -199,8 +197,8 @@ class BlockBot():
 							queue.kick(self.jlist[channel[1:]].pop(),channel)
 					except:
 						queue.append((nick,'Kicking that many people has caused an error!'))
-			elif not self.superuser:
-				self.checkforspam(nick,data,channel)
+		elif not self.superuser:
+			self.checkforspam(nick,data,channel)
 	def checkforspam(self,nick,data,channel):
 		self.msglist.insert(0,(nick,time.time(),data))
 		if len(self.msglist)>5:
@@ -333,15 +331,14 @@ lhandlers=[]#Run every loop
 nhandlers=[bb]
 continuepgm=1
 def PONG(data):
-	if data.find ( 'PING' ) != -1:
-		irc.send ( 'PONG ' + data.split() [ 1 ] + '\r\n' ) #Return the PING to the server
+	if data.find ('PING')!=-1:
+		irc.send('PONG '+data.split()[ 1 ]+'\r\n') #Return the PING to the server
 		print('PONGING')
-
-irc = socket.socket ( socket.AF_INET, socket.SOCK_STREAM )
-irc.connect ( ( network, port ) )
+irc=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+irc.connect((network,port))
 print 'NICK'
 irc.send('NICK '+mynick+'\r\n')
-irc.send ( 'USER '+mynick+' '+mynick+' '+mynick+' :'+mynick+'\r\n' )
+irc.send ('USER '+mynick+' '+mynick+' '+mynick+' :'+mynick+'\r\n')
 needping=1
 ts=time.time()
 while needping:
@@ -351,11 +348,11 @@ while needping:
 		print 'IDENTIFY'
 		irc.send('PRIVMSG NickServ :IDENTIFY '+username+' '+password+'\r\n')
 		needping=0
-	print data
+		print(data)
 	if time.time()-ts>5:
 		needpin=0
 time.sleep(sleep_after_join)
-print 'JOIN'
+print('JOIN')
 for each in autojoin:
 	irc.send('JOIN '+each+'\r\n')
 while continuepgm:
