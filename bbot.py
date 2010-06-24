@@ -1,3 +1,4 @@
+# /usr/bin/python
 #this bot is licensed under the GNU GPL v3.0
 #http://www.gnu.org/licenses/gpl.html
 version='1.5'
@@ -30,12 +31,12 @@ del cline
 import socket
 import re
 import time
-import sqlite3
+#import sqlite3
 from random import randint
-import urllib
+#import urllib
 import thread
-import blockbotlib#some functions required for BlockBot(). Delete this like if you remove BlockBot()
-import api#BBot API Functions
+import blockbotlib #some functions required for BlockBot(). Delete this like if you remove BlockBot()
+import api #BBot API Functions
 
 class queue_class():
 	def __init__(self):
