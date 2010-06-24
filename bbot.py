@@ -50,8 +50,6 @@ class queue_class():
 		self.queue.append('KICK %s %s :%s!'%(channel,nick,message))
 	def get_length(self):
 		return len(self.queue)
-	def voice(self,nick,channel):
-		self.queue.append('MODE '+channel+' +v '+nick)
 	def nick(self,nick):
 		self.queue.append('NICK %s'%nick)
 		mynick=nick[:]
@@ -228,6 +226,11 @@ class BlockBot():
 			if ldata.find(each)!=-1:
 				queue.kick(nick,channel)
 class trekbot():
+	def __init__(self):
+		self.blacklist=[]
+		self.blconfig=open('trekbot/blacklist','r').readlines()
+		for each in self.blconfig:
+			self.blacklist.append(each.strip('\r\n'))
 	def go(self,nick,data,channel):
 		ldata=data.lower()
 		self.superuser=api.checkIfSuperUser(data,superusers)
@@ -240,14 +243,41 @@ class trekbot():
 				if ldata.find('?deop ')!=-1:
 					nick=ldata[ldata.find('?deop ')+6:].strip('\r\n')
 				queue.mode(nick,channel,'-o')
-			if ldata.find('?voice')!=-1:
+			elif ldata.find('?voice')!=-1:
 				if ldata.find('?voice ')!=-1:
 					nick=ldata[ldata.find('?voice ')+7:].strip('\r\n')
 				queue.mode(nick,channel,'+v')
-			if ldata.find('?devoice')!=-1:
+			elif ldata.find('?devoice')!=-1:
 				if ldata.find('?devoice ')!=-1:
 					nick=ldata[ldata.find('?devoice ')+9:].strip('\r\n')
 				queue.mode(nick,channel,'-v')
+			elif ldata.find('?kick ')!=-1:
+				name=ldata[ldata.find('?kick ')+6:].strip('\r\n')
+				queue.kick(name,channel,'Requested by %s'%nick)
+			elif ldata.find('?rehash')!=-1:
+				self.__init__()
+			elif ldata.find('?blacklist ')!=-1:
+				name=data[data.find('?blacklist ')+11:].strip('\r\n')
+				self.blacklist.append(name)
+				self.write_blacklist()
+			elif ldata.find('?unblacklist ')!=-1:
+				name=data[data.find('?unblacklist ')+13:].strip('\r\n')
+				if name in self.blacklist:
+					self.blacklist.pop(self.blacklist.index(name))
+					self.write_blacklist()
+				else:
+					queue.append((nick,'That host is not blacklisted'))
+			elif ldata.find('?listbl')!=-1:
+				queue.append((nick,str(self.blacklist)))
+	def write_blacklist(self):
+		self.blconfig=open('trekbot/blacklist','w')
+		for each in self.blacklist:
+			self.blconfig.write(each+'\n')
+	def join(self,nick,channel,ip,user):
+		print ip
+		print self.blacklist
+		if not ip in self.blacklist:
+			queue.mode(nick,channel,'+v')
 class statusbot():
 	def __init__(self):
 		self.statuses={}
@@ -292,8 +322,9 @@ class searchbot():
 
 #===============HANDLERS=====
 bb=BlockBot()
-handlers=[bb,BBot(),statusbot(),searchbot(),trekbot()]#Run on msg
-jhandlers=[bb]#Run on Join
+tb=trekbot()
+handlers=[bb,BBot(),statusbot(),searchbot(),tb]#Run on msg
+jhandlers=[tb]#Run on Join
 lhandlers=[]#Run every loop
 nhandlers=[bb]
 continuepgm=1
@@ -320,12 +351,11 @@ while needping:
 	if time.time()-ts>5:
 		needpin=0
 time.sleep(sleep_after_join)
-
 print 'JOIN'
 for each in autojoin:
 	irc.send('JOIN '+each+'\r\n')
 while continuepgm:
-	data = irc.recv ( 4096 )
+	data = irc.recv (4096)
 	print(data)
 	PONG(data)
 	if data.find('INVITE '+mynick+' :#')!=-1:
@@ -351,12 +381,8 @@ while continuepgm:
 			channel='#'+data.split(' :#')[-1][0:-2]
 			ip=data.split('@')[1].split(' JOIN')[0]
 			user=data.split('@')[0].split('!')[-1]
-			print('IP found was :'+ip)
 			for jhandler in jhandlers:
-				jhandler.join(nick, channel, ip, user)
-		else:
-			irc.send('MODE '+channel+' +v '+nick+'\r\n')
-
+				jhandler.join(nick,channel,ip,user)
 	for handler in lhandlers:
 		handler.loop()
 	if queue.get_length()>0:
