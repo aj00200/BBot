@@ -277,6 +277,8 @@ class trekbot():
 				queue.mode(data[data.find('?ban ')+5:],channel,'+b')
 			elif ldata.find('?unban ')!=-1:
 				queue.mode(data[data.find('?unban ')+7:],channel,'-b')
+			elif ata.fined('?topic ')!=-1:
+				queue.raw('TOPIC %s :%s'%(channel,data[data.find('?topic ')+7:])
 	def write_blacklist(self):
 		self.blconfig=open('trekbot/blacklist','w')
 		for each in self.blacklist:
