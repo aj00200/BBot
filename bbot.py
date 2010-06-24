@@ -3,6 +3,7 @@
 version='1.1'
 proxyscan=1#Scan for open proxies on join? 1=yes,0=no. Requires nmap and python-namp: http://nmap.org  http://xael.org/norman/python/python-nmap/
 globals=[]
+
 config=open('config','r')
 cline=config.readline()
 mynick=cline.split('nick: ')[-1][0:-1]
@@ -12,9 +13,10 @@ cline=config.readline()
 password=cline.split('password: ')[-1][0:-1]
 cline=config.readline()
 network=cline.split('network: ')[-1][0:-1]
-print('Connecting to: %s' % network)
 cline=config.readline()
 port=int(cline.split('port: ')[-1].strip())
+print('Connecting to: %s' % network)
+
 cline=config.readline()
 autojoin=cline.split('channels: ')[-1].split(' ')
 cline=config.readline()
@@ -36,6 +38,10 @@ import blockbotlib#some functions required for BlockBot(). Delete this like if y
 import api#BBot API Functions
 
 class queue_class():
+	def __init__(self):
+		self.queue=[]
+	def get_length(self):
+		return len(self.queue)
 	def append(self,data):
 		self.queue.append('PRIVMSG '+data[0]+' :'+data[1])
 	def pop(self):
@@ -44,12 +50,8 @@ class queue_class():
 		self.queue.append('JOIN '+channel)
 	def part(self, channel, message=''):
 		self.queue.append('PART %s :%s'%(channel,message))
-	def __init__(self):
-		self.queue=[]
 	def kick(self,nick,channel,message=''):
 		self.queue.append('KICK %s %s :%s!'%(channel,nick,message))
-	def get_length(self):
-		return len(self.queue)
 	def nick(self,nick):
 		self.queue.append('NICK %s'%nick)
 		mynick=nick[:]
@@ -65,36 +67,38 @@ class queue_class():
 		self.queue.append(data)
 queue=queue_class()	
 class BBot():
+	def __init__(self):
+		self.static={
+			'ping': 'PONG',
+			'source': 'My source code is written in Python and can be found at: http://github.com/aj00200/BBot',
+			'about': 'Im a bot by aj00200. %s' % version,
+			'aj00200': 'aj00200 is the bots creator. aj0020020@live.com. He knows all.'
+			}
+			
 	#database=sqlite3.connect('newdatabase.sql')
 	def go(self,nick,data,channel):
 		host=data.split(' PRIVMSG')[0].split('@')[-1]
-		if channel.find('#')==-1:
+		if channel.find('#')==-1:#Detect if the message is a PM to the Bot
 			channel=nick.lower()
 		ldata=data.lower()
-		for su in superusers:
-			if host.find(su)!=-1:
-				if ldata.find('raw ')!=-1:
-					irc.send(data.split('raw ')[-1])
-				elif ldata.find('leave')!=-1:
-					words=ldata.split('leave ')
-					irc.send('PART %s' % words)
+		if api.checkIfSuperUser(data,superusers):
+			if ldata.find('raw ')!=-1:
+				irc.send(data.split('raw ')[-1])
+			elif ldata.find('leave')!=-1:
+				words=ldata.split('leave ')
+				irc.send('PART %s' % words)
 		if re.search(':'+mynick.lower()+'(:|,) (hi|hello)[^a-zA-Z ]',ldata):
-			print('HI')
 			queue.append((channel,'Hi '+nick+'!'))
-		if data.find('?')!=-1:
-			if data.find(':?ping')!=-1:
-				queue.append((channel,'PONG'))
-			elif data.find(':?source')!=-1:
-				queue.append((channel,nick+': My source code is written in Python and can be found at: http://github.com/aj00200/BBot'))
+		if data.find(':?')!=-1:
+			self.q=data[data.find(':?')+2:].strip('\r\n')
+			print self.q
+			if self.q in self.static:
+				queue.append((channel,nick+': '+self.static[self.q]))
 			elif data.find(':?kick ')!=-1:
 				words=data.split(':?kick ')[-1].strip('\r\n')
 				if words.lower().find(mynick.lower())!=-1:
 					words=nick
 				queue.append((channel,u'\x01ACTION kicks %s\x01'%words))
-			elif ldata.find(':?about')!=-1:
-				queue.append((channel,nick+': Im a bot by aj00200. %s' % version))
-			elif ldata.find(':?aj00200')!=-1:
-				queue.append((channel,nick+': aj00200 is the bots creator. aj0020020@live.com. He knows all.'))
 			elif ldata.find(':?help')!=-1:
 				if ldata.find(':?help ')!=-1:
 					words=ldata.split(':?help ')[-1]
@@ -324,7 +328,7 @@ class searchbot():
 bb=BlockBot()
 tb=trekbot()
 handlers=[bb,BBot(),statusbot(),searchbot(),tb]#Run on msg
-jhandlers=[tb]#Run on Join
+jhandlers=[tb,bb]#Run on Join
 lhandlers=[]#Run every loop
 nhandlers=[bb]
 continuepgm=1
