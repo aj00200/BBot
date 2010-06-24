@@ -269,6 +269,14 @@ class trekbot():
 					queue.append((nick,'That host is not blacklisted'))
 			elif ldata.find('?listbl')!=-1:
 				queue.append((nick,str(self.blacklist)))
+			elif ldata.find('?mode ')!=-1:
+				queue.mode('',channel,ldata[ldata.find('?mode ')+6:])
+			elif data.find('?echo ')!=-1:
+				queue.append((channel,data[ldata.find('?echo ')+6:]))
+			elif ldata.find('?ban ')!=-1:
+				queue.mode(nick,channel,'+b')
+			elif ldata.find('?unban ')!=-1:
+				queue.mode(nick,channel,'-b')
 	def write_blacklist(self):
 		self.blconfig=open('trekbot/blacklist','w')
 		for each in self.blacklist:
@@ -382,6 +390,8 @@ while continuepgm:
 			user=data.split('@')[0].split('!')[-1]
 			for jhandler in jhandlers:
 				jhandler.join(nick,channel,ip,user)
+	if data.strip('\r\n')=='':
+		continuepg=0
 	for handler in lhandlers:
 		handler.loop()
 	if queue.get_length()>0:
