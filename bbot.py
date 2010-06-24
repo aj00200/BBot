@@ -137,11 +137,9 @@ class BlockBot():
 			queue.mode(nick,channel,'+v')
 		#user=user.replace('~','')
 		webchat=(str(blockbotlib.hex2dec('0x'+str(user[1:3])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[3:5])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[5:7])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[7:9]))))
-		try:
-			self.jlist[channel[1:]].append(nick)
-		except:
-			print 'Err! Making channel var'
+		if channel[1:] not in self.jlist:
 			self.jlist[channel[1:]]=[]
+		self.jlist[channel[1:]].append(nick)
 		#print 'in JOIN, scan DONE... Running...'
 		if proxyscan:
 			thread.start_new_thread(self.scan, (ip,channel,nick))
