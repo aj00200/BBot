@@ -46,7 +46,7 @@ class queue_class():
 	def append(self,data):
 		self.queue.append('PRIVMSG '+data[0]+' :'+data[1])
 	def pop(self):
-		return self.queue.pop()
+		return self.queue.pop(0)
 	def join(self, channel):
 		self.queue.append('JOIN '+channel)
 	def part(self, channel, message=''):
@@ -280,6 +280,8 @@ class trekbot():
 				queue.mode(data[data.find('?unban ')+7:],channel,'-b')
 			elif data.find('?topic ')!=-1:
 				queue.raw('TOPIC %s :%s'%(channel,data[data.find('?topic ')+7:]))
+			elif data.find('?nick ')!=-1:
+				queue.nick(data[data.find('?nick ')+6:])
 	def write_blacklist(self):
 		self.blconfig=open('trekbot/blacklist','w')
 		for each in self.blacklist:
