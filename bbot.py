@@ -340,14 +340,14 @@ class WhoBot():
 	def code(self,code,data):
 		if code=='311':
 			self.data=data.split(mynick)[-1].split()
-			self.h=self.data[3]
+			self.h=self.data[2]
 			print 'HOST %s'%self.h
 			if self.h.find('webchat/')!=-1:
-				self.ident='!'.join(self.data[2:3])
+				self.ident='!'.join(self.data[1:2])
 				print 'IDENT: %s'%self.ident
 				queue.append(('operserv','AKILL ADD !T 6400 %s@%s Spam is offtopic on FOSSnet. Email kline@fossnet.info for help'%(self.ident,self.h)))
 			else:
-				queue.append(('operserv','AKILL ADD !T 6400 *!*@%s Spam is offtopic on FOSSnet. Email kline@fossnet.info for help.'%self.h))
+				queue.append(('operserv','AKILL ADD !T 6400 *!*@'+self.h+' Spam is offtopic on FOSSnet. Email kline@fossnet.info for help.'))
 #===============HANDLERS=====
 bb=BlockBot()
 tb=trekbot()
