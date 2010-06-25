@@ -330,14 +330,33 @@ class searchbot():
 		elif data.find(':?upb ')!=-1:
 			w=data.split(':?upb ')[-1]
 			queue.append((channel,self.upb%w))
-
+class WhoBot():
+	def go(self,nick,data,channel):
+		if nick.lower()=='evilbikcmp' or nick.lower()=='mithos' or nick.lower()=='aj00200':
+			if data.find('?kline ')!=-1:
+				nick=data[data.find('?kline ')+7:]
+				print nick
+				irc.send('WHOIS %s'%nick)
+	def code(self,code,data):
+		if code=='311':
+			self.data=data.split(mynick)[-1].split()
+			self.h=self.data[3]
+			print 'HOST %s'%self.h
+			if self.h.find('webchat/')!=-1:
+				self.ident='!'.join(self.data[2:3])
+				print 'IDENT: %s'%self.ident
+				queue.append(('operserv','AKILL ADD !T 6400 %s@%s Spam is offtopic on FOSSnet. Email kline@fossnet.info for help'%(self.ident,self.h)))
+			else:
+				queue.append(('operserv','AKILL ADD !T 6400 *!*@%s Spam is offtopic on FOSSnet. Email kline@fossnet.info for help.'%self.h))
 #===============HANDLERS=====
 bb=BlockBot()
 tb=trekbot()
-handlers=[bb,BBot(),statusbot(),searchbot(),tb]#Run on msg
+wb=WhoBot()
+handlers=[bb,BBot(),statusbot(),searchbot(),tb,wb]#Run on msg
 jhandlers=[tb,bb]#Run on Join
 lhandlers=[]#Run every loop
 nhandlers=[bb]
+codes=[wb]
 continuepgm=1
 def PONG(data):
 	if data.find ('PING')!=-1:
@@ -393,8 +412,13 @@ while continuepgm:
 			user=data.split('@')[0].split('!')[-1]
 			for jhandler in jhandlers:
 				jhandler.join(nick,channel,ip,user)
+	elif re.search('[0-9]+ '+mynick,data):
+		code=data.split()[1]
+		print 'CODE: %s'%code
+		for each in codes:
+			each.code(code,data)
 	if data.strip('\r\n')=='':
-		continuepg=0
+		continuepgm=0
 	for handler in lhandlers:
 		handler.loop()
 	if queue.get_length()>0:
