@@ -72,8 +72,12 @@ class BBot():
 		self.static={
 			'ping': 'PONG',
 			'source': 'My source code is written in Python and can be found at: http://github.com/aj00200/BBot',
-			'about': 'Im a bot by aj00200. %s' % version,
-			'aj00200': 'aj00200 is the bots creator. aj0020020@live.com. He knows all.'
+			'about': 'I\'m a bot by aj00200. %s' % version,
+			'aj00200': 'aj00200 is this bots creator. aj0020020@live.com. He knows all.',
+			'help': '?kick, ?about, ?help, ?source, ?aj00200',
+			'help source': 'Tells you where to find my source code. GNU GPL version 3 by the way...',
+			'help about': 'Tells about BBot and its current version',
+			'help kick': 'Makes BBot injure the person. *SYNTAX:* ?kick <nick>'
 			}
 			
 	#database=sqlite3.connect('newdatabase.sql')
@@ -100,21 +104,6 @@ class BBot():
 				if words.lower().find(mynick.lower())!=-1:
 					words=nick
 				queue.append((channel,u'\x01ACTION kicks %s\x01'%words))
-			elif ldata.find(':?help')!=-1:
-				if ldata.find(':?help ')!=-1:
-					words=ldata.split(':?help ')[-1]
-					if words.find('kick')!=-1:
-						queue.append((channel,'Makes BBot injure the person. *SYNTAX:* ?kick <nick>'))
-					elif words.find('about')!=-1:
-						queue.append((channel,'Tells about BBot and its current version'))
-					elif words.find('source')!=-1:
-						queue.append((channel,'Tells you where to find my source code. GNU GPL version 3 by the way...'))
-					else:
-						queue.append((channel,'Sorry, that command does not exist'))
-				else:
-					queue.append((channel,nick+': ?kick, ?about, ?help, ?source, ?aj00200, ?toast'))
-			else:
-				pass
 class BlockBot():
 	def __init__(self):
 		self.ignore_users_on_su_list=1#Don't kick users if they are on the superusers list
