@@ -356,20 +356,17 @@ def PONG(data):
 irc=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 irc.connect((network,port))
 print 'NICK'
-irc.send('NICK '+mynick+'\r\n')
+irc.send('NICK %s\r\n'%mynick)
 irc.send ('USER '+mynick+' '+mynick+' '+mynick+' :'+mynick+'\r\n')
 needping=1
-ts=time.time()
 while needping:
-	data=irc.recv(512)
+	data=irc.recv(1024)
 	if data.find('PING')!=-1:
 		PONG(data)
 		print 'IDENTIFY'
 		irc.send('PRIVMSG NickServ :IDENTIFY '+username+' '+password+'\r\n')
 		needping=0
 		print(data)
-	if time.time()-ts>5:
-		needping=0
 time.sleep(sleep_after_join)
 print('JOIN')
 for each in autojoin:
