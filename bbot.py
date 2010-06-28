@@ -416,7 +416,6 @@ while continuepgm:
 				jhandler.join(nick,channel,ip,user)
 	elif re.search('[0-9]+ '+mynick,data):
 		code=data.split()[1]
-		print 'CODE: %s'%code
 		for each in codes:
 			each.code(code,data)
 	if data.strip('\r\n')=='':
