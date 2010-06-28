@@ -369,7 +369,7 @@ while needping:
 		needping=0
 		print(data)
 	if time.time()-ts>5:
-		needpin=0
+		needping=0
 time.sleep(sleep_after_join)
 print('JOIN')
 for each in autojoin:
