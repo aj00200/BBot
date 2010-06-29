@@ -29,6 +29,7 @@ del config
 del cline
 
 import socket
+import sys
 import re
 import time
 #import sqlite3
@@ -37,7 +38,8 @@ from random import randint
 import thread
 import blockbotlib #some functions required for BlockBot(). Delete this like if you remove BlockBot()
 import api #BBot API Functions
-
+sys.path.append('%s/modules'%sys.path[0])
+from folderbot import *
 class queue_class():
 	def __init__(self):
 		self.queue=[]
@@ -123,8 +125,6 @@ class BlockBot():
 		self.lastnot=('BBot',time.time(),'sdkljfls')
 		self.wait=1.5
 	def join(self,nick,channel,ip,user):
-		if ip.find('/')!=-1:
-			queue.mode(nick,channel,'+v')
 		#user=user.replace('~','')
 		webchat=(str(blockbotlib.hex2dec('0x'+str(user[1:3])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[3:5])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[5:7])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[7:9]))))
 		if channel[1:] not in self.jlist:
@@ -221,6 +221,11 @@ class trekbot():
 		self.blconfig=open('trekbot/blacklist','r').readlines()
 		for each in self.blconfig:
 			self.blacklist.append(each.strip('\r\n'))
+		self.whitelist=[]
+		self.wlconfig=open('trekbot/whitelist','r').readlines()
+		for each in self.wlconfig:
+			self.whitelist.append(each.strip('\r\n'))
+		del self.blconfig,self.wlconfig
 	def go(self,nick,data,channel):
 		ldata=data.lower()
 		self.superuser=api.checkIfSuperUser(data,superusers)
@@ -276,10 +281,14 @@ class trekbot():
 		for each in self.blacklist:
 			self.blconfig.write(each+'\n')
 	def join(self,nick,channel,ip,user):
-		print ip
 		print self.blacklist
 		if not ip in self.blacklist:
-			queue.mode(nick,channel,'+v')
+			if not ip in self.whitelist:
+				bb.scan(ip,channel,nick)
+			else:
+				queue.mode((nick,channel,'+v'))
+		else:
+			queue.kick(nick,channel,'Your on the blacklist, please message a channel op about getting removed from the list')
 class statusbot():
 	def __init__(self):
 		self.statuses={}
@@ -343,7 +352,7 @@ class WhoBot():
 bb=BlockBot()
 tb=trekbot()
 wb=WhoBot()
-handlers=[bb,BBot(),statusbot(),searchbot(),tb,wb]#Run on msg
+handlers=[bb,folderbot(),BBot(),statusbot(),searchbot(),tb,wb]#Run on msg
 jhandlers=[tb,bb]#Run on Join
 lhandlers=[]#Run every loop
 nhandlers=[bb]
