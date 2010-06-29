@@ -92,7 +92,7 @@ class BBot():
 			elif ldata.find('leave')!=-1:
 				words=ldata.split('leave ')
 				irc.send('PART %s' % words)
-		if re.search(':'+mynick.lower()+'(:|,) (hi|hello)[^a-zA-Z ]',ldata):
+		if re.search(':'+re.escape(mynick.lower())+'(:|,) (hi|hello)',ldata):
 			queue.append((channel,'Hi '+nick+'!'))
 		if data.find(':?')!=-1:
 			self.q=data[data.find(':?')+2:].strip('\r\n')
