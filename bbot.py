@@ -281,12 +281,11 @@ class trekbot():
 		for each in self.blacklist:
 			self.blconfig.write(each+'\n')
 	def join(self,nick,channel,ip,user):
-		print self.blacklist
 		if not ip in self.blacklist:
 			if not ip in self.whitelist:
 				bb.scan(ip,channel,nick)
 			else:
-				queue.mode((nick,channel,'+v'))
+				queue.mode(nick,channel,'+v')
 		else:
 			queue.kick(nick,channel,'Your on the blacklist, please message a channel op about getting removed from the list')
 class statusbot():
