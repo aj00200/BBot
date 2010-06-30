@@ -39,7 +39,7 @@ import thread
 import blockbotlib #some functions required for BlockBot(). Delete this like if you remove BlockBot()
 import api #BBot API Functions
 sys.path.append('%s/modules'%sys.path[0])
-from folderbot import *
+#from folderbot import *
 class queue_class():
 	def __init__(self):
 		self.queue=[]
@@ -98,7 +98,6 @@ class BBot():
 			queue.append((channel,'Hi '+nick+'!'))
 		if data.find(':?')!=-1:
 			self.q=data[data.find(':?')+2:].strip('\r\n')
-			print self.q
 			if self.q in self.static:
 				queue.append((channel,nick+': '+self.static[self.q]))
 			elif data.find(':?kick ')!=-1:
@@ -200,7 +199,7 @@ class BlockBot():
 			if self.msglist[0][0]==self.msglist[1][0]==self.msglist[2][0]:
 				if (self.msglist[0][1]-self.msglist[2][1])<self.wait:
 					queue.kick(nick,channel,'No Flooding!')
-				if (self.msglist[0][2]==self.msglist[1][2]) and (self.msglist[0][1]-self.msglist[1][1]<self.repeat_time):
+				if (self.msglist[0][2]==self.msglist[1][2]==self.msglist[2][2]) and (self.msglist[0][1]-self.msglist[1][1]<self.repeat_time):
 						queue.kick(nick,channel,'Please do not repeat!')
 		except IndexError:
 			pass
@@ -351,7 +350,7 @@ class WhoBot():
 bb=BlockBot()
 tb=trekbot()
 wb=WhoBot()
-handlers=[bb,folderbot(),BBot(),statusbot(),searchbot(),tb,wb]#Run on msg
+handlers=[bb,BBot(),statusbot(),searchbot(),tb,wb]#Run on msg
 jhandlers=[tb,bb]#Run on Join
 lhandlers=[]#Run every loop
 nhandlers=[bb]
