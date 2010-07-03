@@ -123,12 +123,14 @@ class BlockBot():
 			proxyscan=1
 		if self.proxyscan==1:
 			import nmap #Can be found at: http://xael.org/norman/python/python-nmap/
+		self.line=self.config.readline()
+		self.wait=float(self.line.split('-speed: ')[-1].split(' #')[0])
+		self.config.close()
 		self.repeatlimit=3
 		self.repeat_time=2
 		self.repeat_1word=4
 		self.msglist=[]
 		self.lastnot=('BBot',time.time(),'sdkljfls')
-		self.wait=1.5
 	def join(self,nick,channel,ip,user):
 		#user=user.replace('~','')
 		webchat=(str(blockbotlib.hex2dec('0x'+str(user[1:3])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[3:5])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[5:7])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[7:9]))))
