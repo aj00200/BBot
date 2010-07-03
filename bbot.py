@@ -36,10 +36,12 @@ import time
 from random import randint
 #import urllib
 import thread
+
 import blockbotlib #some functions required for BlockBot(). Delete this like if you remove BlockBot()
 import api #BBot API Functions
 sys.path.append('%s/modules'%sys.path[0])
 #from folderbot import *
+
 class queue_class():
 	def __init__(self):
 		self.queue=[]
@@ -84,7 +86,6 @@ class BBot():
 			
 	#database=sqlite3.connect('newdatabase.sql')
 	def go(self,nick,data,channel):
-		host=data.split(' PRIVMSG')[0].split('@')[-1]
 		if channel.find('#')==-1:#Detect if the message is a PM to the Bot
 			channel=nick.lower()
 		ldata=data.lower()
@@ -96,6 +97,11 @@ class BBot():
 				irc.send('PART %s' % words)
 		if re.search(':'+re.escape(mynick.lower())+'(:|,) (hi|hello)',ldata):
 			queue.append((channel,'Hi '+nick+'!'))
+		if ldata.find(':'+mynick.lower()+': ')!=-1:
+			self.q=ldata[ldata.find(':'+mynick.lower()+': ')+3+len(mynick):].strip('\r\n')
+			print self.q
+			if self.q in self.static:
+				queue.append((channel,self.static[self.q]))
 		if data.find(':?')!=-1:
 			self.q=data[data.find(':?')+2:].strip('\r\n')
 			if self.q in self.static:
@@ -133,7 +139,7 @@ class BlockBot():
 		if proxyscan:
 			thread.start_new_thread(self.scan, (ip,channel,nick))
 	def scan(self,ip,channel,nick):
-		scansafe=1
+		self.scansafe=1
 		try:
 			print('Scanning '+ip)
 			nm=nmap.PortScanner()
@@ -144,41 +150,40 @@ class BlockBot():
 				lport = nm[each]['tcp'].keys()
 				print lport
 				if 808 in lport or 23 in lport or 110 in lport or 1080 in lport or 29505 in lport or 80 in lport or 8080 in lports or 3246 in lports:
-					scansafe=0
+					self.scansafe=0
 					print 'DRONE'
 			del nm
-			if scansafe:
+			if self.scansafe:
 				queue.mode(nick,channel,'+v')
 			print 'Scan Done...'
 		except:
 			print 'PYTHON NMAP CRASH'
 	def go(self,nick,data,channel):
-		ldata=data.lower()
+		self.ldata=data.lower()
 		if self.ignore_users_on_su_list:
 			self.superuser=api.checkIfSuperUser(data,superusers)
 		if self.superuser:
-			if ldata.find(':?;')!=-1:
+			if self.ldata.find(':?;')!=-1:
 				self.findlist.append(data.split(':?; ')[-1][0:-2])
-			elif ldata.find(':?faster')!=-1:
+			elif self.ldata.find(':?faster')!=-1:
 				print 'FASTER'
 				self.wait=self.wait/2
-			elif ldata.find(':?slower')!=-1:
+			elif self.ldata.find(':?slower')!=-1:
 				print('SLOWER')
 				self.wait=self.wait*2
-			elif ldata.find(':?setspeed ')!=-1:
+			elif self.ldata.find(':?setspeed ')!=-1:
 				self.wait=float(data.split('?setspeed ')[-1][0:-2])
-			elif ldata.find(':?rehash')!=-1:
+			elif self.ldata.find(':?rehash')!=-1:
 				self.__init__()
-			elif ldata.find(':?ekill')!=-1:
+			elif self.ldata.find(':?ekill')!=-1:
 				irc.send('QUIT')
 				continuepgm=0
-			elif ldata.find(':?protect')!=-1:
+			elif self.ldata.find(':?protect')!=-1:
 				queue.mode('',channel,'+mz')
-			elif ldata.find(':?kl')!=-1:
-				times=1
-				if data.find('?kl ')!=-1:
-					t=ldata.split('?kl ')[-1][0:-2]
-					t=int(times)
+			elif self.ldata.find(':?kl')!=-1:
+				if self.ldata.find('?kl ')!=-1:
+					self.t=self.ldata.split('?kl ')[-1][0:-2]
+					self.t=int(self.t)
 					try:
 						for each in range(t):
 							queue.kick(self.jlist[channel[1:]].pop(),channel)
@@ -204,13 +209,12 @@ class BlockBot():
 		except IndexError:
 			pass
 	def notice(self,nick,channel,data):
-		print time.time()
 		ldata=data.lower()
 		self.olastnot=(self.lastnot[0:])
 		self.lastnot=(nick,time.time())
 		if self.olastnot[0]==self.lastnot[0]:
 			if (self.lastnot[1]-self.olastnot[1])<self.wait:
-				queue.kick(nick,channel)
+				queue.kick(nick,channel,'Please do not use the notice command so much')
 		for each in self.findlist:
 			if ldata.find(each)!=-1:
 				queue.kick(nick,channel)
@@ -380,7 +384,7 @@ for each in autojoin:
 	irc.send('JOIN '+each+'\r\n')
 while continuepgm:
 	data = irc.recv (4096)
-	print(data)
+#print(data)
 	PONG(data)
 	if data.find('INVITE '+mynick+' :#')!=-1:
 		newchannel=data.split(mynick+' :')[-1]
@@ -419,4 +423,4 @@ while continuepgm:
 		send=queue.pop()
 		print(send)
 		irc.send(send+'\r\n')
-irc.send('QUIT :BBot Rulez\r\n')
+irc.send('QUIT :Quit: BBot Rulez\r\n')
