@@ -96,7 +96,12 @@ class BBot():
 				irc.send('PART %s' % words)
 		if re.search(':'+re.escape(mynick.lower())+'(:|,) (hi|hello)',ldata):
 			queue.append((channel,'Hi '+nick+'!'))
+		if re.search(re.escape(mynick.lower())+': ',ldata):
+			self.q=ldata[data.find(mynick)+len(mynick)+2:].strip('\r\n')
+			if self.q in self.static:
+				queue.append((channel,nick+': '+self.static[self.q]))
 		if data.find(':?')!=-1:
+			print 'q: %s'%self.q
 			self.q=data[data.find(':?')+2:].strip('\r\n')
 			if self.q in self.static:
 				queue.append((channel,nick+': '+self.static[self.q]))
