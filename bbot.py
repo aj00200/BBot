@@ -250,10 +250,12 @@ class trekbot():
 				queue.kick(name,channel,'Requested by %s'%nick)
 			elif ldata.find('?rehash')!=-1:
 				self.__init__()
+			#Blacklist
 			elif ldata.find(':?blacklist ')!=-1:
 				name=data[data.find('?blacklist ')+11:].strip('\r\n')
-				self.blacklist.append(name)
-				self.write_blacklist()
+				if not name in self.blacklist:
+					self.blacklist.append(name)
+					self.write_blacklist()
 			elif ldata.find(':?unblacklist ')!=-1:
 				name=data[data.find('?unblacklist ')+13:].strip('\r\n')
 				if name in self.blacklist:
@@ -261,6 +263,21 @@ class trekbot():
 					self.write_blacklist()
 				else:
 					queue.append((nick,'That host is not blacklisted'))
+			elif ldata.find(':?listbl')!=-1:
+				queue.append((nick,str(self.blacklist)))
+			#Whitelist
+			elif ldata.find(':?whitelist ')!=-1:
+				name=data[data.find('?whitelist ')+11:].strip('\r\n')
+				if not name in self.whitelist:
+					self.whitelist.append(name)
+					self.write_blacklist()
+			elif ldata.find(':?unwhitelistlist ')!=-1:
+				name=data[data.find('?unwhitelist ')+13:].strip('\r\n')
+				if name in self.blacklist:
+					self.whitelist.pop(self.blacklist.index(name))
+					self.write_whitelist()
+				else:
+					queue.append((nick,'That host is not whitelisted'))
 			elif ldata.find(':?listbl')!=-1:
 				queue.append((nick,str(self.blacklist)))
 			elif ldata.find(':?mode ')!=-1:
@@ -279,6 +296,10 @@ class trekbot():
 		self.blconfig=open('trekbot/blacklist','w')
 		for each in self.blacklist:
 			self.blconfig.write(each+'\n')
+	def write_whitelist(self):
+		self.wlconfig=open('trekbot/whitelist','w')
+		for each in self.whitelist:
+			self.wlconfig.write(each+'\n')
 	def join(self,nick,channel,ip,user):
 		if not ip in self.blacklist:
 			if not ip in self.whitelist:
@@ -379,18 +400,18 @@ print('JOIN')
 for each in autojoin:
 	irc.send('JOIN '+each+'\r\n')
 while continuepgm:
-	data = irc.recv (4096)
+	data = irc.recv (2048)
 	print(data)
 	PONG(data)
 	if data.find('INVITE '+mynick+' :#')!=-1:
 		newchannel=data.split(mynick+' :')[-1]
 		irc.send('JOIN '+newchannel+'\r\n')
 		del newchannel
-	elif data.find(' NOTICE ')!=-1:
-		print data
-		nick=data.split('!')[0][1:]
-		channel=data.split(' NOTICE ')[1].split(' :')[0]
-		words=data.split('NOTICE')[1].split(':')[1]
+	elif re.search(':*!*NOTICE #*:',data):
+		nick=data[1:data.find('!')]
+		channel=data[data.find(' NOTICE ')+8:data.find(':')]
+		words=data[data.find('NOTICE')+6:]
+		words=words[words.find(':'):]
 		for handler in nhandlers:
 			handler.notice(nick,channel,words)
 	elif data.find(' PRIVMSG ')!=-1:
