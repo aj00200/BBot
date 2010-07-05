@@ -83,7 +83,7 @@ class BBot():
 			'help about': 'Tells about BBot and its current version',
 			'help kick': 'Makes BBot injure the person. *SYNTAX:* ?kick <nick>'
 			}
-			
+		self.q=''
 	#database=sqlite3.connect('newdatabase.sql')
 	def go(self,nick,data,channel):
 		if channel.find('#')==-1:#Detect if the message is a PM to the Bot
