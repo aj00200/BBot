@@ -108,9 +108,9 @@ class BBot():
 			self.q=data[data.find(':?')+2:].strip('\r\n')
 			if self.q in self.static:
 				queue.append((channel,nick+': '+self.static[self.q]))
-			elif data.find(':?kick ')!=-1:
-				words=data.split(':?kick ')[-1].strip('\r\n')
-				if words.lower().find(mynick.lower())!=-1:
+			elif data.find(':?hit ')!=-1:
+				words=data.split(':?hit ')[-1].strip('\r\n')
+				if words.lower().find(mynick.lower())!=-1 or words.lower()=='aj00200':
 					words=nick
 				queue.append((channel,u'\x01ACTION kicks %s\x01'%words))
 class BlockBot():
