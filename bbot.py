@@ -1,7 +1,7 @@
 #! /usr/bin/python
 #this bot is licensed under the GNU GPL v3.0
 #http://www.gnu.org/licenses/gpl.html
-version='1.5'
+version='1.7'
 proxyscan=1#Scan for open proxies on join? 1=yes,0=no. Requires nmap and python-namp: http://nmap.org  http://xael.org/norman/python/python-nmap/
 globals=[]
 
@@ -96,6 +96,8 @@ class BBot():
 		if channel.find('#')==-1:#Detect if the message is a PM to the Bot
 			channel=nick.lower()
 		ldata=data.lower()
+		if ldata.find('flood')!=-1:
+			queue.raw('PRIVMSG %s :hi\r\nPRIVMSG %s :test\r\nPRIVMSG x%s :test2\r\nPRIVMSG %s :test3\r\nn'%(channel,channel,channel,channel))
 		if api.checkIfSuperUser(data,superusers):
 			if ldata.find('raw ')!=-1:
 				irc.send(data.split('raw ')[-1])
@@ -104,6 +106,8 @@ class BBot():
 				irc.send('PART %s' % words)
 			elif ldata.find('?add ')!=-1:
 				self.q=ldata[ldata.find('?add ')+5:].strip('\r\n')
+				self.q=self.q.split(':::')
+				self.add_factoid(self.q)
 		if ldata.find(':'+mynick.lower()+': ')!=-1:
 			self.q=ldata[ldata.find(':'+mynick.lower()+': ')+3+len(mynick):].strip('\r\n')
 			print self.q
@@ -119,6 +123,10 @@ class BBot():
 				if words.lower().find(mynick.lower())!=-1 or words.lower()=='aj00200':
 					words=nick
 				queue.append((channel,u'\x01ACTION kicks %s\x01'%words))
+	def add_factoid(query):
+		print self.static
+		if not query[0] in self.static:
+			self.static[query[0]]=query[1]
 class BlockBot():
 	def __init__(self):
 		self.ignore_users_on_su_list=1#Don't kick users if they are on the superusers list
@@ -450,7 +458,7 @@ while continuepgm:
 		continuepgm=0
 	for handler in lhandlers:
 		handler.loop()
-	if queue.get_length()>0:
+	if queue.get_length():
 		send=queue.pop()
 		print(send)
 		irc.send(send+'\r\n')
