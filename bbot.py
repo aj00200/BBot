@@ -81,7 +81,10 @@ class BBot():
 			'help': '?kick, ?about, ?help, ?source, ?aj00200',
 			'help source': 'Tells you where to find my source code. GNU GPL version 3 by the way...',
 			'help about': 'Tells about BBot and its current version',
-			'help kick': 'Makes BBot injure the person. *SYNTAX:* ?kick <nick>'
+			'help kick': 'Makes BBot injure the person. *SYNTAX:* ?kick <nick>',
+			'hi': 'Hi',
+			'hello': 'Hello',
+			'pie':'Mmmm... I take your pie!'
 			}
 		self.q=''
 	#database=sqlite3.connect('newdatabase.sql')
@@ -95,8 +98,6 @@ class BBot():
 			elif ldata.find('leave')!=-1:
 				words=ldata.split('leave ')
 				irc.send('PART %s' % words)
-		if re.search(':'+re.escape(mynick.lower())+'(:|,) (hi|hello)',ldata):
-			queue.append((channel,'Hi '+nick+'!'))
 		if ldata.find(':'+mynick.lower()+': ')!=-1:
 			self.q=ldata[ldata.find(':'+mynick.lower()+': ')+3+len(mynick):].strip('\r\n')
 			print self.q
