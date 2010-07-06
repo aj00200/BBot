@@ -77,14 +77,18 @@ class BBot():
 			'ping': 'PONG',
 			'source': 'My source code is written in Python and can be found at: http://github.com/aj00200/BBot',
 			'about': 'I\'m a bot by aj00200. %s' % version,
-			'aj00200': 'aj00200 is this bots creator. aj0020020@live.com. He knows all.',
+			'aj00200': 'aj00200 is this bots creator. aj0020020@live.com. He knows all. www.aj00200.heliohost.org',
 			'help': '?kick, ?about, ?help, ?source, ?aj00200',
 			'help source': 'Tells you where to find my source code. GNU GPL version 3 by the way...',
 			'help about': 'Tells about BBot and its current version',
-			'help kick': 'Makes BBot injure the person. *SYNTAX:* ?kick <nick>',
+			'help hit': 'Makes BBot injure the person. *SYNTAX:* ?kick <nick>',
 			'hi': 'Hi',
 			'hello': 'Hello',
-			'pie':'Mmmm... I take your pie!'
+			'pie':'Mmmm... I take your pie!',
+			'cake':'Mmm... I take your cake!',
+			'firefox':'www.firefox.com',
+			'ubuntu':'www.ubuntu.com',
+			'fossnet':'irc.fossnet.info - The Free and Open Source Software IRC Network'
 			}
 		self.q=''
 	#database=sqlite3.connect('newdatabase.sql')
@@ -98,6 +102,8 @@ class BBot():
 			elif ldata.find('leave')!=-1:
 				words=ldata.split('leave ')
 				irc.send('PART %s' % words)
+			elif ldata.find('?add ')!=-1:
+				self.q=ldata[ldata.find('?add ')+5:].strip('\r\n')
 		if ldata.find(':'+mynick.lower()+': ')!=-1:
 			self.q=ldata[ldata.find(':'+mynick.lower()+': ')+3+len(mynick):].strip('\r\n')
 			print self.q
