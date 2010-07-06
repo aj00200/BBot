@@ -24,6 +24,9 @@ cline=config.readline()
 superusers=cline.split('super-user: ')[-1].split(' ')
 cline=config.readline()
 sleep_after_join=float(cline.split('wait-after-identify: ')[-1].strip())
+
+cline=config.readline()
+wait_recv=int(cline[cline.find(' '):].strip('\r\n'))
 config.close()
 del config
 del cline
@@ -422,7 +425,7 @@ print('JOIN')
 for each in autojoin:
 	irc.send('JOIN '+each+'\r\n')
 while continuepgm:
-	data = irc.recv (2048)
+	data = irc.recv (wait_recv)
 	print(data)
 	PONG(data)
 	if data.find('INVITE '+mynick+' :#')!=-1:
