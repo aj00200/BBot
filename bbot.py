@@ -37,7 +37,6 @@ import re
 import time
 #import sqlite3
 from random import randint
-#import urllib
 import thread
 
 import blockbotlib #some functions required for BlockBot(). Delete this like if you remove BlockBot()
@@ -77,23 +76,6 @@ queue=queue_class()
 class BBot():
 	def __init__(self):
 		self.read_dict()
-#		self.static={
-#			'ping': 'PONG',
-#			'source': 'My source code is written in Python and can be found at: http://github.com/aj00200/BBot',
-#			'/': 'I\'m a bot by aj00200. %s' % version,
-#			'aj00200': 'aj00200 is this bots creator. aj0020020@live.com. He knows all. www.aj00200.heliohost.org',
-#			'help': '?hit, ?about, ?help, ?source, ?aj00200',
-#			'help source': 'Tells you where to find my source code. GNU GPL version 3 by the way...',
-#			'help about': 'Tells about BBot and its current version',
-#			'help hit': 'Makes BBot injure the person. *SYNTAX:* ?kick <nick>',
-#			'hi': 'Hi',
-#			'hello': 'Hello',
-#			'pie':'Mmmm... I take your pie!',
-#			'cake':'Mmm... I take your cake!',
-#			'firefox':'www.firefox.com',
-#			'ubuntu':'www.ubuntu.com',
-#			'fossnet':'irc.fossnet.info - The Free and Open Source Software IRC Network'
-#			}
 		self.q=''
 	#database=sqlite3.connect('newdatabase.sql')
 	def go(self,nick,data,channel):
@@ -128,9 +110,10 @@ class BBot():
 					words=nick
 				queue.append((channel,u'\x01ACTION kicks %s\x01'%words))
 	def add_factoid(self,query):
-		print self.static
-		if not query[0] in self.static:
-			self.static[query[0]]=query[1]
+		self.static[query[0]]=query[1]
+	def del_factoid(self,query):
+		if quey in self.static:
+			del elf.static[query]
 	def write_dict(self):
 		self.dict=open('bbot/dict','w')
 		for each in self.static:
@@ -148,7 +131,7 @@ class BlockBot():
 		self.ignore_users_on_su_list=1#Don't kick users if they are on the superusers list
 		self.jlist={}
 		self.config=open('blockbot-config','r')
-		self.findlist=self.config.readline().split('spam-strings: ')[-1].split('#')[0].split('^^^@@@^^^')
+		self.findlist=self.config.readline().split('spam-strings: ')[1].split('#')[0].split('^^^@@@^^^')
 		self.proxyscan=0
 		if self.config.readline().lower().split('#')[0].find('yes')!=-1:
 			self.proxyscan=1
@@ -231,7 +214,7 @@ class BlockBot():
 		ldata=data.lower()
 		msg=ldata[ldata.find(' :')+2:]
 		for each in self.findlist:
-			if ldata.find(each)!=-1:
+			if re.search(each,ldata):
 				queue.kick(nick,channel)
 		try:
 			if self.msglist[0][0]==self.msglist[1][0]==self.msglist[2][0]:
