@@ -76,23 +76,24 @@ class queue_class():
 queue=queue_class()	
 class BBot():
 	def __init__(self):
-		self.static={
-			'ping': 'PONG',
-			'source': 'My source code is written in Python and can be found at: http://github.com/aj00200/BBot',
-			'about': 'I\'m a bot by aj00200. %s' % version,
-			'aj00200': 'aj00200 is this bots creator. aj0020020@live.com. He knows all. www.aj00200.heliohost.org',
-			'help': '?hit, ?about, ?help, ?source, ?aj00200',
-			'help source': 'Tells you where to find my source code. GNU GPL version 3 by the way...',
-			'help about': 'Tells about BBot and its current version',
-			'help hit': 'Makes BBot injure the person. *SYNTAX:* ?kick <nick>',
-			'hi': 'Hi',
-			'hello': 'Hello',
-			'pie':'Mmmm... I take your pie!',
-			'cake':'Mmm... I take your cake!',
-			'firefox':'www.firefox.com',
-			'ubuntu':'www.ubuntu.com',
-			'fossnet':'irc.fossnet.info - The Free and Open Source Software IRC Network'
-			}
+		self.read_dict()
+#		self.static={
+#			'ping': 'PONG',
+#			'source': 'My source code is written in Python and can be found at: http://github.com/aj00200/BBot',
+#			'about': 'I\'m a bot by aj00200. %s' % version,
+#			'aj00200': 'aj00200 is this bots creator. aj0020020@live.com. He knows all. www.aj00200.heliohost.org',
+#			'help': '?hit, ?about, ?help, ?source, ?aj00200',
+#			'help source': 'Tells you where to find my source code. GNU GPL version 3 by the way...',
+#			'help about': 'Tells about BBot and its current version',
+#			'help hit': 'Makes BBot injure the person. *SYNTAX:* ?kick <nick>',
+#			'hi': 'Hi',
+#			'hello': 'Hello',
+#			'pie':'Mmmm... I take your pie!',
+#			'cake':'Mmm... I take your cake!',
+#			'firefox':'www.firefox.com',
+#			'ubuntu':'www.ubuntu.com',
+#			'fossnet':'irc.fossnet.info - The Free and Open Source Software IRC Network'
+#			}
 		self.q=''
 	#database=sqlite3.connect('newdatabase.sql')
 	def go(self,nick,data,channel):
@@ -109,6 +110,8 @@ class BBot():
 				self.q=ldata[ldata.find('?add ')+5:].strip('\r\n')
 				self.q=self.q.split(':::')
 				self.add_factoid(self.q)
+			elif ldata.find('?writedict')!=-1:
+				self.write_dict()
 		if ldata.find(':'+mynick.lower()+': ')!=-1:
 			self.q=ldata[ldata.find(':'+mynick.lower()+': ')+3+len(mynick):].strip('\r\n')
 			print self.q
@@ -124,10 +127,22 @@ class BBot():
 				if words.lower().find(mynick.lower())!=-1 or words.lower()=='aj00200':
 					words=nick
 				queue.append((channel,u'\x01ACTION kicks %s\x01'%words))
-	def add_factoid(query):
+	def add_factoid(self,query):
 		print self.static
 		if not query[0] in self.static:
 			self.static[query[0]]=query[1]
+	def write_dict(self):
+		self.dict=open('bbot/dict','w')
+		for each in self.static:
+			self.dict.write('%s:::%s\n'%(each,self.static[each]))
+		self.dict.close()
+	def read_dict(self):
+		self.static={}
+		self.dict=open('bbot/dict','r')
+		for line in self.dict.readlines():
+			self.q=line.split(':::')
+			self.static[self.q[0]]=self.q[1]
+		self.dict.close()
 class BlockBot():
 	def __init__(self):
 		self.ignore_users_on_su_list=1#Don't kick users if they are on the superusers list
