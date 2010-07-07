@@ -81,7 +81,7 @@ class BBot():
 			'source': 'My source code is written in Python and can be found at: http://github.com/aj00200/BBot',
 			'about': 'I\'m a bot by aj00200. %s' % version,
 			'aj00200': 'aj00200 is this bots creator. aj0020020@live.com. He knows all. www.aj00200.heliohost.org',
-			'help': '?kick, ?about, ?help, ?source, ?aj00200',
+			'help': '?hit, ?about, ?help, ?source, ?aj00200',
 			'help source': 'Tells you where to find my source code. GNU GPL version 3 by the way...',
 			'help about': 'Tells about BBot and its current version',
 			'help hit': 'Makes BBot injure the person. *SYNTAX:* ?kick <nick>',
@@ -149,12 +149,10 @@ class BlockBot():
 		self.msglist=[]
 		self.lastnot=('BBot',time.time(),'sdkljfls')
 	def join(self,nick,channel,ip,user):
-		#user=user.replace('~','')
-		webchat=(str(blockbotlib.hex2dec('0x'+str(user[1:3])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[3:5])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[5:7])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[7:9]))))
+		#webchat=(str(blockbotlib.hex2dec('0x'+str(user[1:3])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[3:5])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[5:7])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[7:9]))))
 		if channel[1:] not in self.jlist:
 			self.jlist[channel[1:]]=[]
 		self.jlist[channel[1:]].append(nick)
-		#print 'in JOIN, scan DONE... Running...'
 		if proxyscan:
 			thread.start_new_thread(self.scan, (ip,channel,nick))
 	def scan(self,ip,channel,nick):
@@ -216,6 +214,7 @@ class BlockBot():
 			self.msglist.pop()
 		ident=data.split(' PRIVMSG ')[0].split('@')[0][1:]
 		ldata=data.lower()
+		msg=ldata[ldata.find(' :')+2:]
 		for each in self.findlist:
 			if ldata.find(each)!=-1:
 				queue.kick(nick,channel)
@@ -223,7 +222,8 @@ class BlockBot():
 			if self.msglist[0][0]==self.msglist[1][0]==self.msglist[2][0]:
 				if (self.msglist[0][1]-self.msglist[2][1])<self.wait:
 					queue.kick(nick,channel,'No Flooding!')
-				if (self.msglist[0][2]==self.msglist[1][2]==self.msglist[2][2]) and (self.msglist[0][1]-self.msglist[1][1]<self.repeat_time):
+				if msg.split()>1:
+					if (self.msglist[0][2]==self.msglist[1][2]==self.msglist[2][2]) and (self.msglist[0][1]-self.msglist[1][1]<self.repeat_time):
 						queue.kick(nick,channel,'Please do not repeat!')
 		except IndexError:
 			pass
