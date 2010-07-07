@@ -99,8 +99,6 @@ class BBot():
 		if channel.find('#')==-1:#Detect if the message is a PM to the Bot
 			channel=nick.lower()
 		ldata=data.lower()
-		if ldata.find('flood')!=-1:
-			queue.raw('PRIVMSG %s :hi\r\nPRIVMSG %s :test\r\nPRIVMSG x%s :test2\r\nPRIVMSG %s :test3\r\nn'%(channel,channel,channel,channel))
 		if api.checkIfSuperUser(data,superusers):
 			if ldata.find('raw ')!=-1:
 				irc.send(data.split('raw ')[-1])
