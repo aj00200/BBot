@@ -80,7 +80,7 @@ class BBot():
 #		self.static={
 #			'ping': 'PONG',
 #			'source': 'My source code is written in Python and can be found at: http://github.com/aj00200/BBot',
-#			'about': 'I\'m a bot by aj00200. %s' % version,
+#			'/': 'I\'m a bot by aj00200. %s' % version,
 #			'aj00200': 'aj00200 is this bots creator. aj0020020@live.com. He knows all. www.aj00200.heliohost.org',
 #			'help': '?hit, ?about, ?help, ?source, ?aj00200',
 #			'help source': 'Tells you where to find my source code. GNU GPL version 3 by the way...',
