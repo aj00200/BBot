@@ -37,7 +37,6 @@ import re
 import time
 #import sqlite3
 from random import randint
-#import urllib
 import thread
 
 import blockbotlib #some functions required for BlockBot(). Delete this like if you remove BlockBot()
@@ -111,9 +110,10 @@ class BBot():
 					words=nick
 				queue.append((channel,u'\x01ACTION kicks %s\x01'%words))
 	def add_factoid(self,query):
-		print self.static
-		if not query[0] in self.static:
-			self.static[query[0]]=query[1]
+		self.static[query[0]]=query[1]
+	def del_factoid(self,query):
+		if quey in self.static:
+			del elf.static[query]
 	def write_dict(self):
 		self.dict=open('bbot/dict','w')
 		for each in self.static:
@@ -131,7 +131,7 @@ class BlockBot():
 		self.ignore_users_on_su_list=1#Don't kick users if they are on the superusers list
 		self.jlist={}
 		self.config=open('blockbot-config','r')
-		self.findlist=self.config.readline().split('spam-strings: ')[-1].split('#')[0].split('^^^@@@^^^')
+		self.findlist=self.config.readline().split('spam-strings: ')[1].split('#')[0].split('^^^@@@^^^')
 		self.proxyscan=0
 		if self.config.readline().lower().split('#')[0].find('yes')!=-1:
 			self.proxyscan=1
@@ -214,7 +214,7 @@ class BlockBot():
 		ldata=data.lower()
 		msg=ldata[ldata.find(' :')+2:]
 		for each in self.findlist:
-			if ldata.find(each)!=-1:
+			if re.search(each,ldata):
 				queue.kick(nick,channel)
 		try:
 			if self.msglist[0][0]==self.msglist[1][0]==self.msglist[2][0]:
