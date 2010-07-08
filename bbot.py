@@ -22,11 +22,13 @@ cline=config.readline()
 autojoin=cline.split('channels: ')[-1].split(' ')
 cline=config.readline()
 superusers=cline.split('super-user: ')[-1].split(' ')
-cline=config.readline()
-sleep_after_join=float(cline.split('wait-after-identify: ')[-1].strip())
 
 cline=config.readline()
+sleep_after_join=float(cline.split('wait-after-identify: ')[-1].strip())
+cline=config.readline()
 wait_recv=int(cline[cline.find(' '):].strip('\r\n'))
+cline=config.readline()
+cmd_char=cline[cline.find(' '):].strip('\r\n')
 config.close()
 del config
 del cline
