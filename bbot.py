@@ -69,31 +69,14 @@ class queue_class():
 		self.queue.append('MODE '+channel+' '+mode+' '+nick)
 	def kill(self,nick,reason=''):#Must be IRCOP
 		self.queue.append('KILL %s :%s' % (nick,reason))
-	def kline(self,host,time,reason):#Must be IRCOP
-		self.queue.append('KLINE %s %s :%s'%(host,time,reason))
+	def kline(self,host,time='3600',reason='K-Lined'):#Must be IRCOP
+		self.queue.append('KLINE %s %s :%s'%(host,str(time),reason))
 	def raw(self,data):
 		self.queue.append(data)
 queue=queue_class()	
 class BBot():
 	def __init__(self):
 		self.read_dict()
-#		self.static={
-#			'ping': 'PONG',
-#			'source': 'My source code is written in Python and can be found at: http://github.com/aj00200/BBot',
-#			'/': 'I\'m a bot by aj00200. %s' % version,
-#			'aj00200': 'aj00200 is this bots creator. aj0020020@live.com. He knows all. www.aj00200.heliohost.org',
-#			'help': '?hit, ?about, ?help, ?source, ?aj00200',
-#			'help source': 'Tells you where to find my source code. GNU GPL version 3 by the way...',
-#			'help about': 'Tells about BBot and its current version',
-#			'help hit': 'Makes BBot injure the person. *SYNTAX:* ?kick <nick>',
-#			'hi': 'Hi',
-#			'hello': 'Hello',
-#			'pie':'Mmmm... I take your pie!',
-#			'cake':'Mmm... I take your cake!',
-#			'firefox':'www.firefox.com',
-#			'ubuntu':'www.ubuntu.com',
-#			'fossnet':'irc.fossnet.info - The Free and Open Source Software IRC Network'
-#			}
 		self.q=''
 	#database=sqlite3.connect('newdatabase.sql')
 	def go(self,nick,data,channel):
