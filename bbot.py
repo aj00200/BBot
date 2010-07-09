@@ -22,11 +22,13 @@ cline=config.readline()
 autojoin=cline.split('channels: ')[-1].split(' ')
 cline=config.readline()
 superusers=cline.split('super-user: ')[-1].split(' ')
-cline=config.readline()
-sleep_after_join=float(cline.split('wait-after-identify: ')[-1].strip())
 
 cline=config.readline()
+sleep_after_join=float(cline.split('wait-after-identify: ')[-1].strip())
+cline=config.readline()
 wait_recv=int(cline[cline.find(' '):].strip('\r\n'))
+cline=config.readline()
+cmd_char=cline[cline.find(' '):].strip('\r\n')
 config.close()
 del config
 del cline
@@ -387,11 +389,57 @@ class WhoBot():
 				queue.append(('operserv','AKILL ADD !T 6400 %s@%s Spam is offtopic on FOSSnet. Email kline@fossnet.info for help'%(self.ident,self.h)))
 			else:
 				queue.append(('operserv','AKILL ADD !T 6400 *!*@'+self.h+' Spam is offtopic on FOSSnet. Email kline@fossnet.info for help.'))
+class mathbot():
+	def __init__(self):
+		import math
+		self.allow={
+			'.pi. ':str(math.pi),
+			')':'..0..',
+			'sqrt(':'..1..',
+			'pow(':'..2..',
+			'ceil(':'..3..',
+			'floor(':'..4..',
+			'log(':'..5..',
+			'asin':'..6..',
+			'acos':'..7..',
+			'atan':'..8..',
+			'atan2':'..9..',
+			'sin':'..10..',
+			'cos':'..11..',
+			'tan':'..12..'
+			}
+		self.invert={
+			'..0..':')',
+			'..1..':'math.sqrt(',
+			'..2..':'math.pow(',
+			'..3..':'math.ceil(',
+			'..4..':'math.floor(',
+			'..5..':'math.log(',
+			'..6..':'math.asin(',
+			'..7..':'math.acos(',
+			'..8..':'math.atan(',
+			'..9..':'math.atan2(',
+			'..10..':'math.sin(',
+			'..11..':'math.cos(',
+			'..12..':'math.tan('
+			}
+	def go(self,nick,data,channel):
+		self.ldata=data.lower()
+		if self.ldada.find('?math help')!=-1:
+			queue.append((channel,'%s: +, -, *, /, %, sqrt, pow, ceil, floor, log, asin, acos, atan, atan2, sin, cos, tan'%nick))
+		elif self.ldata.find('?math ')!=-1:
+			slf.e=self.lldata[self.ldata.find(' '):].strip('\r\n')
+			for each in self.allow:
+				self.e.replace(each,self.allow[each])
+			self.e.strip('abcdefghijklmnopqrstubwxyz#@$')
+			for each in self.invert:
+				self.e.replace(each.self.invert[each])
+			queue.append(eval(self.e))
 #===============HANDLERS=====
 bb=BlockBot()
 tb=trekbot()
 wb=WhoBot()
-handlers=[bb,BBot(),statusbot(),searchbot(),tb,wb]#Run on msg
+handlers=[bb,BBot(),statusbot(),searchbot(),tb,wb,mathbot()]#Run on msg
 jhandlers=[tb,bb]#Run on Join
 lhandlers=[]#Run every loop
 nhandlers=[bb]
