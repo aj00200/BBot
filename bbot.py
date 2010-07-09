@@ -84,7 +84,7 @@ class BBot():
 		ldata=data.lower()
 		if api.checkIfSuperUser(data,superusers):
 			if ldata.find('raw ')!=-1:
-				irc.send(data.split('raw ')[-1])
+				queue.raw(data.split('raw ')[-1])
 			elif ldata.find('leave')!=-1:
 				words=ldata.split('leave ')
 				irc.send('PART %s' % words)
@@ -157,9 +157,9 @@ class BlockBot():
 		self.scansafe=1
 		try:
 			print('Scanning '+ip)
-			nm=nmap.PortScanner()
+			self.nm=nmap.PortScanner()
 			#80, 8080, 1080, 3246
-			nm.scan(ip,'808,23,1080,110,29505,8080,3246','-T5')
+			self.nm.scan(ip,'808,23,1080,110,29505,8080,3246','-T5')
 			for each in nm.all_hosts():
 				print each+':::'
 				lport = nm[each]['tcp'].keys()
@@ -167,10 +167,9 @@ class BlockBot():
 				if 808 in lport or 23 in lport or 110 in lport or 1080 in lport or 29505 in lport or 80 in lport or 8080 in lports or 3246 in lports:
 					self.scansafe=0
 					print 'DRONE'
-			del nm
+			del self.nm
 			if self.scansafe:
 				queue.mode(nick,channel,'+v')
-			print 'Scan Done...'
 		except:
 			print 'PYTHON NMAP CRASH'
 	def go(self,nick,data,channel):
