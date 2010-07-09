@@ -389,24 +389,23 @@ class WhoBot():
 				queue.append(('operserv','AKILL ADD !T 6400 %s@%s Spam is offtopic on FOSSnet. Email kline@fossnet.info for help'%(self.ident,self.h)))
 			else:
 				queue.append(('operserv','AKILL ADD !T 6400 *!*@'+self.h+' Spam is offtopic on FOSSnet. Email kline@fossnet.info for help.'))
+import math
 class mathbot():
 	def __init__(self):
-		import math
 		self.allow={
-			'.pi. ':str(math.pi),
 			')':'..0..',
 			'sqrt(':'..1..',
 			'pow(':'..2..',
 			'ceil(':'..3..',
 			'floor(':'..4..',
 			'log(':'..5..',
-			'asin':'..6..',
-			'acos':'..7..',
-			'atan':'..8..',
-			'atan2':'..9..',
-			'sin':'..10..',
-			'cos':'..11..',
-			'tan':'..12..'
+			'asin(':'..6..',
+			'acos(':'..7..',
+			'atan(':'..8..',
+			'atan2(':'..9..',
+			'sin(':'..10..',
+			'cos(':'..11..',
+			'tan(':'..12..'
 			}
 		self.invert={
 			'..0..':')',
@@ -425,16 +424,20 @@ class mathbot():
 			}
 	def go(self,nick,data,channel):
 		self.ldata=data.lower()
-		if self.ldada.find('?math help')!=-1:
-			queue.append((channel,'%s: +, -, *, /, %, sqrt, pow, ceil, floor, log, asin, acos, atan, atan2, sin, cos, tan'%nick))
+		if self.ldata.find('?math help')!=-1:
+			queue.append((channel,nick+' : +, -, *, /, %, sqrt, pow, ceil, floor, log, asin, acos, atan, atan2, sin, cos, tan'))
 		elif self.ldata.find('?math ')!=-1:
-			slf.e=self.lldata[self.ldata.find(' '):].strip('\r\n')
+			self.e=self.ldata[self.ldata.find('?math ')+6:].strip('\r\n')
+			self.e=self.e.replace('pi','3.1415926535897931')
 			for each in self.allow:
-				self.e.replace(each,self.allow[each])
-			self.e.strip('abcdefghijklmnopqrstubwxyz#@$')
+				self.e=self.e.replace(each,self.allow[each])
+			self.e=self.e.strip('abcdefghijklmnopqrstubwxyz#@$')
 			for each in self.invert:
-				self.e.replace(each.self.invert[each])
-			queue.append(eval(self.e))
+				self.e=self.e.replace(each,self.invert[each])
+			try:
+				queue.append((channel,str(eval(self.e))))
+			except SyntaxError:
+				queue.append((channel,'Syntax Error'))
 #===============HANDLERS=====
 bb=BlockBot()
 tb=trekbot()
