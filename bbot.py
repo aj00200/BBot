@@ -436,7 +436,8 @@ class mathbot():
 				self.e=self.e.replace(each,self.invert[each])
 			try:
 				queue.append((channel,str(eval(self.e))))
-			except SyntaxError:
+			except Exception,e:
+				self.e='Error: %; with arguments %'%(type(e),e.args)
 				queue.append((channel,'Syntax Error'))
 #===============HANDLERS=====
 bb=BlockBot()
