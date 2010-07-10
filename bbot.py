@@ -434,11 +434,12 @@ class mathbot():
 			self.e=self.e.strip('abcdefghijklmnopqrstubwxyz#@$')
 			for each in self.invert:
 				self.e=self.e.replace(each,self.invert[each])
+			self.e=self.e.replace('//','.0/')
 			try:
 				queue.append((channel,str(eval(self.e))))
 			except Exception,e:
-				self.e='Error: %; with arguments %'%(type(e),e.args)
-				queue.append((channel,'Syntax Error'))
+				self.e='Error: %s; with arguments %s'%(type(e),e.args)
+				queue.append((channel,self.e))
 #===============HANDLERS=====
 bb=BlockBot()
 tb=trekbot()
