@@ -100,10 +100,11 @@ while needping:
 	data=irc.recv(1024)
 	if data.find('PING')!=-1:
 		PONG(data)
-		print 'IDENTIFY'
-		irc.send('PRIVMSG NickServ :IDENTIFY '+username+' '+password+'\r\n')
 		needping=0
 		print(data)
+time.sleep(0.1)
+print 'IDENTIFY'
+irc.send('PRIVMSG NickServ :IDENTIFY '+username+' '+password+'\r\n')
 time.sleep(sleep_after_join)
 print('JOIN')
 for each in autojoin:
