@@ -345,7 +345,10 @@ class statusbot():
 				queue.append((channel,nick+': %s hasn\'t left a status.'%words))
 		elif data.find('?notify ')!=-1:
 			words=data.split(':?notify ')[-1].strip('\r\n').strip('#')
-			queue.append((words,'Just letting you know, %s is looking for you in %s' % (nick,channel)))
+			if words.find(' '):
+				queue.append((nick,'Please don\'t abuse me. This is logged!'))
+			else:
+				queue.append((words,'Just letting you know, %s is looking for you in %s' % (nick,channel)))
 		elif data.find(':?reset')!=-1:
 			words=data.split(':?reset')[-1].strip('\r\n')
 			try:
@@ -389,9 +392,9 @@ class WhoBot():
 				queue.append(('operserv','AKILL ADD !T 6400 %s@%s Spam is offtopic on FOSSnet. Email kline@fossnet.info for help'%(self.ident,self.h)))
 			else:
 				queue.append(('operserv','AKILL ADD !T 6400 *!*@'+self.h+' Spam is offtopic on FOSSnet. Email kline@fossnet.info for help.'))
-import math
 class mathbot():
 	def __init__(self):
+		import math
 		self.allow={
 			')':'..0..',
 			'sqrt(':'..1..',
