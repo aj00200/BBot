@@ -6,3 +6,5 @@ port: 6667
 channels: #bots #bbot
 super-user: YOUR-HOST-HERE SECOND-HOST-HERE #keep-this-comment-here
 wait-after-identify: 3
+read-wait: 1024
+command-char: $
