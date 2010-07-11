@@ -12,7 +12,7 @@ class statusbot():
                 q.queue.append((channel,nick+': %s is: '%words+self.statuses[words]))
             except:
                 q.queue.append((channel,nick+': %s hasn\'t left a status.'%words))
-        elif data.find('?notify ')!=-1:
+        elif data.find(':?notify ')!=-1:
             words=data.split(':?notify ')[-1].strip('\r\n').strip('#')
             if words.find(' '):
                 q.queue.append((nick,'Please don\'t abuse me. This is logged!'))
