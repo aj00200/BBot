@@ -16,7 +16,7 @@ import api#BBot API Functions
 import blockbotlib #some functions required for BlockBot(). Delete this like if you remove BlockBot()
 import q
 sys.path.insert(0,'%s/modules'%sys.path[0])
-import bbot
+import BBot
 import mathbot
 import searchbot
 import trekbot
@@ -35,7 +35,7 @@ def checkIfSuperUser(data,superusers):
 #===============HANDLERS=====
 bb=blockbot.blockbot()
 tb=trekbot.trekbot()
-handlers=[bb,tb,bbot.bbot(),mathbot.mathbot(),searchbot.searchbot(),statusbot.statusbot()]#Run on msg
+handlers=[bb,tb,BBot.bbot(),mathbot.mathbot(),searchbot.searchbot(),statusbot.statusbot()]#Run on msg
 jhandlers=[bb,tb]#Run on Join
 lhandlers=[]#Run every loop
 nhandlers=[bb]
