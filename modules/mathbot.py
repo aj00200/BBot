@@ -40,6 +40,7 @@ class mathbot():
         elif self.ldata.find('?math ')!=-1:
             self.e=self.ldata[self.ldata.find('?math ')+6:].strip('\r\n')
             self.e=self.e.replace('pi','3.1415926535897931')
+            self.e=self.e.replace('e',str(math.e))
             for each in self.allow:
                 self.e=self.e.replace(each,self.allow[each])
             self.e=self.e.strip('abcdefghijklmnopqrstubwxyz#@$')
