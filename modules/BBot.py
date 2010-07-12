@@ -15,7 +15,7 @@ class bbot():
 				q.queue.raw(data.split('raw ')[-1])
 			elif ldata.find('leave')!=-1:
 				words=ldata.split('leave ')
-				irc.send('PART %s' % words)
+				queue.raw('PART %s' % words)
 			elif ldata.find('?add ')!=-1:
 				self.q=ldata[ldata.find('?add ')+5:].strip('\r\n')
 				self.q=self.q.split(':::')
