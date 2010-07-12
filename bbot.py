@@ -22,7 +22,11 @@ import searchbot
 import trekbot
 import blockbot
 import statusbot
+<<<<<<< HEAD:bbot.py
 import hackbot
+=======
+import rpgbot
+>>>>>>> 8ad256c2e59242d4a299b506fd4e7363c6f70fdc:bbot.py
 def getHost(data):
 	host=data[data.find('@')+1:data.find('PRIVMSG')]
 	return host
@@ -36,9 +40,14 @@ def checkIfSuperUser(data,superusers):
 #===============HANDLERS=====
 bb=blockbot.blockbot()
 tb=trekbot.trekbot()
+<<<<<<< HEAD:bbot.py
 handlers=[bb,tb,BBot.bbot(),mathbot.mathbot(),searchbot.searchbot(),statusbot.statusbot(),hackbot.hackbot()]#Run on msg
+=======
+rb=rpgbot.rpg()
+handlers=[bb,tb,BBot.bbot(),mathbot.mathbot(),searchbot.searchbot(),statusbot.statusbot(),rb]#Run on msg
+>>>>>>> 8ad256c2e59242d4a299b506fd4e7363c6f70fdc:bbot.py
 jhandlers=[bb,tb]#Run on Join
-lhandlers=[]#Run every loop
+lhandlers=[rb]#Run every loop
 nhandlers=[bb]
 codes=[]#wb
 continuepgm=1
@@ -87,6 +96,9 @@ while continuepgm:
 		nick=data.split('!')[0][1:]
 		for handler in handlers:
 			handler.go(nick,data,channel)
+		if data.find('?reload')!=-1:
+			reload(rpgbot)
+			rb=rpgbot.rpg()
 	elif data.find(' JOIN :#')!=-1:
 		nick=data.split('!')[0][1:]
 		if nick.find('#')==-1:
@@ -95,7 +107,7 @@ while continuepgm:
 			user=data.split('@')[0].split('!')[-1]
 			for jhandler in jhandlers:
 				jhandler.join(nick,channel,ip,user)
-	elif re.search('[0-9]+ '+config.mynick,data):
+	elif re.search('[0-9]+ *'+config.mynick,data):
 		code=data.split()[1]
 		for each in codes:
 			each.code(code,data)
@@ -103,6 +115,10 @@ while continuepgm:
 		continuepgm=0
 	for handler in lhandlers:
 		handler.loop()
+	if q.queue.get_length():
+		send=q.queue.pop()
+		print(send)
+		irc.send(send+'\r\n')
 	if q.queue.get_length():
 		send=q.queue.pop()
 		print(send)
