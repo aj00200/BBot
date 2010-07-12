@@ -22,6 +22,7 @@ import searchbot
 import trekbot
 import blockbot
 import statusbot
+import hackbot
 def getHost(data):
 	host=data[data.find('@')+1:data.find('PRIVMSG')]
 	return host
@@ -35,7 +36,7 @@ def checkIfSuperUser(data,superusers):
 #===============HANDLERS=====
 bb=blockbot.blockbot()
 tb=trekbot.trekbot()
-handlers=[bb,tb,BBot.bbot(),mathbot.mathbot(),searchbot.searchbot(),statusbot.statusbot()]#Run on msg
+handlers=[bb,tb,BBot.bbot(),mathbot.mathbot(),searchbot.searchbot(),statusbot.statusbot(),hackbot.hackbot()]#Run on msg
 jhandlers=[bb,tb]#Run on Join
 lhandlers=[]#Run every loop
 nhandlers=[bb]
