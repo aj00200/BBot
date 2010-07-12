@@ -22,11 +22,7 @@ import searchbot
 import trekbot
 import blockbot
 import statusbot
-<<<<<<< HEAD:bbot.py
-import hackbot
-=======
 import rpgbot
->>>>>>> 8ad256c2e59242d4a299b506fd4e7363c6f70fdc:bbot.py
 def getHost(data):
 	host=data[data.find('@')+1:data.find('PRIVMSG')]
 	return host
@@ -37,15 +33,10 @@ def checkIfSuperUser(data,superusers):
 			return True
 	else:
 		return False
-#===============HANDLERS=====
 bb=blockbot.blockbot()
 tb=trekbot.trekbot()
-<<<<<<< HEAD:bbot.py
-handlers=[bb,tb,BBot.bbot(),mathbot.mathbot(),searchbot.searchbot(),statusbot.statusbot(),hackbot.hackbot()]#Run on msg
-=======
 rb=rpgbot.rpg()
 handlers=[bb,tb,BBot.bbot(),mathbot.mathbot(),searchbot.searchbot(),statusbot.statusbot(),rb]#Run on msg
->>>>>>> 8ad256c2e59242d4a299b506fd4e7363c6f70fdc:bbot.py
 jhandlers=[bb,tb]#Run on Join
 lhandlers=[rb]#Run every loop
 nhandlers=[bb]
@@ -97,8 +88,13 @@ while continuepgm:
 		for handler in handlers:
 			handler.go(nick,data,channel)
 		if data.find('?reload')!=-1:
+			del rb
+			handlers.pop()
+			lhandlers.pop()
 			reload(rpgbot)
 			rb=rpgbot.rpg()
+			handlers.append(rb)
+			lhandlers.append(rb)
 	elif data.find(' JOIN :#')!=-1:
 		nick=data.split('!')[0][1:]
 		if nick.find('#')==-1:

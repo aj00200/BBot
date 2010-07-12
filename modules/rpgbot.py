@@ -10,7 +10,7 @@ class rpg():
             0:'Basic Sword',
             1:'Basic Shield'
         }
-        self.version='0.00004'
+        self.version='0.00009'
         self.turn=[]#list of nicks to get their turn
         self.TURN=[]
         self.lastturn=time.time()
@@ -29,6 +29,7 @@ class rpg():
                         'joined':time.time()
                     }
                     self.TURN.append(nick)
+                    self.turn.append(nick)
                     q.queue.notice((channel,'<<%s has joined the game>>'%nick))
             elif self.ldata.find('?rpg help')!=-1:
                 q.queue.append((nick,'Help comming soon. To join the game say ?join. To see your current status, type ?info.'))
@@ -47,4 +48,12 @@ class rpg():
                         q.queue.notice((nick,self.msg))
 
     def loop(self):
-        pass
+        print 'loop'
+        if time.time()-self.lastturn<25:
+            if len(self.turn):
+                tmp=self.turn.pop()
+                q.queue.notice((channel,'<<%s\'s turn has ended. It is now %s\'s turn>>'%(self.currentturn,tmp)))
+                self.currentturn=tmp[:]
+                self.lastturn=time.time()
+            else:
+                self.turn=self.TURN[:]
