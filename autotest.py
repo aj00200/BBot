@@ -1,5 +1,6 @@
 #! /usr/bin/python
 import sys
+import api
 import unittest
 import q
 import config
@@ -25,7 +26,7 @@ class TestBBot(unittest.TestCase):
         self.b=BBot.bbot()
     def testHi(self):
         self.b.go('aj00200',':aj002!aj00200@FOSSnet/developer/aj00200 L PRIVMSG #bots :?hi','#bots')
-        self.assertEqual('PRIVMSG #bots :aj00200: hi',q.queue.pop())
+        self.assertEqual('PRIVMSG #bots :aj00200: Hi',q.queue.pop())
         self.b.go('aj00200','aj00200!aj00200@FOSSnet/developer/aj00200 PRIVMSG #bots :?ping','#bots')
         self.assertEqual('PRIVMSG #bots :aj00200: pong',q.queue.pop(),'ping:::pong seems to be missing or incorrect in bbot/dict.  Please add it again.')
 if __name__ == '__main__':

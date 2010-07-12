@@ -15,7 +15,7 @@ class bbot():
 				q.queue.raw(data.split('raw ')[-1])
 			elif ldata.find('leave')!=-1:
 				words=ldata.split('leave ')
-				queue.raw('PART %s' % words)
+				q.queue.raw('PART %s' % words)
 			elif ldata.find('?add ')!=-1:
 				self.q=ldata[ldata.find('?add ')+5:].strip('\r\n')
 				self.q=self.q.split(':::')
@@ -51,6 +51,6 @@ class bbot():
 		self.static={}
 		self.dict=open('bbot/dict','r')
 		for line in self.dict.readlines():
-			self.q=line.split(':::')
+			self.q=line.strip('\r\n').split(':::')
 			self.static[self.q[0]]=self.q[1]
 		self.dict.close()

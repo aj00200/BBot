@@ -69,7 +69,7 @@ class blockbot():
             elif self.ldata.find(':?rehash')!=-1:
                 self.__init__()
             elif self.ldata.find(':?protect')!=-1:
-                queue.mode('',channel,'+mz')
+                q.queue.mode('',channel,'+mz')
             elif self.ldata.find(':?kl')!=-1:
                 if self.ldata.find('?kl ')!=-1:
                     self.t=self.ldata.split('?kl ')[-1][0:-2]
