@@ -47,6 +47,8 @@ class rpg():
                             self.msg+='%s, '%self.objnames[each]
                         self.msg=self.msg[0:-2]#strip extra ', ' of the end
                         q.queue.notice((nick,self.msg))
+                    else:
+                        q.queue.notice((nick,'Please join the game with ?join'))
             elif self.ldata.find('?players')!=-1:
                 q.queue.append((channel,str(len(players))))
             elif self.ldata.find('?turn')!=-1:

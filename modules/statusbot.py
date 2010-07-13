@@ -3,12 +3,13 @@ class statusbot():
     def __init__(self):
         self.statuses={}
     def go(self,nick,data,channel):
+        self.ldata=data.lower()
         if data.find(':?status ')!=-1:
-            words=data.split('?status')[-1].strip('\r\n')
-            self.statuses[nick]=words[:]
-        elif data.find(':?whereis ')!=-1:
+            words=data.split('?status ')[-1].strip('\r\n')
+            self.statuses[nick.lower()]=words[:]
+        elif self.ldata.find(':?whereis ')!=-1:
             try:
-                words=data.split(':?whereis ')[-1].strip('\r\n')
+                words=self.ldata.split(':?whereis ')[-1].strip('\r\n')
                 q.queue.append((channel,nick+': %s is: '%words+self.statuses[words]))
             except:
                 q.queue.append((channel,nick+': %s hasn\'t left a status.'%words))
