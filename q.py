@@ -3,10 +3,35 @@ import asynchat
 import asyncore
 import socket
 import bbot
+class connection(asynchat.async_chat):
+    def __init__(self):
+        asynchat.async_chat.__init__(self)
+        self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.connect((config.network,config.port))
+        self.set_terminator('\r\n')
+        self.needping=1
+    def handle_connect(self):
+        self.send('NICK %s\r\n'%config.mynick)
+        self.send('USER %s %s %s :%s\r\n'%(config.mynick,config.mynick,config.mynick,config.mynick))
+    def handle_close(self):
+        self.close()
+    def writable(self):
+        return (len(self.buffer) > 0)
+    def handle_write(self):
+        sent = self.send(self.buffer)
+        self.buffer = self.buffer[sent:]
+    def found_terminator(self):
+        for each in bbot.handlers:
+            each.go('aj00200',self.data,'#bots')
+    def collect_incoming_data(self,data):
+        self.data+=data
 class queue_class():
     def __init__(self):
         self.queue=[]
-        self.data=''
+        self.conn=connection()
+    def send(self):
+        for each in self.queue:
+            self.conn.push(each+'\r\n')
     def get_length(self):
         return len(self.queue)
     def append(self,data):
@@ -33,30 +58,4 @@ class queue_class():
     def raw(self,data):
         self.queue.append(data)
 queue=queue_class() 
-import asynchat
-class connection(asynchat.async_chat):
-    def __init__(self):
-        asynchat.async_chat.__init__(self)
-        self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.connect((config.network,config.port))
-        self.set_terminator('\r\n')
-        self.needping=1
-        self.buffer='NICK %s\r\n'%config.mynick
-        self.buffer+='USER %s %s %s :%s\r\n'%(config.mynick,config.mynick,config.mynick,config.mynick)
-    def handle_connect(self):
-        pass
-    def handle_close(self):
-        self.close()
-    def writable(self):
-        return (len(self.buffer) > 0)
-    def handle_write(self):
-        sent = self.send(self.buffer)
-        self.buffer = self.buffer[sent:]
-    def found_terminator(self):
-        for each in bbot.handlers:
-            each.go('aj00200',self.data,'#bots')
-    def collect_incoming_data(self,data):
-        self.data+=data
-c = connection()
 
-asyncore.loop()
