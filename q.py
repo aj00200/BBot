@@ -1,6 +1,7 @@
 import config
-import asyncore
+import asynchat
 import socket
+import bbot
 class queue_class():
     def __init__(self):
         self.queue=[]
@@ -31,14 +32,17 @@ class queue_class():
         self.queue.append(data)
 queue=queue_class() 
 import asynchat
-class connection(asyncore.dispatcher):
+class connection(asynchat.async_chat):
     def __init__(self):
-        asyncore.dispatcher.__init__(self)
+        asynchat.async_chat.__init__(self)
         self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connect((config.network,config.port))
+        self.set_terminator('\r\n')
+        self.needping=1
+        self.buffer='NICK %s\r\n'%config.mynick
+        self.buffer+='USER %s %s %s :%s\r\n'%(config.mynick,config.mynick,config.mynick,config.mynick)
     def handle_connect(self):
-        self.buffer='NICK %s\r\n'%config.nick
-        self.buffer+='USER %s %s %s :%s\r\n'%(config.nick,config.nick,config.nick,config.nick)
+        pass
     def handle_close(self):
         self.close()
     def handle_read(self):
@@ -48,7 +52,11 @@ class connection(asyncore.dispatcher):
     def handle_write(self):
         sent = self.send(self.buffer)
         self.buffer = self.buffer[sent:]
-
-c = connection
+    def found_terminator(self):
+        for each in bbot.handlers:
+            each.go('aj00200',self.data,'#bots')
+    def collect_incomming_data(self,data):
+        self.data+=data
+c = connection()
 while 1:
-    asyncore.loop()
+    c.handle_read()
