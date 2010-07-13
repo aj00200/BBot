@@ -1,10 +1,12 @@
 import config
 import asynchat
+import asyncore
 import socket
 import bbot
 class queue_class():
     def __init__(self):
         self.queue=[]
+        self.data=''
     def get_length(self):
         return len(self.queue)
     def append(self,data):
@@ -45,8 +47,6 @@ class connection(asynchat.async_chat):
         pass
     def handle_close(self):
         self.close()
-    def handle_read(self):
-        print self.recv(512)
     def writable(self):
         return (len(self.buffer) > 0)
     def handle_write(self):
@@ -55,8 +55,8 @@ class connection(asynchat.async_chat):
     def found_terminator(self):
         for each in bbot.handlers:
             each.go('aj00200',self.data,'#bots')
-    def collect_incomming_data(self,data):
+    def collect_incoming_data(self,data):
         self.data+=data
 c = connection()
-while 1:
-    c.handle_read()
+
+asyncore.loop()
