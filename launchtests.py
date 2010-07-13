@@ -3,5 +3,9 @@ import time
 while 1:
     test=subprocess.call(['python','autotest.py'])
     print('RESULTS: %s'%test)
-    subprocess.call(['notify-send',str(test)])
+    if test==0:
+        icon='gtk-dialog-info'
+    else:
+        icon='gtk-dialog-warning'
+    subprocess.call(['notify-send',str(test),'--icon=%s'%icon])
     time.sleep(30)

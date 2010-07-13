@@ -14,6 +14,7 @@ class rpg():
         self.turn=[]#list of nicks to get their turn
         self.TURN=[]
         self.lastturn=time.time()
+        self.currentturn=0
     def go(self,nick,data,channel):
         if channel=='#rpg':
             self.ldata=data.lower()
@@ -46,14 +47,21 @@ class rpg():
                             self.msg+='%s, '%self.objnames[each]
                         self.msg=self.msg[0:-2]#strip extra ', ' of the end
                         q.queue.notice((nick,self.msg))
+            elif self.ldata.find('?players')!=-1:
+                q.queue.append((channel,str(len(players))))
+            elif self.ldata.find('?turn')!=-1:
+                q.queue.append((channel,'It is currently: %s\'s turn.'%self.currentturn))
 
     def loop(self):
         print 'loop'
-        if time.time()-self.lastturn<25:
+        if not self.currentturn and len(self.turn)>0:
+            self.currentturn=self.turn.pop(0)
+        if time.time()-self.lastturn>25:
             if len(self.turn):
-                tmp=self.turn.pop()
+                tmp=self.turn.pop(0)
                 q.queue.notice((channel,'<<%s\'s turn has ended. It is now %s\'s turn>>'%(self.currentturn,tmp)))
                 self.currentturn=tmp[:]
                 self.lastturn=time.time()
             else:
+                print "ELSE"
                 self.turn=self.TURN[:]
