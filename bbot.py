@@ -41,6 +41,7 @@ continuepgm=1
 #irc.send('NICK %s\r\n'%config.mynick)
 #irc.send ('USER '+config.mynick+' '+config.mynick+' '+config.mynick+' :'+config.mynick+'\r\n')
 needping=1
+
 #while needping:
 #	data=irc.recv(1024)
 #	if data.find('PING')!=-1:
