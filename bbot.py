@@ -10,7 +10,6 @@ import q
 import sys
 import re
 import time
-#import sqlite3
 import thread
 import api#BBot API Functions
 import asyncore
@@ -22,7 +21,9 @@ import trekbot
 import blockbot
 import statusbot
 import rpgbot
-
+def privmsg(nick,data,channel):
+	for each in handlers:
+		each.go(nick,data,channel)
 bb=blockbot.blockbot()
 tb=trekbot.trekbot()
 rb=rpgbot.rpg()
