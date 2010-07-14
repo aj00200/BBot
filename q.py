@@ -10,20 +10,22 @@ class connection(asynchat.async_chat):
         self.set_terminator('\r\n')
         self.needping=1
     def handle_connect(self):
+        print('Conencted')
         self.push('NICK %s\r\n'%config.mynick)
         self.push('USER %s %s %s :%s\r\n'%(config.mynick,config.mynick,config.mynick,config.mynick))
     def handle_close(self):
         self.close()
-#    def writable(self):
-#        return (len(self.buffer) > 0)
     def found_terminator(self):
+        if self.needping:
+            if self.data.find('PING')!=-1:
+                pass
         for each in bbot.handlers:
             each.go('aj00200',self.data,'#bots')
     def collect_incoming_data(self,data):
         self.data+=data
 class queue_class():
     def __init__(self):
-        self.queue=[]
+        self.queue=['NICK %s'%config.mynick,'USER %s %s %s %s'%(config.mynick,config.mynick,config.mynick,config.mynick)]
         self.conn=connection()
     def send(self):
         for each in self.queue:
