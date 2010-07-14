@@ -53,11 +53,8 @@ needping=1
 		#print(data)
 
 time.sleep(config.sleep_after_join)
-print('JOIN')
+print('STARTING LOOP')
 asyncore.loop()
-for each in config.autojoin:
-	q.queue.join(each)
-	q.queue.send()
 #while continuepgm:
 #	data = irc.recv (config.wait_recv)
 #	print(data)

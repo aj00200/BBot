@@ -8,22 +8,23 @@ class connection(asynchat.async_chat):
     def __init__(self):
         asynchat.async_chat.__init__(self)
         self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.connect((config.network,config.port))
         self.set_terminator('\r\n')
-        self.needping=1
         self.data=''
+        self.connect((config.network, config.port))
     def handle_connect(self):
-        self.send('USER %s %s %s :%s\r\n'%(config.mynick,config.mynick,config.mynick,config.mynick))
-        self.buffer=''
-    def handle_close(self):
-        self.close()
-#    def writable(self):
-#        return (len(self.buffer) > 0)
-#    def handle_write(self):
-#        sent = self.send(self.buffer)
-#        self.buffer = self.buffer[sent:]
+        self.send('USER %s 8 %s :%s\r\n'%(config.mynick,config.network,'BBot the IRC bot')+'NICK %s'%config.mynick)
+    def get_data(self):
+        r=self.data
+        self.data=''
+        return r
     def found_terminator(self):
-        bbot.privmsg('aj00200',self.data,'#bots')
+        data=self.get_data()
+        print data
+        if data[:4]==('PING'):
+            self.push('PONG %s\r\n'%data[5:])
+        if '001' in data:
+            self.push('JOIN %s\r\n'%', '.join(config.autojoin))
+        
     def collect_incoming_data(self,data):
         self.data+=data
 class queue_class():
@@ -60,9 +61,4 @@ class queue_class():
     def raw(self,data):
         self.queue.append(data)
 queue=queue_class() 
-<<<<<<< HEAD:q.py
-
-asyncore.loop()
-=======
 import bbot
->>>>>>> 67f6be07ed8abb739573a7590938fe7b4791577f:q.py
