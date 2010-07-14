@@ -12,7 +12,7 @@ class connection(asynchat.async_chat):
         self.data=''
         self.connect((config.network, config.port))
     def handle_connect(self):
-        self.send('USER %s 8 %s :%s\r\n'%(config.mynick,config.network,'BBot the IRC bot')+'NICK %s'%config.mynick)
+        self.send('USER %s 8 %s :%s\r\n'%(config.mynick,config.network,'BBot the IRC bot')+'NICK B3Bot')
     def get_data(self):
         r=self.data
         self.data=''

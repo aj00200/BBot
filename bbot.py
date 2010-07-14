@@ -4,7 +4,6 @@
 version='2'
 #Scan for open proxies on join? 1=yes,0=no. Requires nmap and python-namp: http://nmap.org  http://xael.org/norman/python/python-nmap/
 import config
-import q
 
 #import socket
 import sys
@@ -54,6 +53,7 @@ needping=1
 
 time.sleep(config.sleep_after_join)
 print('STARTING LOOP')
+import q
 asyncore.loop()
 #while continuepgm:
 #	data = irc.recv (config.wait_recv)
