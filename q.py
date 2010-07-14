@@ -9,16 +9,13 @@ class connection(asynchat.async_chat):
         self.connect((config.network,config.port))
         self.set_terminator('\r\n')
         self.needping=1
-#    def handle_connect(self):
-#        self.send('NICK %s\r\n'%config.mynick)
-#        self.send('USER %s %s %s :%s\r\n'%(config.mynick,config.mynick,config.mynick,config.mynick))
+    def handle_connect(self):
+        self.push('NICK %s\r\n'%config.mynick)
+        self.push('USER %s %s %s :%s\r\n'%(config.mynick,config.mynick,config.mynick,config.mynick))
     def handle_close(self):
         self.close()
-    def writable(self):
-        return (len(self.buffer) > 0)
-    def handle_write(self):
-        sent = self.send(self.buffer)
-        self.buffer = self.buffer[sent:]
+#    def writable(self):
+#        return (len(self.buffer) > 0)
     def found_terminator(self):
         for each in bbot.handlers:
             each.go('aj00200',self.data,'#bots')
