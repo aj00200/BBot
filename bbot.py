@@ -39,6 +39,8 @@ def PONG(data):
 		print('PONGING')
 #irc=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 #irc.connect((config.network,config.port))
+q.queue.nick(config.mynick)
+q.queue.raw('USER %s %s %s :%s'%(config.mynick,config.mynick,config.mynick,config.mynick))
 #print 'NICK'
 #irc.send('NICK %s\r\n'%config.mynick)
 #irc.send ('USER '+config.mynick+' '+config.mynick+' '+config.mynick+' :'+config.mynick+'\r\n')

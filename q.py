@@ -2,7 +2,6 @@ import config
 import asynchat
 import asyncore
 import socket
-import bbot
 class connection(asynchat.async_chat):
     def __init__(self):
         asynchat.async_chat.__init__(self)
@@ -10,9 +9,9 @@ class connection(asynchat.async_chat):
         self.connect((config.network,config.port))
         self.set_terminator('\r\n')
         self.needping=1
-    def handle_connect(self):
-        self.send('NICK %s\r\n'%config.mynick)
-        self.send('USER %s %s %s :%s\r\n'%(config.mynick,config.mynick,config.mynick,config.mynick))
+#    def handle_connect(self):
+#        self.send('NICK %s\r\n'%config.mynick)
+#        self.send('USER %s %s %s :%s\r\n'%(config.mynick,config.mynick,config.mynick,config.mynick))
     def handle_close(self):
         self.close()
     def writable(self):
@@ -31,6 +30,7 @@ class queue_class():
         self.conn=connection()
     def send(self):
         for each in self.queue:
+            print('PUSHING')
             self.conn.push(each+'\r\n')
     def get_length(self):
         return len(self.queue)
@@ -58,4 +58,4 @@ class queue_class():
     def raw(self,data):
         self.queue.append(data)
 queue=queue_class() 
-
+import bbot
