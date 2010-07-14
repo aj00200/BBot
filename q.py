@@ -1,8 +1,9 @@
+
 import config
 import asynchat
 import asyncore
 import socket
-import bbot
+import api
 class connection(asynchat.async_chat):
     def __init__(self):
         asynchat.async_chat.__init__(self)
@@ -12,9 +13,6 @@ class connection(asynchat.async_chat):
         self.needping=1
         self.data=''
     def handle_connect(self):
-        print('NICK')
-        self.send('NICK %s\r\n'%config.mynick)
-        print('USER')
         self.send('USER %s %s %s :%s\r\n'%(config.mynick,config.mynick,config.mynick,config.mynick))
         self.buffer=''
     def handle_close(self):
@@ -34,6 +32,7 @@ class queue_class():
         self.conn=connection()
     def send(self):
         for each in self.queue:
+            print('PUSHING')
             self.conn.push(each+'\r\n')
     def get_length(self):
         return len(self.queue)
@@ -61,5 +60,9 @@ class queue_class():
     def raw(self,data):
         self.queue.append(data)
 queue=queue_class() 
+<<<<<<< HEAD:q.py
 
 asyncore.loop()
+=======
+import bbot
+>>>>>>> 67f6be07ed8abb739573a7590938fe7b4791577f:q.py

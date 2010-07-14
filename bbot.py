@@ -33,13 +33,11 @@ lhandlers=[rb]#Run every loop
 nhandlers=[bb]
 codes=[]#wb
 continuepgm=1
-def PONG(data):
-	if data.find ('PING')!=-1:
-		print('PING RECEIVED')
-		irc.send('PONG '+data.split()[ 1 ]+'\r\n') #Return the PING to the server
-		print('PONGING')
+
 #irc=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 #irc.connect((config.network,config.port))
+#q.queue.nick(config.mynick)
+#q.queue.raw('USER %s %s %s :%s'%(config.mynick,config.mynick,config.mynick,config.mynick))
 #print 'NICK'
 #irc.send('NICK %s\r\n'%config.mynick)
 #irc.send ('USER '+config.mynick+' '+config.mynick+' '+config.mynick+' :'+config.mynick+'\r\n')
@@ -53,8 +51,10 @@ needping=1
 #		q.queue.send()
 		#needping=0
 		#print(data)
+
 time.sleep(config.sleep_after_join)
 print('JOIN')
+asyncore.loop()
 for each in config.autojoin:
 	q.queue.join(each)
 	q.queue.send()
@@ -109,3 +109,5 @@ for each in config.autojoin:
 #		irc.send(send+'\r\n')
 #	q.queue.send()
 #irc.send('QUIT :Quit: BBot Rulez\r\n')
+while 1:
+	pass
