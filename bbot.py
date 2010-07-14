@@ -53,6 +53,7 @@ needping=1
 
 time.sleep(config.sleep_after_join)
 print('JOIN')
+asyncore.loop()
 for each in config.autojoin:
 	q.queue.join(each)
 	q.queue.send()
@@ -107,4 +108,5 @@ for each in config.autojoin:
 #		irc.send(send+'\r\n')
 #	q.queue.send()
 #irc.send('QUIT :Quit: BBot Rulez\r\n')
-asyncore.loop()
+while 1:
+	pass

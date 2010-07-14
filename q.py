@@ -1,7 +1,9 @@
+
 import config
 import asynchat
 import asyncore
 import socket
+import api
 class connection(asynchat.async_chat):
     def __init__(self):
         asynchat.async_chat.__init__(self)
@@ -10,22 +12,22 @@ class connection(asynchat.async_chat):
         self.set_terminator('\r\n')
         self.needping=1
     def handle_connect(self):
-        print('Conencted')
-        self.push('NICK %s\r\n'%config.mynick)
+        self.push('NICK '+config.mynick+'\r\n')
         self.push('USER %s %s %s :%s\r\n'%(config.mynick,config.mynick,config.mynick,config.mynick))
-    def handle_close(self):
-        self.close()
+#    def handle_close(self):
+#        self.close()
     def found_terminator(self):
         if self.needping:
             if self.data.find('PING')!=-1:
-                pass
+                api.pong(self.data)
+        print self.data
         for each in bbot.handlers:
             each.go('aj00200',self.data,'#bots')
     def collect_incoming_data(self,data):
         self.data+=data
 class queue_class():
     def __init__(self):
-        self.queue=['NICK %s'%config.mynick,'USER %s %s %s %s'%(config.mynick,config.mynick,config.mynick,config.mynick)]
+        self.queue=[]
         self.conn=connection()
     def send(self):
         for each in self.queue:
