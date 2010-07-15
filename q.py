@@ -1,4 +1,6 @@
 import bbot
+#if __name__!='__main__':
+#    reload(bbot)
 import config
 import asynchat
 import asyncore
@@ -14,7 +16,7 @@ class connection(asynchat.async_chat):
         self.data=''
         self.connect((config.network, config.port))
     def handle_connect(self):
-        self.send('USER %s 8 %s :%s\r\n'%(config.mynick,config.network,'BBot the IRC bot')+'NICK B3Bot\r\n')
+        self.send('USER %s 8 %s :%s\r\n'%(config.mynick,config.network,'BBot the IRC bot')+'NICK %s\r\n'%config.mynick)
     def get_data(self):
         r=self.data
         self.data=''
