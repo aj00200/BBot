@@ -39,8 +39,8 @@ class mathbot():
             q.queue.append((channel,nick+' : +, -, *, /, %, sqrt, pow, ceil, floor, log, asin, acos, atan, atan2, sin, cos, tan'))
         elif self.ldata.find(':?math ')!=-1:
             if self.ldata.find('**')!=-1:
-                queue.append((channel,'Please use pow instead of **'))
-                self.e=0
+                q.queue.append((channel,'Please use pow instead of **'))
+                self.ldata='?math 0'
             self.e=self.ldata[self.ldata.find('?math ')+6:].strip('\r\n')
             self.e=self.e.replace('!pi','3.1415926535897931')
             self.e=self.e.replace('!e',str(math.e))
