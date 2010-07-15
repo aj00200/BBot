@@ -67,7 +67,7 @@ class connection(asynchat.async_chat):
             continuepgm=0
         for handler in bbot.lhandlers:
             handler.loop()
-            
+        queue.send()
     def collect_incoming_data(self,data):
         self.data+=data
 class queue_class():
@@ -78,6 +78,7 @@ class queue_class():
         for each in self.queue:
             print('PUSHING')
             self.conn.push(each+'\r\n')
+        self.queue=[]
     def get_length(self):
         return len(self.queue)
     def append(self,data):
