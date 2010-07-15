@@ -16,8 +16,8 @@ class bbot():
 			elif ldata.find('leave')!=-1:
 				words=ldata.split('leave ')
 				q.queue.raw('PART %s' % words)
-			elif ldata.find('?add ')!=-1:
-				self.q=ldata[ldata.find('?add ')+5:].strip('\r\n')
+			elif data.find('?add ')!=-1:
+				self.q=data[ldata.find('?add ')+5:].strip('\r\n')
 				self.q=self.q.split(':::')
 				self.add_factoid(self.q)
 			elif ldata.find('?writedict')!=-1:
@@ -38,7 +38,7 @@ class bbot():
 					words=nick
 				q.queue.append((channel,u'\x01ACTION kicks %s\x01'%words))
 	def add_factoid(self,query):
-		self.static[query[0]]=query[1]
+		self.static[query[0].lower()]=query[1]
 	def del_factoid(self,query):
 		if quey in self.static:
 			del elf.static[query]
