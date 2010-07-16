@@ -8,9 +8,11 @@ class rpg():
     def __init__(self):
         self.objnames={
             0:'Basic Sword',
-            1:'Basic Shield'
+            1:'Basic Shield',
+            2:'Light Swod',
+            3:'Light Shield'
         }
-        self.version='0.00009'
+        self.version='0.00010'
         self.turn=[]#list of nicks to get their turn
         self.TURN=[]
         self.lastturn=time.time()
