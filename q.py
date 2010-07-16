@@ -27,7 +27,8 @@ class connection(asynchat.async_chat):
         if data[:4]==('PING'):
             self.push('PONG %s\r\n'%data[5:])
         if '001' in data:
-            self.push('JOIN %s\r\n'%', '.join(config.autojoin))
+            for each in config.autojoin:
+                self.push('JOIN %s\r\n'%each)
         if data.find('INVITE '+config.mynick+' :#')!=-1:
             if data.find(' 33')==-1 and data.find('NOTICE')==-1 and data.find('PRIVMSG')==-1 and data.find('KICK')==-1:
                 newchannel=data.split(config.mynick+' :')[-1]

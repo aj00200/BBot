@@ -22,13 +22,14 @@ import trekbot
 import blockbot
 import statusbot
 import rpgbot
+import globalbot
 def privmsg(nick,data,channel):
 	for each in handlers:
 		each.go(nick,data,channel)
 bb=blockbot.blockbot()
 tb=trekbot.trekbot()
 rb=rpgbot.rpg()
-handlers=[bb,tb,BBot.bbot(),mathbot.mathbot(),searchbot.searchbot(),statusbot.statusbot(),rb]#Run on msg
+handlers=[bb,tb,BBot.bbot(),mathbot.mathbot(),searchbot.searchbot(),statusbot.statusbot(),rb,globalbot.globalbot()]#Run on msg
 jhandlers=[bb,tb]#Run on Join
 lhandlers=[rb]#Run every loop
 nhandlers=[bb]
