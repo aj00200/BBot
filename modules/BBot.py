@@ -1,6 +1,7 @@
 import q
 import api
 import config
+import re
 class bbot():
 	def __init__(self):
 		self.read_dict()
@@ -27,8 +28,8 @@ class bbot():
 			print self.q
 			if self.q in self.static:
 				q.queue.append((channel,self.static[self.q]))
-		if ldata.find('what is ')!=-1:
-			self.q=ldata[ldata.find('what is ')+8:].strip('?.\r\n:')
+		if re.search('(what|who|where) is ',ldata):
+			self.q=ldata[ldata.find(' is ')+4:].strip('?.\r\n:')
 			if self.q in self.static:
 				q.queue.append((channel,nick+': '+self.static[self.q]))
 		if data.find(':?')!=-1:
