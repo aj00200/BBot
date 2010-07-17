@@ -27,6 +27,10 @@ class bbot():
 			print self.q
 			if self.q in self.static:
 				q.queue.append((channel,self.static[self.q]))
+		if ldata.find('what is ')!=-1:
+			self.q=ldata[ldata.find('what is ')+8:].strip('?.\r\n:')
+			if self.q in self.static:
+				q.queue.append((channel,nick+': '+self.static[self.q]))
 		if data.find(':?')!=-1:
 			self.q=ldata[data.find(':?')+2:].strip('\r\n')
 			if self.q in self.static:
