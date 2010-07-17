@@ -26,7 +26,7 @@ class connection(asynchat.async_chat):
         print data
         if data[:4]==('PING'):
             self.push('PONG %s\r\n'%data[5:])
-        if '001' in data:
+        if re.search(':*\. 001',data):
             for each in config.autojoin:
                 self.push('JOIN %s\r\n'%each)
         if data.find('INVITE '+config.mynick+' :#')!=-1:
@@ -47,14 +47,6 @@ class connection(asynchat.async_chat):
             nick=data.split('!')[0][1:]
             for handler in bbot.handlers:
                 handler.go(nick,data,channel)
-            if data.find('?reload')!=-1:
-                del rb
-                handlers.pop()
-                lhandlers.pop()
-                reload(rpgbot)
-                rb=rpgbot.rpg()
-                handlers.append(rb)
-                lhandlers.append(rb)
         elif data.find(' JOIN :#')!=-1:
             nick=data.split('!')[0][1:]
             if nick.find('#')==-1:

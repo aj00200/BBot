@@ -29,7 +29,7 @@ def privmsg(nick,data,channel):
 bb=blockbot.blockbot()
 tb=trekbot.trekbot()
 rb=rpgbot.rpg()
-handlers=[bb,tb,BBot.bbot(),mathbot.mathbot(),searchbot.searchbot(),statusbot.statusbot(),rb,globalbot.globalbot()]#Run on msg
+handlers=[bb,tb,BBot.bbot(),mathbot.mathbot(),searchbot.searchbot(),statusbot.statusbot(),globalbot.globalbot(),rb]#Run on msg
 jhandlers=[bb,tb]#Run on Join
 lhandlers=[rb]#Run every loop
 nhandlers=[bb]
