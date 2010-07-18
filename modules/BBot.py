@@ -30,6 +30,9 @@ class bbot():
 				q.queue.append((channel,self.static[self.q]))
 		if re.search('(what|who|where) is ',ldata):
 			self.q=ldata[ldata.find(' is ')+4:].strip('?.\r\n:')
+			self.q=self.q.replace('a ','')
+			self.q=self.q.replace('the ','')
+			self.q=self.q.replace('was ','')
 			if self.q in self.static:
 				q.queue.append((channel,nick+': '+self.static[self.q]))
 		if data.find(':?')!=-1:
