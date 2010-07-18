@@ -95,3 +95,8 @@ class rpg():
                 self.turn=self.TURN[:]
         time.sleep(2)
         self.turn_tracker()
+class weapon():
+    def use(self):
+        return random.randint(self.minatk,self.maxatk)
+    def defend(self):
+        return random.randint(self.mindef,self.maxdef)

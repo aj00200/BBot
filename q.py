@@ -26,7 +26,7 @@ class connection(asynchat.async_chat):
         print data
         if data[:4]==('PING'):
             self.push('PONG %s\r\n'%data[5:])
-        if re.search(':*001',data):
+        if re.search(':*\.* 001 ',data):
             for each in config.autojoin:
                 self.push('JOIN %s\r\n'%each)
         if data.find('INVITE '+config.mynick+' :#')!=-1:
