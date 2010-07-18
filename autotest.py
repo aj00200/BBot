@@ -1,28 +1,18 @@
 #! /usr/bin/python
 import sys
-import api
 import unittest
-import q
 import config
 import socket
 import thread
-sys.path.insert(0,sys.path[0]+'/modules/')
+sys.path.insert(0,sys.path[0]+'/unittesting/')
+print sys.path
+import q
+sys.path.insert(1,sys.path[1]+'/modules/')
+print sys.path
 import BBot
-import rpgbot
-import statusbot
-class TestQueue(unittest.TestCase):
-    def setUp(self):
-        self.q=q.queue_class()
-    def tearDown(self):
-        del self.q
-    def test_get_length(self):
-        self.assertEqual(0,self.q.get_length())
-        self.q.raw('stuff')
-        self.q.append(('#help','hi'))
-        self.assertEqual(2,self.q.get_length())
-        self.assertEqual('stuff',self.q.pop())
-        self.assertEqual('PRIVMSG #help :hi',self.q.pop())
-        self.assertEqual(0,self.q.get_length())
+
+#import rpgbot
+#import statusbot
 class TestBBot(unittest.TestCase):
     def setUp(self):
         self.b=BBot.bbot()
