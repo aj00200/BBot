@@ -69,7 +69,6 @@ class rpg():
         except Exception,e:
             q.queue.append((channel,'Error: %s; Args: %s'%(type(e),e.args)))
     def loop(self):
-        print 'loop'
         if not self.currentturn and len(self.turn)>0:
             self.currentturn=self.turn.pop(0)
         if time.time()-self.lastturn>25:
@@ -79,5 +78,4 @@ class rpg():
                 self.currentturn=tmp[:]
                 self.lastturn=time.time()
             else:
-                print "ELSE"
                 self.turn=self.TURN[:]

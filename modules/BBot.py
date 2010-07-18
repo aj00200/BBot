@@ -29,7 +29,7 @@ class bbot():
 			if self.q in self.static:
 				q.queue.append((channel,self.static[self.q]))
 		if re.search('(what|who|where) is ',ldata):
-			self.q=ldata[ldata.find(' is ')+4:].strip('?.\r\n:')
+			self.q=ldata[ldata.find(' is')+4:].strip('?.\r\n:')
 			self.q=self.q.replace(' a ',' ')
 			self.q=self.q.replace(' the ',' ')
 			self.q=self.q.replace(' was ',' ')
@@ -44,7 +44,7 @@ class bbot():
 				words=data.split(':?hit ')[-1].strip('\r\n')
 				if words.lower().find(config.mynick.lower())!=-1 or words.lower()=='aj00200':
 					words=nick
-				q.queue.append((channel,u'\x01ACTION kicks %s\x01'%words))
+				q.queue.append((channel,'\x01ACTION kicks %s\x01'%words))
 	def add_factoid(self,query):
 		self.static[query[0].lower()]=query[1]
 	def del_factoid(self,query):
