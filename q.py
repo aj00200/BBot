@@ -72,7 +72,6 @@ class queue_class():
         self.conn=connection()
     def send(self):
         for each in self.queue:
-            print('PUSHING')
             self.conn.push(each+'\r\n')
         self.queue=[]
     def get_length(self):

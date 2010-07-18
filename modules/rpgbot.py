@@ -1,6 +1,7 @@
 import q
 import hashlib
 import time
+import thread
 players={}
 channel='#rpg'
 op='FOSSnet/developer/aj00200'
@@ -12,14 +13,24 @@ class rpg():
             2:'LightSwod',
             3:'LightShield'
         }
+        self.stats={
+            #ATK-high,ATK-low,DEF-high,DEF-low
+            0:[10,15,1,5],
+            1:[0,1,1,5],
+            3:[10,35,0,0]
+        }
         self.objid={}
         for each in self.objnames:
             self.objid[self.objnames[each]]=each
+        print self.objnames
+        print self.objid
         self.version='0.00011'
         self.turn=[]#list of nicks to get their turn
         self.TURN=[]
         self.lastturn=time.time()
         self.currentturn=0
+        
+        thread.start_new_thread(self.turn_tracker,())
     def go(self,nick,data,channel):
         try:
             if channel=='#rpg':
@@ -41,9 +52,11 @@ class rpg():
                 if self.currentturn==nick:
                     if data.find('?attack ')!=-1:
                         self.vars=data[data.find('?attack ')+8:].split()
+                        print self.vars
                         if self.vars[0] in players:
                             self.weapon=self.objid[self.vars[1].strip('\r\n')]
-                            if self.weapon in self.objid:
+                            print self.weapon
+                            if self.weapon in self.objnames:
                                 q.queue.notice((channel,'%s attacks %s with a %s'%(nick,self.vars[0],self.vars[1])))
                 if self.ldata.find('?rpg help')!=-1:
                     q.queue.append((nick,'Help comming soon. To join the game say ?join. To see your current status, type ?info.'))
@@ -68,7 +81,8 @@ class rpg():
                     q.queue.append((channel,'It is currently: %s\'s turn.'%self.currentturn))
         except Exception,e:
             q.queue.append((channel,'Error: %s; Args: %s'%(type(e),e.args)))
-    def loop(self):
+    def turn_tracker(self):
+        print "TURN TRACKER"
         if not self.currentturn and len(self.turn)>0:
             self.currentturn=self.turn.pop(0)
         if time.time()-self.lastturn>25:
@@ -79,3 +93,5 @@ class rpg():
                 self.lastturn=time.time()
             else:
                 self.turn=self.TURN[:]
+        time.sleep(2)
+        self.turn_tracker()
