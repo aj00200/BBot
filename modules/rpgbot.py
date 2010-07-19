@@ -99,7 +99,7 @@ class weapon():
         return random.randint(self.minatk,self.maxatk)
     def defend(self):
         return random.randint(self.mindef,self.maxdef)
-class basicsword():
+class BasicSword():
     def __init__(self):
         self.minatk=10
         self.maxatk=15

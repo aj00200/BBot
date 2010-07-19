@@ -57,7 +57,6 @@ class bbot():
 		self.dict=open('bbot/dict','w')
 		for each in self.static:
 			self.dict.write('%s:::%s\r\n'%(each,self.static[each]))
-			self.dict.write('%s:::%s\n'%(each,self.static[each]))
 		self.dict.close()
 	def read_dict(self):
 		self.static={}
