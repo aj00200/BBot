@@ -82,7 +82,6 @@ class rpg():
         except Exception,e:
             q.queue.append((channel,'Error: %s; Args: %s'%(type(e),e.args)))
     def turn_tracker(self):
-        print "TURN TRACKER"
         if not self.currentturn and len(self.turn)>0:
             self.currentturn=self.turn.pop(0)
         if time.time()-self.lastturn>25:
@@ -100,3 +99,9 @@ class weapon():
         return random.randint(self.minatk,self.maxatk)
     def defend(self):
         return random.randint(self.mindef,self.maxdef)
+class basicsword():
+    def __init__(self):
+        self.minatk=10
+        self.maxatk=15
+        self.mindef=1
+        self.maxdef=5

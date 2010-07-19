@@ -21,6 +21,9 @@ class bbot():
 				self.q=data[ldata.find('?add ')+5:].strip('\r\n')
 				self.q=self.q.split(':::')
 				self.add_factoid(self.q)
+			elif data.find('?del ')!=-1:
+				self.q=data[data.find('?del ')+5:].strip('\r\n')
+				del self.static[self.q]
 			elif ldata.find('?writedict')!=-1:
 				self.write_dict()
 		if ldata.find(':'+config.mynick.lower()+': ')!=-1:
