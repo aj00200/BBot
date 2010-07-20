@@ -81,19 +81,18 @@ class rpg():
                     q.queue.append((channel,'It is currently: %s\'s turn.'%self.currentturn))
         except Exception,e:
             q.queue.append((channel,'Error: %s; Args: %s'%(type(e),e.args)))
-    def turn_tracker(self):
-        if not self.currentturn and len(self.turn)>0:
-            self.currentturn=self.turn.pop(0)
-        if time.time()-self.lastturn>25:
-            if len(self.turn):
-                tmp=self.turn.pop(0)
-                q.queue.notice((channel,'<<%s\'s turn has ended. It is now %s\'s turn>>'%(self.currentturn,tmp)))
-                self.currentturn=tmp[:]
-                self.lastturn=time.time()
-            else:
-                self.turn=self.TURN[:]
-        time.sleep(2)
-        self.turn_tracker()
+    def turn_tracker(self,ret=0):
+        while 1:
+            if not self.currentturn and len(self.turn)>0:
+                self.currentturn=self.turn.pop(0)
+            if time.time()-self.lastturn>25:
+                if len(self.turn):
+                    tmp=self.turn.pop(0)
+                    q.queue.notice((channel,'<<%s\'s turn has ended. It is now %s\'s turn>>'%(self.currentturn,tmp)))
+                    self.currentturn=tmp[:]
+                    self.lastturn=time.time()
+                else:
+                    self.turn=self.TURN[:]
 class weapon():
     def use(self):
         return random.randint(self.minatk,self.maxatk)
