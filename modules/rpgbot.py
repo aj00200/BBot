@@ -22,8 +22,6 @@ class rpg():
         self.objid={}
         for each in self.objnames:
             self.objid[self.objnames[each]]=each
-        print self.objnames
-        print self.objid
         self.version='0.00011'
         self.turn=[]#list of nicks to get their turn
         self.TURN=[]
@@ -52,10 +50,8 @@ class rpg():
                 if self.currentturn==nick:
                     if data.find('?attack ')!=-1:
                         self.vars=data[data.find('?attack ')+8:].split()
-                        print self.vars
                         if self.vars[0] in players:
                             self.weapon=self.objid[self.vars[1].strip('\r\n')]
-                            print self.weapon
                             if self.weapon in self.objnames:
                                 q.queue.notice((channel,'%s attacks %s with a %s'%(nick,self.vars[0],self.vars[1])))
                 if self.ldata.find('?rpg help')!=-1:
