@@ -46,7 +46,9 @@ class mathbot():
             self.e=self.e.replace('!e',str(math.e))
             for each in self.allow:
                 self.e=self.e.replace(each,self.allow[each])
-            self.e=self.e.strip('abcdefghijklmnopqrstubwxyz#@$')
+            self.chars='_abcdefghijklmnopqrstuvwxyz#@$\'\"()!:='
+            for each in self.chars:
+                self.e=self.e.replace(each,'')
             for each in self.invert:
                 self.e=self.e.replace(each,self.invert[each])
             self.e=self.e.replace('//','.0/')

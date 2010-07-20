@@ -31,12 +31,12 @@ class bbot():
 			print self.q
 			if self.q in self.static:
 				q.queue.append((channel,self.static[self.q]))
-		if re.search('(what|who|where) is ',ldata):
-			self.q=ldata[ldata.find(' is')+4:].strip('?.\r\n:')
-			self.q=self.q.replace(' a ',' ')
-			self.q=self.q.replace(' the ',' ')
-			self.q=self.q.replace(' was ',' ')
-			self.q=self.q.replace(' an ',' ')
+		if re.search('(what|who|where) (is|was) ',ldata):
+			self.ldata=ldata.replace(' was ',' is ')
+			self.ldata=self.ldata.replace(' a ',' ')
+			self.ldata=self.ldata.replace(' the ',' ')
+			self.ldata=self.ldata.replace(' was ',' ')
+			self.q=self.ldata[self.ldata.find(' is ')+4:].strip('?.\r\n:')
 			if self.q in self.static:
 				q.queue.append((channel,nick+': '+self.static[self.q]))
 		if data.find(':?')!=-1:
