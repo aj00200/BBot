@@ -45,7 +45,6 @@ import blockbotlib #some functions required for BlockBot(). Delete this like if 
 import api #BBot API Functions
 sys.path.append('%s/modules'%sys.path[0])
 #from folderbot import *
-
 class queue_class():
 	def __init__(self):
 		self.queue=[]
@@ -75,16 +74,23 @@ class queue_class():
 	def raw(self,data):
 		self.queue.append(data)
 queue=queue_class()
-
+class pybot():
+	def go(self,nick,data,channel):
+		if '/aj00200'in data or '/ZTG' in data or '76-90' in data:
+			if data.find('?py ')!=-1:
+				self.q=data[data.find('?py ')+4:].strip('\r\n')
+				try:
+					ret=str(eval(self.q),dir())
+				except Exception,e:
+					ret='Error %s; Arg: %s'%(type(e),e.args)
+				queue.append((channel,ret))
 #===============HANDLERS=====
-bb=BlockBot()
-tb=trekbot()
-wb=WhoBot()
-handlers=[bb,BBot(),statusbot(),searchbot(),tb,wb]#Run on msg
-jhandlers=[tb,bb]#Run on Join
+
+handlers=[pybot()]#Run on msg
+jhandlers=[]#Run on Join
 lhandlers=[]#Run every loop
-nhandlers=[bb]
-codes=[wb]
+nhandlers=[]
+codes=[]
 continuepgm=1
 def PONG(data):
 	if data.find ('PING')!=-1:
