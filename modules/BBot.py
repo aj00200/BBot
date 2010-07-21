@@ -2,6 +2,7 @@ import q
 import api
 import config
 import re
+import thread
 class bbot():
 	def __init__(self):
 		self.read_dict()
@@ -28,7 +29,6 @@ class bbot():
 				self.write_dict()
 		if ldata.find(':'+config.mynick.lower()+': ')!=-1:
 			self.q=ldata[ldata.find(':'+config.mynick.lower()+': ')+3+len(config.mynick):].strip('\r\n')
-			print self.q
 			if self.q in self.static:
 				q.queue.append((channel,self.static[self.q]))
 		if re.search('(what|who|where) (is|was) ',ldata):
@@ -36,6 +36,7 @@ class bbot():
 			self.ldata=self.ldata.replace(' a ',' ')
 			self.ldata=self.ldata.replace(' the ',' ')
 			self.ldata=self.ldata.replace(' was ',' ')
+			self.ldata=self.ldata.replace(' an ',' ')
 			self.q=self.ldata[self.ldata.find(' is ')+4:].strip('?.\r\n:')
 			if self.q in self.static:
 				q.queue.append((channel,nick+': '+self.static[self.q]))
