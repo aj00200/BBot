@@ -27,6 +27,13 @@ class bbot():
 				del self.static[self.q]
 			elif ldata.find('?writedict')!=-1:
 				self.write_dict()
+			elif data.find('?py ')!=-1:
+				self.q=data[data.find('?py ')+4:].strip('\r\n')
+				try:
+					ret=str(eval(self.q))
+				except Exception,e:
+					ret='Error: %s; Args: %s'%(type(e),e.args)
+				q.queue.append((channel,ret))
 		if ldata.find(':'+config.mynick.lower()+': ')!=-1:
 			self.q=ldata[ldata.find(':'+config.mynick.lower()+': ')+3+len(config.mynick):].strip('\r\n')
 			if self.q in self.static:
