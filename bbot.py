@@ -23,9 +23,7 @@ import blockbot
 import statusbot
 import rpgbot
 import globalbot
-def privmsg(nick,data,channel):
-	for each in handlers:
-		each.go(nick,data,channel)
+
 bb=blockbot.blockbot()
 tb=trekbot.trekbot()
 rb=rpgbot.rpg()
@@ -35,15 +33,7 @@ lhandlers=[]#Run every loop
 nhandlers=[bb]
 codes=[]#wb
 continuepgm=1
-
-#irc=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-#irc.connect((config.network,config.port))
-#q.queue.nick(config.mynick)
-#q.queue.raw('USER %s %s %s :%s'%(config.mynick,config.mynick,config.mynick,config.mynick))
-#print 'NICK'
-#irc.send('NICK %s\r\n'%config.mynick)
-#irc.send ('USER '+config.mynick+' '+config.mynick+' '+config.mynick+' :'+config.mynick+'\r\n')
-needping=1
+#needping=1
 
 
 time.sleep(config.sleep_after_join)
