@@ -14,3 +14,28 @@ def pong(data):
         print('PING RECEIVED')
         q.queue.raw('PONG '+data.split()[ 1 ]+'\r\n') #Return the PING to the server
         print('PONGING')
+        
+class module():
+    def __init__(self,server):
+        self.__server__=server
+    def append(self,data):
+        q.append(self.__server__,data)
+    def join(self, channel):
+        q.append(self.__server__,'JOIN '+channel)
+    def part(self, channel, message=''):
+        q.append(self.__server__,'PART %s :%s'%(channel,message))
+    def kick(self,nick,channel,message=''):
+        q.append(self.__server__,'KICK %s %s :%s!'%(channel,nick,message))
+    def nick(self,nick):
+        q.append(self.__server__,'NICK %s'%nick)
+        bbot.mynick=nick[:]
+    def notice(self,data):
+        q.append(self.__server__,'NOTICE '+data[0]+' :'+data[1])
+    def mode(self,nick,channel,mode):
+        q.append(self.__server__,'MODE '+channel+' '+mode+' '+nick)
+    def kill(self,nick,reason=''):#Must be IRCOP
+        q.append(self.__server__,'KILL %s :%s' % (nick,reason))
+    def kline(self,host,time='3600',reason='K-Lined'):#Must be IRCOP
+        q.append(self.__server__,'KLINE %s %s :%s'%(host,str(time),reason))
+    def raw(self,data):
+        q.append(self.__server__,data)
