@@ -4,9 +4,10 @@ import config
 import re
 import thread
 class bbot(api.module):
-	def __init__(self):
+	def __init__(self,server):
 		self.read_dict()
 		self.q=''
+		api.module.__init__(self,server)
 	#database=sqlite3.connect('newdatabase.sql')
 	def go(self,nick,data,channel):
 		if channel.find('#')==-1:#Detect if the message is a PM to the Bot

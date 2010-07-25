@@ -92,3 +92,6 @@ class connection(asynchat.async_chat,queue_class):
         self.data+=data
 connections={}
 connections[config.network]=connection(config.network)
+queue=connections[config.network]
+def append(server,data):
+    connections[server].append((data))

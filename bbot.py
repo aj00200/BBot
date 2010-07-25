@@ -27,7 +27,7 @@ import globalbot
 bb=blockbot.blockbot()
 tb=trekbot.trekbot()
 rb=rpgbot.rpg()
-handlers=[bb,tb,BBot.bbot(),mathbot.mathbot(),searchbot.searchbot(),statusbot.statusbot(),globalbot.globalbot(),rb]#Run on msg
+handlers=[bb,tb,BBot.bbot(config.network),mathbot.mathbot(),searchbot.searchbot(),statusbot.statusbot(),globalbot.globalbot(),rb]#Run on msg
 jhandlers=[bb,tb]#Run on Join
 lhandlers=[]#Run every loop
 nhandlers=[bb]
