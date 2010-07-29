@@ -24,7 +24,7 @@ import statusbot
 import rpgbot
 import globalbot
 
-bb=blockbot.blockbot()
+bb=blockbot.blockbot(config.network)
 tb=trekbot.trekbot()
 rb=rpgbot.rpg()
 handlers=[bb,tb,BBot.bbot(config.network),mathbot.mathbot(),searchbot.searchbot(),statusbot.statusbot(),globalbot.globalbot(),rb]#Run on msg
@@ -35,11 +35,11 @@ codes=[]#wb
 continuepgm=1
 #needping=1
 
-
-time.sleep(config.sleep_after_join)
-print('STARTING LOOP')
-import q
-asyncore.loop()
-
-while 1:
-	pass
+#time.sleep(config.sleep_after_join) # ...
+if __name__ == '__main__':
+	import q
+	
+	print('STARTING LOOP')
+	while 1:
+		q.connection(config.network)
+		asyncore.loop()
