@@ -42,5 +42,4 @@ if __name__ == '__main__':
 	
 	print('STARTING LOOP')
 	while 1:
-		q.connection()
 		asyncore.loop()
