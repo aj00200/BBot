@@ -36,10 +36,11 @@ continuepgm=1
 #needping=1
 
 
-time.sleep(config.sleep_after_join)
-print('STARTING LOOP')
-import q
-asyncore.loop()
-
-while 1:
-	pass
+#time.sleep(config.sleep_after_join) # ...
+if __name__ == '__main__':
+	import q
+	
+	print('STARTING LOOP')
+	while 1:
+		q.connection()
+		asyncore.loop()
