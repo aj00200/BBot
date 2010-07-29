@@ -90,6 +90,5 @@ class connection(asynchat.async_chat,queue_class):
             handler.loop()
     def collect_incoming_data(self,data):
         self.data+=data
-
 queue=connection()
 
