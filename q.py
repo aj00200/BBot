@@ -5,6 +5,7 @@ import config
 import asynchat
 import asyncore
 import socket
+import time
 import api
 import re
 class queue_class():
@@ -52,7 +53,8 @@ class connection(asynchat.async_chat,queue_class):
         if data[:4]==('PING'):
             self.push('PONG %s\r\n'%data[5:])
         if re.search(':*\.* 001 ',data):
-            self.push('PRIVMSG nickserv :identify %s %s>r>n'%(config.username,config.password))
+            self.push('PRIVMSG nickserv :identify %s %s\r\n'%(config.username,config.password))
+            time.sleep(2)
             for each in config.autojoin:
                 self.push('JOIN %s\r\n'%each)
         if data.find('INVITE '+config.mynick+' :#')!=-1:
