@@ -23,6 +23,7 @@ import blockbot
 import statusbot
 import rpgbot
 import globalbot
+import bugbot
 
 bb=blockbot.blockbot()
 tb=trekbot.trekbot()
@@ -37,6 +38,7 @@ continuepgm=1
 
 
 #time.sleep(config.sleep_after_join) # ...
+bugbot=bugbot.bugbot()
 if __name__ == '__main__':
 	import q
 	while 1:
