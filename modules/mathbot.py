@@ -38,9 +38,6 @@ class mathbot():
         if self.ldata.find(':?math help')!=-1:
             q.queue.append((channel,nick+' : +, -, *, /, %, sqrt, pow, ceil, floor, log, asin, acos, atan, atan2, sin, cos, tan'))
         elif self.ldata.find(':?math ')!=-1:
-            if self.ldata.find('**')!=-1:
-                q.queue.append((channel,'Please use pow instead of **'))
-                self.ldata='?math 0'
             self.e=self.ldata[self.ldata.find('?math ')+6:].strip('\r\n')
             self.e=self.e.replace('!pi','3.1415926535897931')
             self.e=self.e.replace('!e',str(math.e))
@@ -53,7 +50,12 @@ class mathbot():
                 self.e=self.e.replace(each,self.invert[each])
             self.e=self.e.replace('//','.0/')
             try:
+                if self.e.find('**')!=-1:
+                    raise Disallowed('**')
                 q.queue.append((channel,str(eval(self.e))))
             except Exception,e:
                 self.e='Error: %s; with arguments %s'%(type(e),e.args)
                 q.queue.append((channel,self.e))
+class Disallowed(Exception):
+    def __init__(self,string):
+        self.args=['%s is not allowed!'%string]

@@ -44,7 +44,7 @@ class connection(asynchat.async_chat,queue_class):
         self.send('USER %s 8 %s :%s\r\n'%(config.mynick,config.network,'BBot the IRC bot')+'NICK %s\r\n'%config.mynick)
     def get_data(self):
         r=self.data
-        self.data=''
+        self.data=u''
         return r
     def found_terminator(self):
         data=self.get_data()
@@ -52,6 +52,7 @@ class connection(asynchat.async_chat,queue_class):
         if data[:4]==('PING'):
             self.push('PONG %s\r\n'%data[5:])
         if re.search(':*\.* 001 ',data):
+            self.push('PRIVMSG nickserv :identify %s %s>r>n'%(config.username,config.password))
             for each in config.autojoin:
                 self.push('JOIN %s\r\n'%each)
         if data.find('INVITE '+config.mynick+' :#')!=-1:
