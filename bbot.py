@@ -21,13 +21,13 @@ import searchbot
 import trekbot
 import blockbot
 import statusbot
-import rpgbot
+#import rpgbot
 import globalbot
 
 bb=blockbot.blockbot()
 tb=trekbot.trekbot()
-rb=rpgbot.rpg()
-handlers=[bb,tb,BBot.bbot(),mathbot.mathbot(),searchbot.searchbot(),statusbot.statusbot(),globalbot.globalbot(),rb]#Run on msg
+#rb=rpgbot.rpg()
+handlers=[bb,tb,BBot.bbot(),mathbot.mathbot(),searchbot.searchbot(),statusbot.statusbot(),globalbot.globalbot()]#Run on msg
 jhandlers=[bb,tb]#Run on Join
 lhandlers=[]#Run every loop
 nhandlers=[bb]
