@@ -35,12 +35,12 @@ class queue_class():
     def go(self,data):
         self.push(data+'\r\n')
 class connection(asynchat.async_chat,queue_class):
-    def __init__(self):
+    def __init__(self,server):
         asynchat.async_chat.__init__(self)
         self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
         self.set_terminator('\r\n')
         self.data=''
-        self.connect((config.network, config.port))
+        self.connect((server, config.port))
     def handle_connect(self):
         self.send('USER %s 8 %s :%s\r\n'%(config.mynick,config.network,'BBot the IRC bot')+'NICK %s\r\n'%config.mynick)
     def get_data(self):
@@ -93,5 +93,10 @@ class connection(asynchat.async_chat,queue_class):
             handler.loop()
     def collect_incoming_data(self,data):
         self.data+=data
-queue=connection()
+
+connections={}
+connections[config.network]=connection(config.network)
+queue=connections[config.network]
+def append(server,data):
+    connections[server].append((data))
 

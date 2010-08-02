@@ -5,8 +5,8 @@ import config
 import thread
 import re
 proxyscan=1
-class blockbot():
-    def __init__(self):
+class blockbot(api.module):
+    def __init__(self,server):
         self.ignore_users_on_su_list=1#Don't kick users if they are on the superusers list
         self.jlist={}
         self.config=open('blockbot-config','r')
@@ -25,6 +25,7 @@ class blockbot():
         self.repeat_1word=4
         self.msglist=[]
         self.lastnot=('BBot',time.time(),'sdkljfls')
+        api.module.__init__(self,server)
     def join(self,nick,channel,ip,user):
         #webchat=(str(blockbotlib.hex2dec('0x'+str(user[1:3])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[3:5])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[5:7])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[7:9]))))
         if channel[1:] not in self.jlist:
@@ -48,7 +49,7 @@ class blockbot():
                     print 'DRONE'
             del self.nm
             if self.scansafe:
-                queue.mode(nick,channel,'+v')
+                self.mode(nick,channel,'+v')
         except:
             print 'PYTHON NMAP CRASH'
     def go(self,nick,data,channel):
@@ -69,16 +70,16 @@ class blockbot():
             elif self.ldata.find(':?rehash')!=-1:
                 self.__init__()
             elif self.ldata.find(':?protect')!=-1:
-                q.queue.mode('',channel,'+mz')
+                self.mode('',channel,'+mz')
             elif self.ldata.find(':?kl')!=-1:
                 if self.ldata.find('?kl ')!=-1:
                     self.t=self.ldata.split('?kl ')[-1][0:-2]
                     self.t=int(self.t)
                     try:
                         for each in range(t):
-                            q.queue.kick(self.jlist[channel[1:]].pop(),channel)
+                            self.kick(self.jlist[channel[1:]].pop(),channel)
                     except:
-                        q.queue.append((nick,'Kicking that many people has caused an error!'))
+                        self.append((nick,'Kicking that many people has caused an error!'))
         elif not self.superuser:
             self.checkforspam(nick,data,channel)
     def checkforspam(self,nick,data,channel):
@@ -90,14 +91,14 @@ class blockbot():
         msg=ldata[ldata.find(' :')+2:]
         for each in self.findlist:
             if re.search(each,ldata):
-                q.queue.kick(nick,channel)
+                self.kick(nick,channel)
         try:
             if self.msglist[0][0]==self.msglist[1][0]==self.msglist[2][0]:
                 if (self.msglist[0][1]-self.msglist[2][1])<self.wait:
-                    q.queue.kick(nick,channel,'No Flooding!')
+                    self.kick(nick,channel,'No Flooding!')
                 if msg.split()>1:
                     if (self.msglist[0][2]==self.msglist[1][2]==self.msglist[2][2]) and (self.msglist[0][1]-self.msglist[1][1]<self.repeat_time):
-                        q.queue.kick(nick,channel,'Please do not repeat!')
+                        self.kick(nick,channel,'Please do not repeat!')
         except IndexError:
             pass
     def notice(self,nick,channel,data):
@@ -106,7 +107,7 @@ class blockbot():
         self.lastnot=(nick,time.time())
         if self.olastnot[0]==self.lastnot[0]:
             if (self.lastnot[1]-self.olastnot[1])<self.wait:
-                q.queue.kick(nick,channel,'Please do not use the notice command so much')
+                self.kick(nick,channel,'Please do not use the notice command so much')
         for each in self.findlist:
             if ldata.find(each)!=-1:
-                q.queue.kick(nick,channel)
+                self.kick(nick,channel)

@@ -24,10 +24,11 @@ import statusbot
 #import rpgbot
 import globalbot
 
-bb=blockbot.blockbot()
+bb=blockbot.blockbot(config.network)
 tb=trekbot.trekbot()
 #rb=rpgbot.rpg()
-handlers=[bb,tb,BBot.bbot(),mathbot.mathbot(),searchbot.searchbot(),statusbot.statusbot(),globalbot.globalbot()]#Run on msg
+handlers=[bb,tb,BBot.bbot(config.network),mathbot.mathbot(),searchbot.searchbot(),statusbot.statusbot(),globalbot.globalbot()]#Run on msg
+
 jhandlers=[bb,tb]#Run on Join
 lhandlers=[]#Run every loop
 nhandlers=[bb]
@@ -35,9 +36,19 @@ codes=[]#wb
 continuepgm=1
 #needping=1
 
+#<<<<<<< HEAD:bbot.py
 
-#time.sleep(config.sleep_after_join) # ...
+##time.sleep(config.sleep_after_join) # ...
 if __name__ == '__main__':
 	import q
 	while 1:
+#=======
+#time.sleep(config.sleep_after_join) # ...
+#if __name__ == '__main__':
+#	import q
+#	
+#	print('STARTING LOOP')
+#	while 1:
+#		q.connection(config.network)
+##>>>>>>> dev:bbot.py
 		asyncore.loop()
