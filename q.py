@@ -8,16 +8,20 @@ import socket
 import time
 import api
 import re
+
+import colorz
 class queue_class():
     def __init__(self):
         self.queue=[]
     def append(self,data):
+        print colorz.encode('PRIVMSG '+data[0]+' :'+data[1],'yellow')
         self.go('PRIVMSG '+data[0]+' :'+data[1])
     def join(self, channel):
         self.go('JOIN '+channel)
     def part(self, channel, message=''):
         self.go('PART %s :%s'%(channel,message))
     def kick(self,nick,channel,message=''):
+        print(colorz.encode('channel: %s nick: %s msg: :%s!'%(channel,nick,message),'green'))
         self.go('KICK %s %s :%s!'%(channel,nick,message))
     def nick(self,nick):
         self.go('NICK %s'%nick)
@@ -98,5 +102,6 @@ connections={}
 connections[config.network]=connection(config.network)
 queue=connections[config.network]
 def append(server,data):
-    connections[server].append((data))
-
+    connections[server].append(data)
+def kick(server,nick,channel,msg=''):
+    connections[server].kick(nick,channel,msg)

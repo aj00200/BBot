@@ -1,4 +1,5 @@
 import q
+import colorz
 def getHost(data):
     host=data[data.find('@')+1:data.find('PRIVMSG')]
     return host
@@ -25,7 +26,8 @@ class module():
     def part(self, channel, message=''):
         q.append(self.__server__,'PART %s :%s'%(channel,message))
     def kick(self,nick,channel,message=''):
-        q.append(self.__server__,'KICK %s %s :%s!'%(channel,nick,message))
+        print colorz.encode('KICK %s %s :%s!'%(channel,nick,message),'red')
+        q.kick(self.__server__,nick,channel,message)
     def nick(self,nick):
         q.append(self.__server__,'NICK %s'%nick)
         bbot.mynick=nick[:]
