@@ -3,6 +3,7 @@ import api
 import time
 import config
 import thread
+import colorz
 import re
 proxyscan=1
 class blockbot(api.module):
@@ -46,12 +47,12 @@ class blockbot(api.module):
                 print lport
                 if 808 in lport or 23 in lport or 110 in lport or 1080 in lport or 29505 in lport or 80 in lport or 8080 in lports or 3246 in lports:
                     self.scansafe=0
-                    print 'DRONE'
+                    print colorz.encode('DRONE','yellow')
             del self.nm
             if self.scansafe:
                 self.mode(nick,channel,'+v')
         except:
-            print 'PYTHON NMAP CRASH'
+            print colorz.encode('PYTHON NMAP CRASH','red')
     def go(self,nick,data,channel):
         self.ldata=data.lower()
         if self.ignore_users_on_su_list:
@@ -60,10 +61,10 @@ class blockbot(api.module):
             if self.ldata.find(':?;')!=-1:
                 self.findlist.append(data.split(':?; ')[-1][0:-2])
             elif self.ldata.find(':?faster')!=-1:
-                print 'FASTER'
+                print(colorz.encode('FASTER','cayn'))
                 self.wait=self.wait/2
             elif self.ldata.find(':?slower')!=-1:
-                print('SLOWER')
+                print(colorz.encode('SLOWER','cayn'))
                 self.wait=self.wait*2
             elif self.ldata.find(':?setspeed ')!=-1:
                 self.wait=float(data.split('?setspeed ')[-1][0:-2])
