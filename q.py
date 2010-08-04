@@ -105,3 +105,5 @@ def append(server,data):
     connections[server].append(data)
 def kick(server,nick,channel,msg=''):
     connections[server].kick(nick,channel,msg)
+def raw(server,data):
+    connections[server].raw(data)
