@@ -114,3 +114,4 @@ class trekbot():
                 queue.mode(nick,channel,'+v')
         except:
             print 'PYTHON NMAP CRASH'
+module=trekbot

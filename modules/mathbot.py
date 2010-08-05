@@ -59,3 +59,4 @@ class mathbot():
 class Disallowed(Exception):
     def __init__(self,string):
         self.args=['%s is not allowed!'%string]
+module=mathbot

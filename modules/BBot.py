@@ -83,3 +83,4 @@ class bbot(api.module):
 			self.q=line.strip('\r\n').split(':::')
 			self.static[self.q[0]]=self.q[1]
 		self.dict.close()
+module=bbot

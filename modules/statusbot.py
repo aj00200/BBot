@@ -25,3 +25,4 @@ class statusbot():
                 del self.statuses[words]
             except:
                 pass
+module=statusbot

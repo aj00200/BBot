@@ -28,3 +28,4 @@ class proxy():
         if channel=='#bbot':
             self.msg2=data[data.find(' :'):]
             self.irc.send('PRIVMSG #bbot :<%s> %s'%(nick,self.msg2+'\r\n')
+module=proxy

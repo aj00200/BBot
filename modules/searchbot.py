@@ -18,3 +18,4 @@ class searchbot():
         elif data.find(':?upb ')!=-1:
             w=data.split(':?upb ')[-1]
             q.queue.append((channel,self.upb%w))
+module=searchbot
