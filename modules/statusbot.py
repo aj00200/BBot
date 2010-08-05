@@ -1,6 +1,6 @@
 import q
 class statusbot():
-    def __init__(self):
+    def __init__(self,server):
         self.statuses={}
     def go(self,nick,data,channel):
         self.ldata=data.lower()

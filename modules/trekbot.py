@@ -1,8 +1,8 @@
 import q
 import api
 import config
-class trekbot():
-    def __init__(self):
+class trekbot(api.module):
+    def __init__(self,server=config.network):
         self.blacklist=[]
         self.blconfig=open('trekbot/blacklist','r').readlines()
         for each in self.blconfig:
@@ -12,6 +12,7 @@ class trekbot():
         for each in self.wlconfig:
             self.whitelist.append(each.strip('\r\n'))
         del self.blconfig,self.wlconfig
+        api.module.__init__(self,server)
     def go(self,nick,data,channel):
         ldata=data.lower()
         self.superuser=api.checkIfSuperUser(data,config.superusers)

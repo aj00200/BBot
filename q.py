@@ -14,7 +14,7 @@ class queue_class():
     def __init__(self):
         self.queue=[]
     def append(self,data):
-        print colorz.encode('PRIVMSG '+data[0]+' :'+data[1],'yellow')
+        print colorz.encode('PRIVMSG '+data[0]+' :'+data[1],'green')
         self.go('PRIVMSG '+data[0]+' :'+data[1])
     def join(self, channel):
         self.go('JOIN '+channel)
@@ -38,6 +38,9 @@ class queue_class():
         self.go(data)
     def go(self,data):
         self.push(data+'\r\n')
+
+    def load_module(self,name):
+        bbot.networks[self.server].append(__import__(name).module(self.server))
 class connection(asynchat.async_chat,queue_class):
     def __init__(self,server):
         asynchat.async_chat.__init__(self)
@@ -45,6 +48,9 @@ class connection(asynchat.async_chat,queue_class):
         self.set_terminator('\r\n')
         self.data=''
         self.connect((server, config.port))
+        self.server=server
+        if not self.server in bbot.networks:
+            bbot.networks[self.server]=[]
     def handle_connect(self):
         self.send('USER %s 8 %s :%s\r\n'%(config.mynick,config.network,'BBot the IRC bot')+'NICK %s\r\n'%config.mynick)
     def get_data(self):
@@ -77,7 +83,7 @@ class connection(asynchat.async_chat,queue_class):
             channel=data.split(' PRIVMSG ')[1]
             channel=channel.split(' :')[0]
             nick=data.split('!')[0][1:]
-            for handler in bbot.handlers:
+            for handler in bbot.networks[self.server]:
                 handler.go(nick,data,channel)
         elif data.find(' JOIN :#')!=-1:
             nick=data.split('!')[0][1:]

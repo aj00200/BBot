@@ -1,6 +1,7 @@
 import q
+import config
 class searchbot():
-    def __init__(self):
+    def __init__(self,server=config.network):
         self.goog='http://www.google.com/search?q=%s'
         self.wiki='http://www.en.wikipedia.org/wiki/%s'
         self.pb='http://www.pastebin.com/%s'

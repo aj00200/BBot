@@ -2,6 +2,8 @@ import q
 import api
 import config
 class globalbot():
+    def __init__(self,server):
+        self.server=server
     def go(self,nick,data,channel):
         if api.checkIfSuperUser(data,config.superusers):
             if data.find('?global ')!=-1:

@@ -28,6 +28,10 @@ class bbot(api.module):
 				del self.static[self.q]
 			elif ldata.find('?writedict')!=-1:
 				self.write_dict()
+			elif ldata.find(':?connect ')!=-1:
+				self.q=ldata[ldata.find(':?connect ')+10:].strip('\r\n')
+				self.append((channel,'Connecting to %s'%self.q))
+				q.connections[self.q]=q.connection(self.q)
 			elif data.find('?py ')!=-1:
 				self.q=data[data.find('?py ')+4:].strip('\r\n')
 				try:

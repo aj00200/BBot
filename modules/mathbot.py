@@ -1,8 +1,9 @@
 import q
 import math
+import config
 class mathbot():
-    def __init__(self):
-
+    def __init__(self,server=config.network):
+        self.server=server
         self.allow={
             ')':'..0..',
             'sqrt(':'..1..',
