@@ -20,22 +20,22 @@ class trekbot(api.module):
             if ldata.find(':?op')!=-1:
                 if ldata.find('?op ')!=-1:
                     nick=ldata[ldata.find('?op')+4:].strip('\r\n')
-                q.queue.mode(nick,channel,'+o')
+                self.mode(nick,channel,'+o')
             if ldata.find(':?deop')!=-1:
                 if ldata.find('?deop ')!=-1:
                     nick=ldata[ldata.find('?deop ')+6:].strip('\r\n')
-                q.queue.mode(nick,channel,'-o')
+                self.mode(nick,channel,'-o')
             elif ldata.find(':?voice')!=-1:
                 if ldata.find('?voice ')!=-1:
                     nick=ldata[ldata.find('?voice ')+7:].strip('\r\n')
-                q.queue.mode(nick,channel,'+v')
+                self.mode(nick,channel,'+v')
             elif ldata.find(':?devoice')!=-1:
                 if ldata.find('?devoice ')!=-1:
                     nick=ldata[ldata.find('?devoice ')+9:].strip('\r\n')
-                q.queue.mode(nick,channel,'-v')
+                self.mode(nick,channel,'-v')
             elif ldata.find(':?kick ')!=-1:
                 name=ldata[ldata.find('?kick ')+6:].strip('\r\n')
-                q.queue.kick(name,channel,'Requested by %s'%nick)
+                self.kick(name,channel,'Requested by %s'%nick)
             elif ldata.find('?rehash')!=-1:
                 self.__init__()
             #Blacklist
@@ -50,9 +50,9 @@ class trekbot(api.module):
                     self.blacklist.pop(self.blacklist.index(name))
                     self.write_blacklist()
                 else:
-                    q.queue.append((nick,'That host is not blacklisted'))
+                    self.append((nick,'That host is not blacklisted'))
             elif ldata.find(':?listbl')!=-1:
-                q.queue.append((nick,str(self.blacklist)))
+                self.append((nick,str(self.blacklist)))
             #Whitelist
             elif ldata.find(':?whitelist ')!=-1:
                 name=data[data.find('?whitelist ')+11:].strip('\r\n')
@@ -65,21 +65,21 @@ class trekbot(api.module):
                     self.whitelist.pop(self.blacklist.index(name))
                     self.write_whitelist()
                 else:
-                    q.queue.append((nick,'That host is not whitelisted'))
+                    self.append((nick,'That host is not whitelisted'))
             elif ldata.find(':?listbl')!=-1:
-                q.queue.append((nick,str(self.blacklist)))
+                self.append((nick,str(self.blacklist)))
             elif ldata.find(':?mode ')!=-1:
-                q.queue.mode('',channel,ldata[ldata.find('?mode ')+6:])
+                self.mode('',channel,ldata[ldata.find('?mode ')+6:])
             elif data.find(':?echo ')!=-1:
-                q.queue.append((channel,data[ldata.find('?echo ')+6:]))
+                self.append((channel,data[ldata.find('?echo ')+6:]))
             elif ldata.find(':?ban ')!=-1:
-                q.queue.mode(data[data.find('?ban ')+5:],channel,'+b')
+                self.mode(data[data.find('?ban ')+5:],channel,'+b')
             elif ldata.find(':?unban ')!=-1:
-                q.queue.mode(data[data.find('?unban ')+7:],channel,'-b')
+                self.mode(data[data.find('?unban ')+7:],channel,'-b')
             elif data.find(':?topic ')!=-1:
-                q.queue.raw('TOPIC %s :%s'%(channel,data[data.find('?topic ')+7:]))
+                self.raw('TOPIC %s :%s'%(channel,data[data.find('?topic ')+7:]))
             elif data.find(':?nick ')!=-1:
-                q.queue.nick(data[data.find('?nick ')+6:])
+                self.nick(data[data.find('?nick ')+6:])
     def write_blacklist(self):
         self.blconfig=open('trekbot/blacklist','w')
         for each in self.blacklist:
@@ -93,9 +93,9 @@ class trekbot(api.module):
             if not ip in self.whitelist:
                 self.scan(ip,channel,nick)
             else:
-                q.queue.mode(nick,channel,'+v')
+                self.mode(nick,channel,'+v')
         else:
-            q.queue.kick(nick,channel,'Your on the blacklist, please message a channel op about getting removed from the list')
+            self.kick(nick,channel,'Your on the blacklist, please message a channel op about getting removed from the list')
     def scan(self,ip,channel,nick):
         self.scansafe=1
         try:
@@ -112,7 +112,7 @@ class trekbot(api.module):
                     print 'DRONE'
             del self.nm
             if self.scansafe:
-                queue.mode(nick,channel,'+v')
+                self.mode(nick,channel,'+v')
         except:
             print 'PYTHON NMAP CRASH'
 module=trekbot

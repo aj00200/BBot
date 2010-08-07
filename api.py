@@ -44,5 +44,4 @@ class module():
         q.raw(self.__server__,data)
     def go(self,nick,data,channel):
         pass
-    def notice(self,nick,data,channel):
-        pass
+

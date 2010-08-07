@@ -55,7 +55,7 @@ class connection(asynchat.async_chat,queue_class):
         self.send('USER %s 8 %s :%s\r\n'%(config.mynick,config.network,'BBot the IRC bot')+'NICK %s\r\n'%config.mynick)
     def get_data(self):
         r=self.data
-        self.data=u''
+        self.data=''
         return r
     def found_terminator(self):
         data=self.get_data()

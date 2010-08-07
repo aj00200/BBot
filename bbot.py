@@ -2,7 +2,7 @@
 import q
 #this bot is licensed under the GNU GPL v3.0
 #http://www.gnu.org/licenses/gpl.html
-version='2.95'
+version='3.0'
 #Scan for open proxies on join? 1=yes,0=no. Requires nmap and python-namp: http://nmap.org  http://xael.org/norman/python/python-nmap/
 
 import config
@@ -24,7 +24,6 @@ import statusbot
 import globalbot
 import debatebot
 
-import pprint
 bb=blockbot.module(config.network)
 tb=trekbot.module(config.network)
 handlers=[bb,tb,BBot.module(config.network),mathbot.module(config.network),debatebot.module(config.network),searchbot.module(config.network),statusbot.module(config.network),globalbot.module(config.network)]#Run on msg
@@ -35,8 +34,6 @@ def add_network(name):
 def load_module(name,server):
 	print colorz.encode('Loading module "%s" for server "%s"'%(name,server),'yellow')
 	try:
-		pprint.pprint(server)
-		print type(server)
 		networks[server].append(eval(name+'.module("%s")'%server))
 	except Exception,e:
 		q.append('irc.fossnet.info',(('#spam','BBot has crashed with error: %s; and args: %s'%(type(e),e.args)))) 
