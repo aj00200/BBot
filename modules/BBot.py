@@ -3,6 +3,7 @@ import api
 import config
 import re
 import thread
+import bbot as BBot
 class bbot(api.module):
 	def __init__(self,server):
 		self.read_dict()
@@ -30,8 +31,12 @@ class bbot(api.module):
 				self.write_dict()
 			elif ldata.find(':?connect ')!=-1:
 				self.q=ldata[ldata.find(':?connect ')+10:].strip('\r\n')
-				self.append((channel,'Connecting to %s'%self.q))
+				self.append((channel,'Connecting to "%s"'%self.q))
+				BBot.add_network(self.q)
 				q.connections[self.q]=q.connection(self.q)
+			elif ldata.find(':?load ')!=-1:
+				self.q=ldata[ldata.find('?load ')+6:].strip('\r\n')
+				BBot.load_module(self.q,self.__server__)
 			elif data.find('?py ')!=-1:
 				self.q=data[data.find('?py ')+4:].strip('\r\n')
 				try:
@@ -43,12 +48,14 @@ class bbot(api.module):
 			self.q=ldata[ldata.find(':'+config.mynick.lower()+': ')+3+len(config.mynick):].strip('\r\n')
 			if self.q in self.static:
 				self.append((channel,self.static[self.q]))
-		if re.search('(what|who|where) (is|was) ',ldata):
+		if re.search('(what|who|where) (is|was|are|am) ',ldata):
 			self.ldata=ldata.replace(' was ',' is ')
 			self.ldata=self.ldata.replace(' a ',' ')
 			self.ldata=self.ldata.replace(' the ',' ')
 			self.ldata=self.ldata.replace(' was ',' ')
 			self.ldata=self.ldata.replace(' an ',' ')
+			self.ldata=self.ldata.replace(' are ',' is ')
+			self.ldata=self.ldata.replace(' am ',' is ')
 			self.q=self.ldata[self.ldata.find(' is ')+4:].strip('?.\r\n:')
 			if self.q in self.static:
 				self.append((channel,nick+': '+self.static[self.q]))

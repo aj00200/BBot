@@ -1,4 +1,5 @@
 import q
+import bbot
 import colorz
 def getHost(data):
     host=data[data.find('@')+1:data.find('PRIVMSG')]
@@ -15,7 +16,8 @@ def pong(data):
         print('PING RECEIVED')
         q.queue.raw('PONG '+data.split()[ 1 ]+'\r\n') #Return the PING to the server
         print('PONGING')
-        
+def add_networkk(server):
+    bbot.add_network(server)
 class module():
     def __init__(self,server):
         self.__server__=server
@@ -40,3 +42,7 @@ class module():
         q.raw(self.__server__,'KLINE %s %s :%s'%(host,str(time),reason))
     def raw(self,data):
         q.raw(self.__server__,data)
+    def go(self,nick,data,channel):
+        pass
+    def notice(self,nick,data,channel):
+        pass
