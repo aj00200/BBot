@@ -30,13 +30,13 @@ class bbot(api.module):
 			elif ldata.find('?writedict')!=-1:
 				self.write_dict()
 			elif ldata.find(':?connect ')!=-1:
-				self.q=ldata[ldata.find(':?connect ')+10:].strip('\r\n')
+				self.q=str(ldata[ldata.find(':?connect ')+10:].strip('\r\n'))
 				self.append((channel,'Connecting to "%s"'%self.q))
 				BBot.add_network(self.q)
 				q.connections[self.q]=q.connection(self.q)
 			elif ldata.find(':?load ')!=-1:
 				self.q=ldata[ldata.find('?load ')+6:].strip('\r\n')
-				BBot.load_module(self.q,self.__server__)
+				BBot.load_module(str(self.q),str(self.__server__))
 			elif data.find('?py ')!=-1:
 				self.q=data[data.find('?py ')+4:].strip('\r\n')
 				try:

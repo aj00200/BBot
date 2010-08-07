@@ -12,7 +12,6 @@ import sys
 import re
 import time
 import colorz
-import thread
 import api#BBot API Functions
 import asyncore
 sys.path.insert(0,'%s/modules'%sys.path[0])
@@ -25,6 +24,7 @@ import statusbot
 import globalbot
 import debatebot
 
+import pprint
 bb=blockbot.module(config.network)
 tb=trekbot.module(config.network)
 handlers=[bb,tb,BBot.module(config.network),mathbot.module(config.network),debatebot.module(config.network),searchbot.module(config.network),statusbot.module(config.network),globalbot.module(config.network)]#Run on msg
@@ -35,7 +35,9 @@ def add_network(name):
 def load_module(name,server):
 	print colorz.encode('Loading module "%s" for server "%s"'%(name,server),'yellow')
 	try:
-		networks[server].append(eval(name+'.module(%s)'%server))
+		pprint.pprint(server)
+		print type(server)
+		networks[server].append(eval(name+'.module("%s")'%server))
 	except Exception,e:
 		q.append('irc.fossnet.info',(('#spam','BBot has crashed with error: %s; and args: %s'%(type(e),e.args)))) 
 jhandlers=[bb,tb]#Run on Join

@@ -1,7 +1,8 @@
 import q
+import api
 import math
 import config
-class mathbot():
+class mathbot(api.module):
     def __init__(self,server=config.network):
         self.server=server
         self.allow={
