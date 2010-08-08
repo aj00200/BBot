@@ -1,8 +1,7 @@
 import q
 import api
-import config
 import re
-import thread
+import config
 import bbot as BBot
 class bbot(api.module):
 	def __init__(self,server):
@@ -80,10 +79,10 @@ class bbot(api.module):
 	def add_factoid(self,query):
 		self.static[query[0].lower()]=query[1]
 	def del_factoid(self,query):
-		if quey in self.static:
+		if query in self.static:
 			del self.static[query]
 	def write_dict(self):
-		self.dict=open('bbot/dict','w')
+ 		self.dict=open('bbot/dict','w')
 		for each in self.static:
 			self.dict.write('%s:::%s\r\n'%(each,self.static[each]))
 		self.dict.close()
@@ -94,4 +93,10 @@ class bbot(api.module):
 			self.q=line.strip('\r\n').split(':::')
 			self.static[self.q[0]]=self.q[1]
 		self.dict.close()
+	def query_dict(self,query):
+		'''
+		Primarily for the unittester
+		'''
+		if query in self.static:
+			return self.static[query]
 module=bbot
