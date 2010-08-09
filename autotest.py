@@ -27,7 +27,13 @@ class test_bbot(unittest.TestCase):
         self.assertEqual(self.bbot.query_dict('hi'),'Hi!')
     def test_main_module(self):
         self.assertEqual(self.bbot.go('aj00200',':aj00200!aj00200@FOSSnet/staff/oper/aj00200 PRIVMSG #bots :?hi','#bots'),None)#Do a quick check to make sure it works
+class test_api(unittest.TestCase):
+    def test_getHost(self):
+        self.assertEqual(api.getHost(':aj00200!aj00200@Fossnet/staff/aj00200 PRIVMSG #bots: hi'),'Fossnet/staff/aj00200','api.getHost() isn\'t returning hosts inside PRIVMSGs')
+        self.assertEqual(api.getHost(':aj00200!aj00200@127.0.0.1 NOTICE #bots :Hi!'),'127.0.0.1','api.getHost() isn\'t returning hosts inside NOTICEs')
+
 from BBot import bbot
+import api
 if __name__ == '__main__':
     unittest.main()
 
