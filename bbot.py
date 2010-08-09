@@ -48,6 +48,7 @@ continuepgm=1
 #<<<<<<< HEAD:bbot.py
 
 ##time.sleep(config.sleep_after_join) # ...
+lastloop=time.time()-10
 if __name__ == '__main__':
 	import q
 	while 1:
@@ -60,5 +61,8 @@ if __name__ == '__main__':
 #	while 1:
 #		q.connection(config.network)
 ##>>>>>>> dev:bbot.py
+		if time.time()-lastloop<5.1:
+			break
 		asyncore.loop()
+		lastloop=time.time()
 		time.sleep(5)
