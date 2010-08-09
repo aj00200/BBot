@@ -92,14 +92,16 @@ class blockbot(api.module):
         msg=ldata[ldata.find(' :')+2:]
         for each in self.findlist:
             if re.search(each,ldata):
-                self.kick(nick,channel)
+                self.mode('*!*@%s'%api.getHost(data),channel,'+b')
+                self.kick(nick,channel,'You have matched a spam string and have been banned from the channel, if you think this is a mistake, contact a channel op about being unbaned')
         try:
             if self.msglist[0][0]==self.msglist[1][0]==self.msglist[2][0]:
                 if (self.msglist[0][1]-self.msglist[2][1])<self.wait:
-                    self.kick(nick,channel,'No Flooding!')
+                    self.kick(nick,channel,'No Flooding! If you keep doing this, you will be banned.')
                 if msg.split()>1:
                     if (self.msglist[0][2]==self.msglist[1][2]==self.msglist[2][2]) and (self.msglist[0][1]-self.msglist[1][1]<self.repeat_time):
                         self.kick(nick,channel,'Please do not repeat!')
+                        self.mode('*!*@%s'%api.getHost(data),channel,'+b')
         except IndexError:
             pass
     def notice(self,nick,channel,data):
