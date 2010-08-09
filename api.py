@@ -3,9 +3,9 @@ import bbot
 import colorz
 def getHost(data):
     return data[data.find('@')+1:data.find(' ')]
-def hostInList(host,list):
+def hostInList(data,list):
     host=getHost(data)
-    for su in superusers:
+    for su in list:
         if host.find(su)!=-1:
             return True
     else:
