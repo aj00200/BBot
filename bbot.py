@@ -2,7 +2,7 @@
 import q
 #this bot is licensed under the GNU GPL v3.0
 #http://www.gnu.org/licenses/gpl.html
-version='3.0'
+version='3.1'
 import config
 #import socket
 import sys
