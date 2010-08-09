@@ -6,6 +6,7 @@ class searchbot(api.module):
         self.wiki='http://www.en.wikipedia.org/wiki/%s'
         self.pb='http://www.pastebin.com/%s'
         self.upb='http://paste.ubuntu.com/%s'
+        self.kb='http://www.aj00200.heliohost.org/kb/item.py?=%s'
         api.module.__init__(self,server)
     def go(self,nick,data,channel):
         if data.find(':?goog ')!=-1:
@@ -20,4 +21,7 @@ class searchbot(api.module):
         elif data.find(':?upb ')!=-1:
             w=data.split(':?upb ')[-1]
             self.append((channel,self.upb%w))
+        elif data.find(':?kb ')!=-1:
+            w=data[data.find(':?kb ')+5:]
+            self.append((channel,self.kb%w))
 module=searchbot

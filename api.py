@@ -11,7 +11,7 @@ def hostInList(data,list):
     else:
         return False
 def checkIfSuperUser(data,superusers):
-    hostInList(data,superusers)
+    return hostInList(data,superusers)
 def pong(data):
     if data.find ('PING')!=-1:
         q.queue.raw('PONG '+data.split()[ 1 ]+'\r\n') #Return the PING to the server
