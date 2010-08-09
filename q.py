@@ -1,6 +1,4 @@
 import bbot
-#if __name__!='__main__':
-#    reload(bbot)
 import config
 import asynchat
 import asyncore

@@ -3,10 +3,7 @@ import q
 #this bot is licensed under the GNU GPL v3.0
 #http://www.gnu.org/licenses/gpl.html
 version='3.0'
-#Scan for open proxies on join? 1=yes,0=no. Requires nmap and python-namp: http://nmap.org  http://xael.org/norman/python/python-nmap/
-
 import config
-
 #import socket
 import sys
 import re
@@ -43,24 +40,10 @@ lhandlers=[]#Run every loop
 nhandlers=[bb]
 codes=[]#wb
 continuepgm=1
-#needping=1
-
-#<<<<<<< HEAD:bbot.py
-
-##time.sleep(config.sleep_after_join) # ...
 lastloop=time.time()-10
 if __name__ == '__main__':
 	import q
 	while 1:
-#=======
-#time.sleep(config.sleep_after_join) # ...
-#if __name__ == '__main__':
-#	import q
-#	
-#	print('STARTING LOOP')
-#	while 1:
-#		q.connection(config.network)
-##>>>>>>> dev:bbot.py
 		if time.time()-lastloop<5.1:
 			break
 		asyncore.loop()
