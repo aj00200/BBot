@@ -61,3 +61,4 @@ if __name__ == '__main__':
 #		q.connection(config.network)
 ##>>>>>>> dev:bbot.py
 		asyncore.loop()
+		time.sleep(5)

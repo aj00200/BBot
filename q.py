@@ -8,7 +8,6 @@ import socket
 import time
 import api
 import re
-
 import colorz
 class queue_class():
     def __init__(self):
@@ -49,6 +48,7 @@ class connection(asynchat.async_chat,queue_class):
         self.data=''
         self.connect((server, config.port))
         self.server=server
+        self.ac_in_buffer_size=config.wait_recv
         if not self.server in bbot.networks:
             bbot.networks[self.server]=[]
     def handle_connect(self):
@@ -97,10 +97,10 @@ class connection(asynchat.async_chat,queue_class):
             code=data.split()[1]
             for each in bbot.codes:
                 each.code(code,data)
-        if data.strip('\r\n')=='':
-            continuepgm=0
         for handler in bbot.lhandlers:
             handler.loop()
+        if data.find(' KILL ')!=-1:
+            raise die('BBot has been killed')
     def collect_incoming_data(self,data):
         self.data+=data
 
@@ -113,3 +113,8 @@ def kick(server,nick,channel,msg=''):
     connections[server].kick(nick,channel,msg)
 def raw(server,data):
     connections[server].raw(data)
+
+#===Errors===
+class die(Exception):
+    def __init__(self,error):
+        self.args=[error]
