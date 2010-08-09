@@ -1,8 +1,10 @@
 import q
+import api
 import math
-class mathbot():
-    def __init__(self):
-
+import config
+class mathbot(api.module):
+    def __init__(self,server=config.network):
+        self.server=server
         self.allow={
             ')':'..0..',
             'sqrt(':'..1..',
@@ -33,10 +35,11 @@ class mathbot():
             '..11..':'math.cos(',
             '..12..':'math.tan('
             }
+        api.module.__init__(self,server)
     def go(self,nick,data,channel):
         self.ldata=data.lower()
         if self.ldata.find(':?math help')!=-1:
-            q.queue.append((channel,nick+' : +, -, *, /, %, sqrt, pow, ceil, floor, log, asin, acos, atan, atan2, sin, cos, tan'))
+            self.append((channel,nick+' : +, -, *, /, %, sqrt, pow, ceil, floor, log, asin, acos, atan, atan2, sin, cos, tan'))
         elif self.ldata.find(':?math ')!=-1:
             self.e=self.ldata[self.ldata.find('?math ')+6:].strip('\r\n')
             self.e=self.e.replace('!pi','3.1415926535897931')
@@ -52,10 +55,11 @@ class mathbot():
             try:
                 if self.e.find('**')!=-1:
                     raise Disallowed('**')
-                q.queue.append((channel,str(eval(self.e))))
+                self.append((channel,str(eval(self.e))))
             except Exception,e:
                 self.e='Error: %s; with arguments %s'%(type(e),e.args)
-                q.queue.append((channel,self.e))
+                self.append((channel,self.e))
 class Disallowed(Exception):
     def __init__(self,string):
         self.args=['%s is not allowed!'%string]
+module=mathbot

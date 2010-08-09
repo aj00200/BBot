@@ -8,16 +8,19 @@ import socket
 import time
 import api
 import re
+import colorz
 class queue_class():
     def __init__(self):
         self.queue=[]
     def append(self,data):
+        print colorz.encode('PRIVMSG '+data[0]+' :'+data[1],'green')
         self.go('PRIVMSG '+data[0]+' :'+data[1])
     def join(self, channel):
         self.go('JOIN '+channel)
     def part(self, channel, message=''):
         self.go('PART %s :%s'%(channel,message))
     def kick(self,nick,channel,message=''):
+        print(colorz.encode('channel: %s nick: %s msg: :%s!'%(channel,nick,message),'green'))
         self.go('KICK %s %s :%s!'%(channel,nick,message))
     def nick(self,nick):
         self.go('NICK %s'%nick)
@@ -34,6 +37,9 @@ class queue_class():
         self.go(data)
     def go(self,data):
         self.push(data+'\r\n')
+
+    def load_module(self,name):
+        bbot.networks[self.server].append(__import__(name).module(self.server))
 class connection(asynchat.async_chat,queue_class):
     def __init__(self,server):
         asynchat.async_chat.__init__(self)
@@ -41,11 +47,15 @@ class connection(asynchat.async_chat,queue_class):
         self.set_terminator('\r\n')
         self.data=''
         self.connect((server, config.port))
+        self.server=server
+        self.ac_in_buffer_size=config.wait_recv
+        if not self.server in bbot.networks:
+            bbot.networks[self.server]=[]
     def handle_connect(self):
         self.send('USER %s 8 %s :%s\r\n'%(config.mynick,config.network,'BBot the IRC bot')+'NICK %s\r\n'%config.mynick)
     def get_data(self):
         r=self.data
-        self.data=u''
+        self.data=''
         return r
     def found_terminator(self):
         data=self.get_data()
@@ -73,7 +83,7 @@ class connection(asynchat.async_chat,queue_class):
             channel=data.split(' PRIVMSG ')[1]
             channel=channel.split(' :')[0]
             nick=data.split('!')[0][1:]
-            for handler in bbot.handlers:
+            for handler in bbot.networks[self.server]:
                 handler.go(nick,data,channel)
         elif data.find(' JOIN :#')!=-1:
             nick=data.split('!')[0][1:]
@@ -87,10 +97,10 @@ class connection(asynchat.async_chat,queue_class):
             code=data.split()[1]
             for each in bbot.codes:
                 each.code(code,data)
-        if data.strip('\r\n')=='':
-            continuepgm=0
         for handler in bbot.lhandlers:
             handler.loop()
+        if data.find(' KILL ')!=-1:
+            raise die('BBot has been killed')
     def collect_incoming_data(self,data):
         self.data+=data
 
@@ -98,5 +108,13 @@ connections={}
 connections[config.network]=connection(config.network)
 queue=connections[config.network]
 def append(server,data):
-    connections[server].append((data))
+    connections[server].append(data)
+def kick(server,nick,channel,msg=''):
+    connections[server].kick(nick,channel,msg)
+def raw(server,data):
+    connections[server].raw(data)
 
+#===Errors===
+class die(Exception):
+    def __init__(self,error):
+        self.args=[error]

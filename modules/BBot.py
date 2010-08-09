@@ -1,8 +1,8 @@
 import q
 import api
-import config
 import re
-import thread
+import config
+import bbot as BBot
 class bbot(api.module):
 	def __init__(self,server):
 		self.read_dict()
@@ -28,6 +28,14 @@ class bbot(api.module):
 				del self.static[self.q]
 			elif ldata.find('?writedict')!=-1:
 				self.write_dict()
+			elif ldata.find(':?connect ')!=-1:
+				self.q=str(ldata[ldata.find(':?connect ')+10:].strip('\r\n'))
+				self.append((channel,'Connecting to "%s"'%self.q))
+				BBot.add_network(self.q)
+				q.connections[self.q]=q.connection(self.q)
+			elif ldata.find(':?load ')!=-1:
+				self.q=ldata[ldata.find('?load ')+6:].strip('\r\n')
+				BBot.load_module(str(self.q),str(self.__server__))
 			elif data.find('?py ')!=-1:
 				self.q=data[data.find('?py ')+4:].strip('\r\n')
 				try:
@@ -39,12 +47,14 @@ class bbot(api.module):
 			self.q=ldata[ldata.find(':'+config.mynick.lower()+': ')+3+len(config.mynick):].strip('\r\n')
 			if self.q in self.static:
 				self.append((channel,self.static[self.q]))
-		if re.search('(what|who|where) (is|was) ',ldata):
+		if re.search('(what|who|where) (is|was|are|am) ',ldata):
 			self.ldata=ldata.replace(' was ',' is ')
 			self.ldata=self.ldata.replace(' a ',' ')
 			self.ldata=self.ldata.replace(' the ',' ')
 			self.ldata=self.ldata.replace(' was ',' ')
 			self.ldata=self.ldata.replace(' an ',' ')
+			self.ldata=self.ldata.replace(' are ',' is ')
+			self.ldata=self.ldata.replace(' am ',' is ')
 			self.q=self.ldata[self.ldata.find(' is ')+4:].strip('?.\r\n:')
 			if self.q in self.static:
 				self.append((channel,nick+': '+self.static[self.q]))
@@ -69,10 +79,10 @@ class bbot(api.module):
 	def add_factoid(self,query):
 		self.static[query[0].lower()]=query[1]
 	def del_factoid(self,query):
-		if quey in self.static:
+		if query in self.static:
 			del self.static[query]
 	def write_dict(self):
-		self.dict=open('bbot/dict','w')
+ 		self.dict=open('bbot/dict','w')
 		for each in self.static:
 			self.dict.write('%s:::%s\r\n'%(each,self.static[each]))
 		self.dict.close()
@@ -83,3 +93,10 @@ class bbot(api.module):
 			self.q=line.strip('\r\n').split(':::')
 			self.static[self.q[0]]=self.q[1]
 		self.dict.close()
+	def query_dict(self,query):
+		'''
+		Primarily for the unittester
+		'''
+		if query in self.static:
+			return self.static[query]
+module=bbot

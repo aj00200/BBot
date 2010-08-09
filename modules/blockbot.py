@@ -112,3 +112,4 @@ class blockbot(api.module):
         for each in self.findlist:
             if ldata.find(each)!=-1:
                 self.kick(nick,channel)
+module=blockbot

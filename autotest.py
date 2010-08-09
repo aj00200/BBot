@@ -1,42 +1,33 @@
 #! /usr/bin/python
+ret_val=' '
 import sys
 import unittest
-import config
-import socket
-import thread
-sys.path.insert(0,sys.path[0]+'/unittesting/')
-print sys.path
+sys.path.insert(1,sys.path[0]+'/modules')
+sys.path.insert(0,sys.path[0]+'/unittests')
 import q
-sys.path.insert(1,sys.path[1]+'/modules/')
-print sys.path
-import BBot
+import bbot
 
-#import rpgbot
-#import statusbot
-class TestBBot(unittest.TestCase):
+class test_bbot(unittest.TestCase):
     def setUp(self):
-        self.b=BBot.bbot()
-    def testHi(self):
-        self.b.go('aj00200',':aj002!aj00200@FOSSnet/developer/aj00200 PRIVMSG #bots :?hi','#bots')
-        self.assertEqual('PRIVMSG #bots :aj00200: Hi',q.queue.pop())
-        self.b.go('aj00200','aj00200!aj00200@FOSSnet/developer/aj00200 PRIVMSG #bots :?ping','#bots')
-        self.assertEqual('PRIVMSG #bots :aj00200: pong',q.queue.pop(),'ping:::pong seems to be missing or incorrect in bbot/dict.  Please add it again.')
-class TestStatusBot(unittest.TestCase):
-    def setUp(self):
-        self.s=statusbot.statusbot()
-    def test_status(self):
-        self.s.go('aj00200','aj00200!aj00200@FOSSnet/developer/aj00200 PRIVMSG #bots :?status Hi','#bots')
-        self.s.go('aj00200','aj00200!aj00200@FOSSnet/developer/aj00200 PRIVMSG #bots :?whereis AJ00200','#bots')
-        self.assertEqual(1,q.queue.get_length(),'?whereis isn\'t appending to queue')
-        self.assertEqual('PRIVMSG #bots :aj00200: aj00200 is: Hi',q.queue.pop(),'All nick cases should be accepted for ?whereis')
-class TestRpg(unittest.TestCase):
-    def setUp(self):
-        self.rpg=rpgbot.rpg()
-    def test_players(self):
-        self.rpg.go('aj00200',':aj00200!aj00200@FOSSnet/developer/aj00200 PRIVMSG #rpg :?players','#rpg')
-        self.assertEqual('PRIVMSG #rpg :0',q.queue.pop())
-    def test_loop(self):
-        self.rpg.loop()
+        self.bbot=bbot('127.0.0.1')
+    def test_read_dict(self):
+        self.assertEqual(self.bbot.read_dict(),None)
+    def test_add_factoid(self):
+        self.bbot.add_factoid(('abcdefg','gfedcba'))
+        self.assertEqual(self.bbot.query_dict('abcdefg'),'gfedcba')
+    def test_del_factoid(self):
+        self.bbot.add_factoid(('abc','abc'))
+        self.bbot.del_factoid('abc')
+        self.assertEqual(self.bbot.query_dict('abc'),None)
+    def test_io(self):
+        self.bbot.add_factoid(('hi','Hi!'))
+        self.bbot.write_dict()
+        self.bbot.del_factoid('hi')
+        self.bbot.read_dict()
+        self.assertEqual(self.bbot.query_dict('hi'),'Hi!')
+    def test_main_module(self):
+        self.assertEqual(self.bbot.go('aj00200',':aj00200!aj00200@FOSSnet/staff/oper/aj00200 PRIVMSG #bots :?hi','#bots'),None)#Do a quick check to make sure it works
+from BBot import bbot
 if __name__ == '__main__':
     unittest.main()
 
