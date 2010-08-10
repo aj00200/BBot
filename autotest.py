@@ -31,16 +31,9 @@ class test_api(unittest.TestCase):
     def test_getHost(self):
         self.assertEqual(api.getHost(':aj00200!aj00200@Fossnet/staff/aj00200 PRIVMSG #bots: hi'),'Fossnet/staff/aj00200','api.getHost() isn\'t returning hosts inside PRIVMSGs')
         self.assertEqual(api.getHost(':aj00200!aj00200@127.0.0.1 NOTICE #bots :Hi!'),'127.0.0.1','api.getHost() isn\'t returning hosts inside NOTICEs')
-    class test_searchbot(unittest.TestCase):
-        def __init__(self):
-            self.template=':aj00200!aj00200@Fossnet/staff/aj00200 PRIVMSG #bots :%s'
-            self.search_queries=['?goog test','?wiki test','?pb 1234','?upb 1234','?kb 0']
-        def test_quick_all_searches(self):
-            for each in self.search_queries:
-                searchbot.go('aj00200',self.template%each,'#bots')
+
 from BBot import bbot
 import api
-import searchbot
 if __name__ == '__main__':
     unittest.main()
 
