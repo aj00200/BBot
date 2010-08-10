@@ -57,9 +57,28 @@ class mathbot(api.module):
                     raise Disallowed('**')
                 self.append((channel,str(eval(self.e))))
             except Exception,e:
-                self.e='Error: %s; with arguments %s'%(type(e),e.args)
+                self.report_error(channel,e)
                 self.append((channel,self.e))
+        elif self.ldata.find(':?hex ')!=-1:
+            try:
+                self.e=self.ldata[self.ldata.find(':?hex ')+6:]
+                self.append((channel,str(hex2dec(self.e))))
+            except Exception,e:
+                self.report_error(channel,e)
+        elif self.ldata.find(':?dec ')!=-1:
+            try:
+                self.e=int(self.ldata[self.ldata.find(':?dec ')+6:])
+                self.append((channel,str(dec2hex(self.e))))
+            except Exception,e:
+                self.report_error(channel,e)
+    def report_error(self,channel,e):
+        self.append((channel,'Error %s; with arguments %s'%(type(e),e.args)))
 class Disallowed(Exception):
     def __init__(self,string):
         self.args=['%s is not allowed!'%string]
+#===Custom Functions===
+def hex2dec(hex):
+    return int(hex,16)
+def dec2hex(dec):
+    return '%X'%dec
 module=mathbot
