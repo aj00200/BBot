@@ -97,7 +97,7 @@ class bbot(api.module):
 				if words.lower().find(config.mynick.lower())!=-1 or words.lower()=='aj00200':
 					words=nick
 				self.append((channel,'\x01ACTION kicks %s\x01'%words))
-			elif data.find(':?version'):
+			elif data.find(':?version')!=-1:
 				self.append((channel,'I am version %s.'%BBot.version))
 	def add_factoid(self,query):
 		self.static[query[0].lower()]=query[1]
