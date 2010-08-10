@@ -1,7 +1,9 @@
 import q
-class statusbot():
+import api
+class statusbot(api.module):
     def __init__(self,server):
         self.statuses={}
+        api.module.__init__(self,server)
     def go(self,nick,data,channel):
         self.ldata=data.lower()
         if data.find(':?status ')!=-1:

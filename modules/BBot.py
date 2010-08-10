@@ -24,14 +24,14 @@ class bbot(api.module):
 			elif ldata.find('leave')!=-1:
 				words=ldata.split('leave ')
 				self.raw('PART %s' % words)
-			elif data.find('?add ')!=-1:
+			elif data.find(':?add ')!=-1:
 				self.q=data[ldata.find('?add ')+5:].strip('\r\n')
 				self.q=self.q.split(':::')
 				self.add_factoid(self.q)
-			elif data.find('?del ')!=-1:
+			elif data.find(':?del ')!=-1:
 				self.q=data[data.find('?del ')+5:].strip('\r\n')
 				del self.static[self.q]
-			elif ldata.find('?writedict')!=-1:
+			elif ldata.find(':?writedict')!=-1:
 				self.write_dict()
 			elif ldata.find(':?connect ')!=-1:
 				self.q=str(ldata[ldata.find(':?connect ')+10:].strip('\r\n'))
@@ -41,7 +41,7 @@ class bbot(api.module):
 			elif ldata.find(':?load ')!=-1:
 				self.q=ldata[ldata.find('?load ')+6:].strip('\r\n')
 				BBot.load_module(str(self.q),str(self.__server__))
-			elif data.find('?py ')!=-1:
+			elif data.find(':?py ')!=-1:
 				self.q=data[data.find('?py ')+4:].strip('\r\n')
 				try:
 					ret=str(eval(self.q))
