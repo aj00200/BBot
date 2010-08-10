@@ -15,7 +15,6 @@ sys.path.insert(0,'%s/modules'%sys.path[0])
 import BBot
 import proxy
 import mathbot
-import searchbot
 import trekbot
 import blockbot
 import statusbot
@@ -24,7 +23,7 @@ import debatebot
 
 bb=blockbot.module(config.network)
 tb=trekbot.module(config.network)
-handlers=[bb,tb,BBot.module(config.network),proxy.module(config.network),mathbot.module(config.network),debatebot.module(config.network),searchbot.module(config.network),statusbot.module(config.network),globalbot.module(config.network)]#Run on msg
+handlers=[bb,tb,BBot.module(config.network),proxy.module(config.network),mathbot.module(config.network),debatebot.module(config.network),statusbot.module(config.network),globalbot.module(config.network)]#Run on msg
 networks={config.network: handlers}
 def add_network(name):
 	print colorz.encode('Adding Network "%s"'%name,'yellow')

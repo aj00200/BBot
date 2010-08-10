@@ -7,6 +7,11 @@ class bbot(api.module):
 	def __init__(self,server):
 		self.read_dict()
 		self.q=''
+		self.goog='http://www.google.com/search?q=%s'
+		self.wiki='http://www.en.wikipedia.org/wiki/%s'
+		self.pb='http://www.pastebin.com/%s'
+		self.upb='http://paste.ubuntu.com/%s'
+		self.kb='http://www.kb.aj00200.heliohost.org/index.py?q=%s'
 		api.module.__init__(self,server)
 	#database=sqlite3.connect('newdatabase.sql')
 	def go(self,nick,data,channel):
@@ -59,6 +64,22 @@ class bbot(api.module):
 			if self.q in self.static:
 				self.append((channel,nick+': '+self.static[self.q]))
 		if data.find(':?')!=-1:
+			if data.find(':?goog ')!=-1:
+				w=data.split(':?goog ')[-1].replace(' ','+')
+				self.append((channel,self.goog%w))
+			elif data.find(':?wiki ')!=-1:
+				w=data.split(':?wiki ')[-1].replace(' ','_')
+				self.append((channel,self.wiki%w))
+			elif data.find(':?pb ')!=-1:
+				w=data.split(':?pb ')[-1]
+				self.append((channel,self.pb%w))
+			elif data.find(':?upb ')!=-1:
+				w=data.split(':?upb ')[-1]
+				self.append((channel,self.upb%w))
+			elif data.find(':?kb ')!=-1:
+				w=data[data.find(':?kb ')+5:]
+				self.append((channel,self.kb%w))
+
 			self.q=ldata[data.find(':?')+2:].strip('\r\n')
 			if ' | ' in self.q:
 				nick=self.q.split(' | ')
@@ -82,7 +103,7 @@ class bbot(api.module):
 		if query in self.static:
 			del self.static[query]
 	def write_dict(self):
- 		self.dict=open('bbot/dict','w')
+		self.dict=open('bbot/dict','w')
 		for each in self.static:
 			self.dict.write('%s:::%s\r\n'%(each,self.static[each]))
 		self.dict.close()
