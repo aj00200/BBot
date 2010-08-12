@@ -59,7 +59,7 @@ class blockbot(api.module):
             self.superuser=api.checkIfSuperUser(data,config.superusers)
         if self.superuser:
             if self.ldata.find(':?;')!=-1:
-                self.findlist.append(data.split(':?; ')[-1][0:-2])
+                self.findlist.append(data[data.find(':?; ')+4:].lower())
             elif self.ldata.find(':?faster')!=-1:
                 print(colorz.encode('FASTER','cayn'))
                 self.wait=self.wait/2
@@ -69,7 +69,7 @@ class blockbot(api.module):
             elif self.ldata.find(':?setspeed ')!=-1:
                 self.wait=float(data.split('?setspeed ')[-1][0:-2])
             elif self.ldata.find(':?rehash')!=-1:
-                self.__init__()
+                self.__init__(self.__server__)
             elif self.ldata.find(':?protect')!=-1:
                 self.mode('',channel,'+mz')
             elif self.ldata.find(':?kl')!=-1:

@@ -22,3 +22,7 @@ cline=config.readline()
 wait_recv=int(cline[cline.find(' '):].strip('\r\n'))
 cline=config.readline()
 cmd_char=cline[cline.find(' '):].strip('\r\n')
+cline=config.readline()
+error_chan=cline[cline.find(' '):].strip('\r\n')
+
+config.close()

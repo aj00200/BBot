@@ -8,3 +8,4 @@ super-user: YOUR-HOST-HERE SECOND-HOST-HERE #keep-this-comment-here
 wait-after-identify: 3
 read-wait: 1024
 command-char: $
+error-channel: #bots

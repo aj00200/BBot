@@ -82,7 +82,10 @@ class connection(asynchat.async_chat,queue_class):
             channel=channel.split(' :')[0]
             nick=data.split('!')[0][1:]
             for handler in bbot.networks[self.server]:
-                handler.go(nick,data,channel)
+                try:
+                    handler.go(nick,data,channel)
+                except Exception,e:
+                    append(config.network,(config.error_chan,'Error: %s; With args: %s;'%(type(e),e.args)))
         elif data.find(' JOIN :#')!=-1:
             nick=data.split('!')[0][1:]
             if nick.find('#')==-1:
