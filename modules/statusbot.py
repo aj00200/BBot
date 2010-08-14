@@ -1,5 +1,7 @@
 import q
 import api
+import time
+import thread
 class statusbot(api.module):
     def __init__(self,server):
         self.statuses={}
@@ -21,10 +23,22 @@ class statusbot(api.module):
                 self.append((nick,'Please don\'t abuse the bot. This is loged!'))
             else:
                 self.append((words,'Just letting you know, %s is looking for you in %s' % (nick,channel)))
-        elif data.find(':?reset')!=-1:
-            words=data.split(':?reset')[-1].strip('\r\n')
-            try:
-                del self.statuses[words]
-            except:
-                pass
+        if api.checkIfSuperUser(data):
+            if data.find(':?reset')!=-1:
+                words=data.split(':?reset ')[-1].strip('\r\n')
+                try:
+                    del self.statuses[words]
+                except:
+                    pass
+            elif data.find(':?timer ')!=-1:
+                words=data[data.find(':?timer ')+8:]
+                words=words.split('m ',1)
+                thread.start_new_thread(self.timer,(words[0],'PRIVMSG %s :%s'%(channel,words[1])))
+            elif data.find('?rawtimer ')!=-1:
+                words=data[data.find(':?rawtimer ')+10:]
+                words=words.split('m ',1)
+                thread.start_new_thread(self.timer,(words[0],words[1]))
+    def timer(self,wait,message):
+        time.sleep(float(wait)*60)
+        self.raw(message)
 module=statusbot

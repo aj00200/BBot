@@ -1,5 +1,6 @@
 import q
 import bbot
+import config
 import colorz
 def getHost(data):
     return data[data.find('@')+1:data.find(' ')]
@@ -10,7 +11,7 @@ def hostInList(data,list):
             return True
     else:
         return False
-def checkIfSuperUser(data,superusers):
+def checkIfSuperUser(data,superusers=config.superusers):
     return hostInList(data,superusers)
 def pong(data):
     if data.find ('PING')!=-1:

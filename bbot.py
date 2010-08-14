@@ -33,7 +33,7 @@ def load_module(name,server):
 	try:
 		networks[server].append(eval(name+'.module("%s")'%server))
 	except Exception,e:
-		q.append('irc.fossnet.info',(('#spam','BBot has crashed with error: %s; and args: %s'%(type(e),e.args)))) 
+		q.append(config.network,((config.error_chan,'BBot has crashed with error: %s; and args: %s'%(type(e),e.args)))) 
 jhandlers=[bb,tb]#Run on Join
 lhandlers=[]#Run every loop
 nhandlers=[bb]

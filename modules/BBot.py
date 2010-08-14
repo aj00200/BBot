@@ -3,6 +3,7 @@ import api
 import re
 import config
 import bbot as BBot
+dict={}
 class bbot(api.module):
 	def __init__(self,server):
 		self.read_dict()
@@ -13,7 +14,6 @@ class bbot(api.module):
 		self.upb='http://paste.ubuntu.com/%s'
 		self.kb='http://www.kb.aj00200.heliohost.org/index.py?q=%s'
 		api.module.__init__(self,server)
-	#database=sqlite3.connect('newdatabase.sql')
 	def go(self,nick,data,channel):
 		if channel.find('#')==-1:#Detect if the message is a PM to the Bot
 			channel=nick.lower()
@@ -21,26 +21,33 @@ class bbot(api.module):
 		if api.checkIfSuperUser(data,config.superusers):
 			if ldata.find('raw ')!=-1:
 				self.raw(data.split('raw ')[-1])
+				return 0 #Just for speed
 			elif ldata.find('leave')!=-1:
 				words=ldata.split('leave ')
 				self.raw('PART %s' % words)
+				return 0
 			elif data.find(':?add ')!=-1:
 				self.q=data[ldata.find('?add ')+5:].strip('\r\n')
 				self.q=self.q.split(':::')
 				self.add_factoid(self.q)
+				return 0
 			elif data.find(':?del ')!=-1:
 				self.q=data[data.find('?del ')+5:].strip('\r\n')
-				del self.static[self.q]
+				self.del_factoid(self.q)
+				return 0
 			elif ldata.find(':?writedict')!=-1:
 				self.write_dict()
+				return 0
 			elif ldata.find(':?connect ')!=-1:
 				self.q=str(ldata[ldata.find(':?connect ')+10:].strip('\r\n'))
 				self.append((channel,'Connecting to "%s"'%self.q))
 				BBot.add_network(self.q)
 				q.connections[self.q]=q.connection(self.q)
+				return 0
 			elif ldata.find(':?load ')!=-1:
 				self.q=ldata[ldata.find('?load ')+6:].strip('\r\n')
 				BBot.load_module(str(self.q),str(self.__server__))
+				return 0
 			elif data.find(':?py ')!=-1:
 				self.q=data[data.find('?py ')+4:].strip('\r\n')
 				try:
@@ -48,10 +55,12 @@ class bbot(api.module):
 				except Exception,e:
 					ret='Error: %s; Args: %s'%(type(e),e.args)
 				self.append((channel,ret))
+				return 0
 		if ldata.find(':'+config.mynick.lower()+': ')!=-1:
 			self.q=ldata[ldata.find(':'+config.mynick.lower()+': ')+3+len(config.mynick):].strip('\r\n')
-			if self.q in self.static:
-				self.append((channel,self.static[self.q]))
+			if self.q in dict:
+				self.append((channel,dict[self.q]))
+			return 0
 		if re.search('(what|who|where) (is|was|are|am) ',ldata):
 			self.ldata=ldata.replace(' was ',' is ')
 			self.ldata=self.ldata.replace(' a ',' ')
@@ -61,25 +70,30 @@ class bbot(api.module):
 			self.ldata=self.ldata.replace(' are ',' is ')
 			self.ldata=self.ldata.replace(' am ',' is ')
 			self.q=self.ldata[self.ldata.find(' is ')+4:].strip('?.\r\n:')
-			if self.q in self.static:
-				self.append((channel,nick+': '+self.static[self.q]))
+			if self.q in dict:
+				self.append((channel,nick+': '+dict[self.q]))
+			return 0
 		if data.find(':?')!=-1:
 			if data.find(':?goog ')!=-1:
 				w=data.split(':?goog ')[-1].replace(' ','+')
 				self.append((channel,self.goog%w))
+				return 0
 			elif data.find(':?wiki ')!=-1:
 				w=data.split(':?wiki ')[-1].replace(' ','_')
 				self.append((channel,self.wiki%w))
+				return 0
 			elif data.find(':?pb ')!=-1:
 				w=data.split(':?pb ')[-1]
 				self.append((channel,self.pb%w))
+				return 0
 			elif data.find(':?upb ')!=-1:
 				w=data.split(':?upb ')[-1]
 				self.append((channel,self.upb%w))
+				return 0
 			elif data.find(':?kb ')!=-1:
 				w=data[data.find(':?kb ')+5:]
 				self.append((channel,self.kb%w))
-
+				return 0
 			self.q=ldata[data.find(':?')+2:].strip('\r\n')
 			if ' | ' in self.q:
 				nick=self.q.split(' | ')
@@ -90,36 +104,42 @@ class bbot(api.module):
 				self.q=self.nick[0]
 				channel=self.nick[1]
 				nick='From %s'%nick
-			if self.q in self.static:
-				self.append((channel,nick+': '+self.static[self.q]))
+			if self.q in dict:
+				self.append((channel,nick+': '+dict[self.q]))
+				return 0
 			elif data.find(':?hit ')!=-1:
-				words=data.split(':?hit ')[-1].strip('\r\n')
+				words=data[data.find(':?hit ')+6:]
 				if words.lower().find(config.mynick.lower())!=-1 or words.lower()=='aj00200':
 					words=nick
 				self.append((channel,'\x01ACTION kicks %s\x01'%words))
+				return 0
 			elif data.find(':?version')!=-1:
 				self.append((channel,'I am version %s.'%BBot.version))
+				return 0
 	def add_factoid(self,query):
-		self.static[query[0].lower()]=query[1]
+		dict[query[0].lower()]=query[1]
 	def del_factoid(self,query):
-		if query in self.static:
-			del self.static[query]
+		if query in dict:
+			del dict[query]
 	def write_dict(self):
 		self.dict=open('bbot/dict','w')
-		for each in self.static:
-			self.dict.write('%s:::%s\r\n'%(each,self.static[each]))
+		for each in dict:
+			self.dict.write('%s:::%s\r\n'%(each,dict[each]))
 		self.dict.close()
+	def clear_dict(self):
+		dict={}
 	def read_dict(self):
-		self.static={}
+ 		self.clear_dict()
 		self.dict=open('bbot/dict','r')
 		for line in self.dict.readlines():
 			self.q=line.strip('\r\n').split(':::')
-			self.static[self.q[0]]=self.q[1]
+			dict[self.q[0]]=self.q[1]
 		self.dict.close()
 	def query_dict(self,query):
 		'''
 		Primarily for the unittester
 		'''
-		if query in self.static:
-			return self.static[query]
+		if query in dict:
+			return dict[query]
 module=bbot
+commands=['<query>','wiki','pb','upn','kb','goog','hit']
