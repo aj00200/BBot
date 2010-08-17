@@ -56,6 +56,10 @@ class bbot(api.module):
 					ret='Error: %s; Args: %s'%(type(e),e.args)
 				self.append((channel,ret))
 				return 0
+			elif data.find(':?reload ')!=-1:
+				self.q=data[data.find(':?reload ')+9:].strip('\r\n')
+				BBot.reload_module(self.q,str(self.__server__))
+				return 0
 		if ldata.find(':'+config.mynick.lower()+': ')!=-1:
 			self.q=ldata[ldata.find(':'+config.mynick.lower()+': ')+3+len(config.mynick):].strip('\r\n')
 			if self.q in dict:

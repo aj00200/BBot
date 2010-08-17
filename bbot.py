@@ -35,6 +35,15 @@ def load_module(name,server):
 		networks[server].append(__import__(name).module(server))
 	except Exception,e:
 		q.append(config.network,((config.error_chan,'BBot has crashed with error: %s; and args: %s'%(type(e),e.args)))) 
+def reload_module(name,server):
+	try:
+		for each in networks[server]:
+			if isinstance(each,eval(name+'.module')):
+				networks[server].pop(networks[server].index(each))
+		reload(eval(name))
+		networks[server].append(eval(name+'.module(%s)'%config.network))
+	except Exception,e:
+		q.append(config.network,((config.error_chan,'BBot has crashed with error: %s; args %s'%(type(e),e.args))))
 jhandlers=[bb,tb]#Run on Join
 lhandlers=[]#Run every loop
 nhandlers=[bb]
