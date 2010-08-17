@@ -11,6 +11,7 @@ import time
 import colorz
 import api#BBot API Functions
 import asyncore
+sys.path.insert(1,'%s/libs'%sys.path[0])
 sys.path.insert(0,'%s/modules'%sys.path[0])
 import BBot
 import proxy

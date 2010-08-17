@@ -1,7 +1,9 @@
 import q
+import re
 import api
 import math
 import config
+import mathwiz as geo
 class mathbot(api.module):
     def __init__(self,server=config.network):
         self.allow={
@@ -20,7 +22,9 @@ class mathbot(api.module):
             'tan(':'..12..',
             'geo.midpoint(':'..13..',
             'geo.triangle(':'..14..',
-            'geo.distance(':'..15..'
+            'geo.distance(':'..15..',
+            '.points(':'..16..',
+            '.area(':'..17..'
             }
         self.invert={
             '..0..':')',
@@ -38,7 +42,9 @@ class mathbot(api.module):
             '..12..':'math.tan(',
             '..13..':'geo.midpoint(',
             '..14..':'geo.triangle(',
-            '..15..':'geo.distance('
+            '..15..':'geo.distance(',
+            '..16..':'.points(',
+            '..17..':'.area('
             }
         api.module.__init__(self,server)
     def go(self,nick,data,channel):
@@ -86,72 +92,5 @@ def hex2dec(hex):
     return int(hex,16)
 def dec2hex(dec):
     return '%X'%dec
-class undefined(int):
-    def __abs__(self):
-        return self
-    def __add__(self,y):
-        return self
-    def __and__(self,y):
-        return False
-    def __cmp__(self,y):
-        return False
-    def __div__(self,y):
-        if isinstance(y,undefined):
-            return 1
-        else:
-            return self
-    def __divmod__(self,y):
-        if isinstance(y,undefined):
-            return 0
-        else:
-            return self
-    def __float__(self):
-        return self
-    def __floordiv__(self,y):
-        if isinstance(y,undefined):
-            return 0
-        else:
-            return self
-    def __index__(self,y):
-        if isinstance(y,undefined):
-            return 0
-        else:
-            return -1
-    def __int__(self):
-        return 0
-    def __invert__(self):
-        return negative_undefined()
-    def __long__(self):
-        return self
-    def __lshift__(self,y):
-        return self
-    def __mod__(self,y):
-        if isinstance(y,undefined):
-            return 0
-        else:
-            return self
-    def __mul__(self,y):
-        return self
 
-class geomath():
-    def midpoint(self,x,y,x2,y2):
-        return '%s,%s'%((x+x2)/2,(y+y2)/2)
-    def triangle(self,ax,ay,bx,by,cx,cy):
-        ab=float(self.distance(ax,ay,bx,by))
-        bc=float(self.distance(bx,by,cx,cy))
-        ca=float(self.distance(cx,cy,ax,ay))
-        centroid='%s,%s'%(round((ax+bx+cx)/3.0,4),round((ay+by+cy)/3.0,4))
-        if ab==bc==ca:
-            type='Equilateral'
-        elif (ab==bc) or (ab==ca) or (bc==ca):
-            type='Isosceles'
-        else:
-            type='Scalene'
-        return '<triangle ab=%s; bc=%s; ca=%s; type=%s; centroid=(%s)>'%(ab,bc,ca,type,centroid)
-    def regular_polygn(self,sides,length=undefined()):
-        pass
-    def distance(self,x1,y1,x2,y2):
-        return math.sqrt(math.pow(x1-x2,2)+math.pow(y1-y2,2))
-        
-geo=geomath()
 module=mathbot

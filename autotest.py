@@ -3,6 +3,7 @@ ret_val=' '
 import sys
 import unittest
 sys.path.insert(1,sys.path[0]+'/modules')
+sys.path.insert(1,sys.path[0]+'/libs')
 sys.path.insert(0,sys.path[0]+'/unittests')
 import q
 import bbot
@@ -30,7 +31,7 @@ class test_bbot(unittest.TestCase):
     def test_main_module(self):
         self.assertEqual(self.bbot.go('aj00200',':aj00200!aj00200@FOSSnet/staff/oper/aj00200 PRIVMSG #bots :abcdefg','#bots'),None)#Do a quick check to make sure it works
         self.assertEqual(self.bbot.go('aj00200',':aj00200!aj00200@FOSSnet/staff/oper/aj00200 PRIVMSG #bots :?hi','#bots'),0)
-        self.assertEqual(self.bbot.go('aj00200',':aj00200!aj00200@FOSSnet/staff/open/aj00200 PRIVMSG #bots :?add test:::test','#bots'),0)
+        self.assertEqual(self.bbot.go('aj00200',':aj00200!aj00200@FOSSnet/staff/oper/aj00200 PRIVMSG #bots :?add test:::test','#bots'),0)
         self.assertEqual(self.bbot.query_dict('test'),'test','?add Command seems broken')
 class test_api(unittest.TestCase):
     def test_getHost(self):
@@ -39,6 +40,7 @@ class test_api(unittest.TestCase):
 
 from BBot import bbot
 import api
+import mathbot
 if __name__ == '__main__':
     unittest.main()
 
