@@ -26,7 +26,8 @@ class mathbot(api.module):
             '.points(':'..16..',
             '.area(':'..17..',
             '.perimeter(':'..18..',
-            'undefined':'..19..'
+            'undefined':'..19..',
+            'geo.square(':'..20..'
         }
         self.invert={
             '..0..':')',
@@ -48,7 +49,8 @@ class mathbot(api.module):
             '..16..':'.points(',
             '..17..':'.area(',
             '..18..':'.perimeter(',
-            '..19..':'geo.undefined()'
+            '..19..':'geo.undefined()',
+            '..20..':'geo.square('
             }
         api.module.__init__(self,server)
     def go(self,nick,data,channel):

@@ -35,7 +35,7 @@ class undefined(int):
         else:
             return -1
     def __int__(self):
-        return 0
+        return self
     def __invert__(self):
         return negative_undefined()
     def __long__(self):
@@ -50,6 +50,8 @@ class undefined(int):
     def __mul__(self,y):
         return self
     def __repr__(self):
+        return '<undefined>'
+    def __str__(self):
         return '<undefined>'
 
 def midpoint(x,y,x2,y2):
@@ -87,3 +89,17 @@ class triangle(polygon):
         return 0.5*(math.sqrt(math.pow(self.sides['ab'],2)*math.pow(self.sides['ca'],2)-math.pow(self.sides['ab']*self.sides['ca'],2)))
     def __repr__(self):
         return '<triangle ab=%s; bc=%s; ca=%s; type=%s; centroid=(%s)>'%(self.sides['ab'],self.sides['bc'],self.sides['ca'],self.type,self.centroid)
+class quad(polygon):
+    pass
+class square(polygon,quad):
+    def __init__(self,ax,ay,bx,by,cx,cy,dx,dy):
+        self.coords={'A':(ax,ay),'B':(bx,by),'C':(cx,cy),'D':(dx,dy)}
+        self.sides={'ab':float(distance(ax,ay,bx,by)),
+            'bc':float(distance(bx,by,cx,cy)),
+            'cd':float(distance(cx,cy,dx,dy)),
+            'da':float(distance(dx,dy,ax,ay))
+        }
+    def area(self):
+        return self.sides['ab']*self.sides['bc']
+    def __repr__(self):
+        return '<square ab=%s; bc=%s; cd=%s; da=%s;>'%(self.sides['ab'],self.sides['bc'],self.sides['cd'],self.sides['da'])
