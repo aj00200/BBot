@@ -49,6 +49,8 @@ class undefined(int):
             return self
     def __mul__(self,y):
         return self
+    def __repr__(self):
+        return '<undefined>'
 
 def midpoint(x,y,x2,y2):
     return '%s,%s'%((x+x2)/2,(y+y2)/2)
@@ -62,6 +64,11 @@ class polygon():
     def points(self):
         sorted=sort_dict(self.coords)
         return 'A: %s; B: %s; C: %s;'%(sorted[0],sorted[1],sorted[2])
+    def perimeter(self):
+        p=0.0
+        for each in self.sides:
+            p+=self.sides[each]
+        return p
 class triangle(polygon):
     def __init__(self,ax,ay,bx,by,cx,cy):
         self.coords={'A':(ax,ay),'B':(bx,by),'C':(cx,cy)}

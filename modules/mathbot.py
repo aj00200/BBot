@@ -24,8 +24,10 @@ class mathbot(api.module):
             'geo.triangle(':'..14..',
             'geo.distance(':'..15..',
             '.points(':'..16..',
-            '.area(':'..17..'
-            }
+            '.area(':'..17..',
+            '.perimeter(':'..18..',
+            'undefined':'..19..'
+        }
         self.invert={
             '..0..':')',
             '..1..':'math.sqrt(',
@@ -44,7 +46,9 @@ class mathbot(api.module):
             '..14..':'geo.triangle(',
             '..15..':'geo.distance(',
             '..16..':'.points(',
-            '..17..':'.area('
+            '..17..':'.area(',
+            '..18..':'.perimeter(',
+            '..19..':'geo.undefined()'
             }
         api.module.__init__(self,server)
     def go(self,nick,data,channel):
