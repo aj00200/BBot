@@ -98,19 +98,6 @@ class bbot(api.module):
 				w=data[data.find(':?kb ')+5:]
 				self.append((channel,self.kb%w))
 				return 0
-			self.q=ldata[data.find(':?')+2:].strip('\r\n')
-			if ' | ' in self.q:
-				nick=self.q.split(' | ')
-				self.q=nick[0]
-				nick=nick[1]
-			if ' > ' in self.q:
-				self.nick=self.q.split(' > ')
-				self.q=self.nick[0]
-				channel=self.nick[1]
-				nick='From %s'%nick
-			if self.q in dict:
-				self.append((channel,nick+': '+dict[self.q]))
-				return 0
 			elif data.find(':?hit ')!=-1:
 				words=data[data.find(':?hit ')+6:]
 				if words.lower().find(config.mynick.lower())!=-1 or words.lower()=='aj00200':
@@ -120,6 +107,22 @@ class bbot(api.module):
 			elif data.find(':?version')!=-1:
 				self.append((channel,'I am version %s.'%BBot.version))
 				return 0
+			self.q=ldata[data.find(':?')+2:].strip('\r\n')
+			if ' > ' in self.q:
+				if ' | ' not in self.q:
+					self.nick=self.q.split(' > ')
+					self.q=self.nick[0]
+					channel=self.nick[1]
+					nick='From %s'%nick
+				else:
+					self.append((channel,nick+': All abuse is logged: %s'%data))
+					return 1
+			elif ' | ' in self.q:
+				nick=self.q.split(' | ')
+				self.q=nick[0]
+				nick=nick[1]
+			if self.q in dict:
+				self.append((channel,nick+': '+dict[self.q]))
 	def add_factoid(self,query):
 		dict[query[0].lower()]=query[1]
 	def del_factoid(self,query):
