@@ -133,7 +133,7 @@ class bbot(api.module):
 	def clear_dict(self):
 		dict={}
 	def read_dict(self):
- 		self.clear_dict()
+		self.clear_dict()
 		self.dict=open('bbot/dict','r')
 		for line in self.dict.readlines():
 			self.q=line.strip('\r\n').split(':::')

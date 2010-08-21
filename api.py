@@ -44,4 +44,6 @@ class module():
         q.raw(self.__server__,data)
     def go(self,nick,data,channel):
         pass
+    def loop(self):
+        pass
 

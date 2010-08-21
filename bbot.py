@@ -1,13 +1,14 @@
 #! /usr/bin/python
-import q
 #this bot is licensed under the GNU GPL v3.0
 #http://www.gnu.org/licenses/gpl.html
 version='3.1'
+import q
 import config
 #import socket
 import sys
 import re
 import time
+import thread
 import colorz
 import api#BBot API Functions
 import asyncore
@@ -51,7 +52,19 @@ nhandlers=[bb]
 codes=[]#wb
 continuepgm=1
 lastloop=time.time()-10
+def loop():
+	'''
+	Calls the loop() method of each module every 5 seconds + execution time
+	'''
+	try:
+		time.sleep(5)
+		for network in networks:
+			for module in networks[network]:
+				module.loop()
+	except Exception,e:
+		q.append(config.network,((config.error_chan,'BBot has crashed with error: %s; args %s'%(type(e),e.args))))
 if __name__ == '__main__':
+	thread.start_new_thread(loop,())
 	import q
 	while 1:
 		if time.time()-lastloop<5.1:
