@@ -93,10 +93,20 @@ class connection(asynchat.async_chat,queue_class):
                 for handler in bbot.networks[self.server]:
                     handler.get_join(nick,channel,ip,user)
         elif ' PART #' in data:
+            channel=data[data.find(' :#')+2:]
+            nick=data[1:data.find('!')]
             for each in bbot.networks[self.server]:
-                channel=data[data.find(' :#')+2:]
-                nick=data[1:data.find('@')]
                 each.get_raw('PART',(nick,data,channel))
+        elif ' KICK ' in data:
+            nick=data[data.find(' KICK ')+6:data.find(' #')]
+            channel=data[data.find(' #')+1:data.find(' :')]
+            message=data[data.find(' :')+2:]
+            for each in bbot.networks[self.server]:
+                each.get_raw('KICK',(nick,message,channel))
+        elif ' QUIT ' in data:
+            nick=data[1:data.find('!')]
+            for each in bbot.networks[self.server]:
+                each.get_raw('QUIT',(nick,data))
         elif re.search('[0-9]+ *'+config.mynick,data):
             code=data.split()[1]
             for each in bbot.networks[self.server]:

@@ -126,10 +126,18 @@ class blockbot(api.module):
             self.kick(nick,channel,'Please do not ping that many people at one time.')
         print colorz.encode('Found: %s'%found,'cayn')
     def get_raw(self,type,data):
-        if type=='PART':
+        if type=='PART' or type=='KICK':
             try:
                 if data[0] in self.nicklists[data[2]]:
                     self.nicklisst[data[2]].pop(self.nicklists[data[2]].index(nick))
+            except:
+                pass
+        elif type=='QUIT':
+            try:
+                for channel in self.nicklists:
+                    for nick in channel:
+                        if data[0]==nick:
+                            self.nicklists[channel].pop(self.nicklists[channel].index(nick))
             except:
                 pass
 module=blockbot
