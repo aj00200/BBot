@@ -69,35 +69,33 @@ class connection(asynchat.async_chat,queue_class):
             if data.find(' 33')==-1 and data.find('NOTICE')==-1 and data.find('PRIVMSG')==-1 and data.find('KICK')==-1:
                 newchannel=data.split(config.mynick+' :')[-1]
                 self.push('JOIN '+newchannel+'\r\n')
-                del newchannel
-        elif re.search(':*!*NOTICE #*:',data):
+        elif re.search(':(.)+!(.)+NOTICE #(.)+ :',data):
             nick=data[1:data.find('!')]
-            channel=data[data.find(' NOTICE ')+8:data.find(':')]
+            channel=data[data.find(' NOTICE ')+8:data.find(' :')]
             words=data[data.find('NOTICE')+6:]
             words=words[words.find(':'):]
-            for handler in bbot.nhandlers:
-                handler.notice(nick,channel,words)
+            for handler in bbot.networks[self.server]:
+                handler.get_notice(nick,channel,words)
         elif data.find(' PRIVMSG ')!=-1:
-            channel=data.split(' PRIVMSG ')[1]
-            channel=channel.split(' :')[0]
-            nick=data.split('!')[0][1:]
+            channel=data[data.find(' PRIVMSG ')+9:data.find(' :')]
+            nick=data.[1:data.find('!')]
             for handler in bbot.networks[self.server]:
                 try:
                     handler.go(nick,data,channel)
                 except Exception,e:
-                    append(config.network,(config.error_chan,'Error: %s; With args: %s;'%(type(e),e.args)))
+                    append(config.network,(config.error_chan,'Error: %s; With args: %s; in %s'%(type(e),e.args,handler)))
         elif data.find(' JOIN :#')!=-1:
             nick=data.split('!')[0][1:]
             if nick.find('#')==-1:
-                channel='#'+data.split(' :#')[-1][0:-2]
-                ip=data.split('@')[1].split(' JOIN')[0]
-                user=data.split('@')[0].split('!')[-1]
-                for jhandler in bbot.jhandlers:
-                    jhandler.join(nick,channel,ip,user)
+                channel=data[data.find(' :#')+2:]
+                ip=data[data.find('@'):data.find(' JOIN ')]
+                user=data[data.find('!'):data.find('@')]
+                for handler in bbot.networks[self.server]:
+                    handler.get_join(nick,channel,ip,user)
         elif re.search('[0-9]+ *'+config.mynick,data):
             code=data.split()[1]
-            for each in bbot.codes:
-                each.code(code,data)
+            for each in bbot.networks[self.server]:
+                each.get_raw('CODE',(code,data))
         for handler in bbot.lhandlers:
             handler.loop()
         if data.find(' KILL ')!=-1:

@@ -9,7 +9,7 @@ proxyscan=1
 class blockbot(api.module):
     def __init__(self,server):
         self.ignore_users_on_su_list=1#Don't kick users if they are on the superusers list
-        self.jlist={}
+        self.nicklists={}
         self.config=open('blockbot-config','r')
         self.findlist=self.config.readline().split('spam-strings: ')[1].split('#')[0].split('^^^@@@^^^')
         self.proxyscan=0
@@ -27,14 +27,17 @@ class blockbot(api.module):
         self.msglist=[]
         self.lastnot=('BBot',time.time(),'sdkljfls')
         api.module.__init__(self,server)
-    def join(self,nick,channel,ip,user):
+    def get_join(self,nick,channel,ip,user):
+        '''Add user to nicklist, and preform optional proxy scan'''
         #webchat=(str(blockbotlib.hex2dec('0x'+str(user[1:3])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[3:5])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[5:7])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[7:9]))))
-        if channel[1:] not in self.jlist:
-            self.jlist[channel[1:]]=[]
-        self.jlist[channel[1:]].append(nick)
-        if proxyscan:
+        if channel in self.nicklists:
+            self.nicklists[channel].append(nick)
+        else:
+            self.nicklists[channel]=[nick]
+        if self.proxyscan:
             thread.start_new_thread(self.scan, (ip,channel,nick))
     def scan(self,ip,channel,nick):
+        '''Preform a Nmap scan on the user to detect open ports that are commonly used to host open proxys used by spammers'''
         self.scansafe=1
         try:
             print('Scanning '+ip)
@@ -72,15 +75,6 @@ class blockbot(api.module):
                 self.__init__(self.__server__)
             elif self.ldata.find(':?protect')!=-1:
                 self.mode('',channel,'+mz')
-            elif self.ldata.find(':?kl')!=-1:
-                if self.ldata.find('?kl ')!=-1:
-                    self.t=self.ldata.split('?kl ')[-1][0:-2]
-                    self.t=int(self.t)
-                    try:
-                        for each in range(t):
-                            self.kick(self.jlist[channel[1:]].pop(),channel)
-                    except:
-                        self.append((nick,'Kicking that many people has caused an error!'))
         elif not self.superuser:
             self.checkforspam(nick,data,channel)
     def checkforspam(self,nick,data,channel):
@@ -104,7 +98,8 @@ class blockbot(api.module):
                         self.mode('*!*@%s'%api.getHost(data),channel,'+b')
         except IndexError:
             pass
-    def notice(self,nick,channel,data):
+    def get_notice(self,nick,channel,data):
+        print colorz.encode('NOTICE Nick: %s; Channel: %s, Data: %s'%(nick,channel,data),'red')
         ldata=data.lower()
         self.olastnot=(self.lastnot[0:])
         self.lastnot=(nick,time.time())
@@ -113,5 +108,14 @@ class blockbot(api.module):
                 self.kick(nick,channel,'Please do not use the notice command so much')
         for each in self.findlist:
             if ldata.find(each)!=-1:
-                self.kick(nick,channel)
+                self.kick(nick,channel,'You have matched a spam string. Please avoid saying that again.')
+    def loop(self):
+        self.check_hilight()
+        self.loops+=1
+        if self.loops==10:
+            self.refresh_nicklists()
+    def refresh_nicklists(self):
+        pass
+    def check_hilight(self):
+        pass
 module=blockbot

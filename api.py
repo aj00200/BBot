@@ -44,6 +44,12 @@ class module():
         q.raw(self.__server__,data)
     def go(self,nick,data,channel):
         pass
+    def get_notice(self,nick,channel,data):
+        pass
+    def get_raw(self,type,data):
+        pass
+    def get_join(self,nick,channel,ip,user):
+        pass
     def loop(self):
         pass
 
