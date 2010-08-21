@@ -123,6 +123,7 @@ class bbot(api.module):
 				nick=nick[1]
 			if self.q in dict:
 				self.append((channel,nick+': '+dict[self.q]))
+			return 0
 	def add_factoid(self,query):
 		dict[query[0].lower()]=query[1]
 	def del_factoid(self,query):

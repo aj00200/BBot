@@ -65,7 +65,7 @@ class connection(asynchat.async_chat,queue_class):
             time.sleep(2)
             for each in config.autojoin:
                 self.push('JOIN %s\r\n'%each)
-        if data.find('INVITE '+config.mynick+' :#')!=-1:
+        if 'INVITE '+config.mynick+' :#' in data:
             if data.find(' 33')==-1 and data.find('NOTICE')==-1 and data.find('PRIVMSG')==-1 and data.find('KICK')==-1:
                 newchannel=data.split(config.mynick+' :')[-1]
                 self.push('JOIN '+newchannel+'\r\n')
@@ -76,15 +76,15 @@ class connection(asynchat.async_chat,queue_class):
             words=words[words.find(':'):]
             for handler in bbot.networks[self.server]:
                 handler.get_notice(nick,channel,words)
-        elif data.find(' PRIVMSG ')!=-1:
+        elif ' PRIVMSG ' in data:
             channel=data[data.find(' PRIVMSG ')+9:data.find(' :')]
-            nick=data.[1:data.find('!')]
+            nick=data[1:data.find('!')]
             for handler in bbot.networks[self.server]:
                 try:
                     handler.go(nick,data,channel)
                 except Exception,e:
                     append(config.network,(config.error_chan,'Error: %s; With args: %s; in %s'%(type(e),e.args,handler)))
-        elif data.find(' JOIN :#')!=-1:
+        elif ' JOIN :#' in data:
             nick=data.split('!')[0][1:]
             if nick.find('#')==-1:
                 channel=data[data.find(' :#')+2:]
@@ -92,6 +92,11 @@ class connection(asynchat.async_chat,queue_class):
                 user=data[data.find('!'):data.find('@')]
                 for handler in bbot.networks[self.server]:
                     handler.get_join(nick,channel,ip,user)
+        elif ' PART #' in data:
+            for each in bbot.networks[self.server]:
+                channel=data[data.find(' :#')+2:]
+                nick=data[1:data.find('@')]
+                each.get_raw('PART',(nick,data,channel))
         elif re.search('[0-9]+ *'+config.mynick,data):
             code=data.split()[1]
             for each in bbot.networks[self.server]:

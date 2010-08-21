@@ -10,6 +10,7 @@ class blockbot(api.module):
     def __init__(self,server):
         self.ignore_users_on_su_list=1#Don't kick users if they are on the superusers list
         self.nicklists={}
+        self.hilight_limit=1
         self.config=open('blockbot-config','r')
         self.findlist=self.config.readline().split('spam-strings: ')[1].split('#')[0].split('^^^@@@^^^')
         self.proxyscan=0
@@ -61,27 +62,28 @@ class blockbot(api.module):
         if self.ignore_users_on_su_list:
             self.superuser=api.checkIfSuperUser(data,config.superusers)
         if self.superuser:
-            if self.ldata.find(':?;')!=-1:
+            if ':?;' in self.ldata:
                 self.findlist.append(data[data.find(':?; ')+4:].lower())
-            elif self.ldata.find(':?faster')!=-1:
+            elif ':?faster' in self.ldata:
                 print(colorz.encode('FASTER','cayn'))
                 self.wait=self.wait/2
-            elif self.ldata.find(':?slower')!=-1:
+            elif ':?slower' in self.ldata:
                 print(colorz.encode('SLOWER','cayn'))
                 self.wait=self.wait*2
-            elif self.ldata.find(':?setspeed ')!=-1:
+            elif ':?setspeed ' in self.ldata:
                 self.wait=float(data.split('?setspeed ')[-1][0:-2])
-            elif self.ldata.find(':?rehash')!=-1:
+            elif ':?rehash' in self.ldata:
                 self.__init__(self.__server__)
-            elif self.ldata.find(':?protect')!=-1:
+            elif ':?protect' in self.ldata:
                 self.mode('',channel,'+mz')
         elif not self.superuser:
             self.checkforspam(nick,data,channel)
     def checkforspam(self,nick,data,channel):
+        thread.start_new_thread(self.check_hilight,(nick,data,channel))
         self.msglist.insert(0,(nick,time.time(),data))
         if len(self.msglist)>5:
             self.msglist.pop()
-        ident=data.split(' PRIVMSG ')[0].split('@')[0][1:]
+        ident=data[data.find('@'):data.find(' PRIVMSG ')]
         ldata=data.lower()
         msg=ldata[ldata.find(' :')+2:]
         for each in self.findlist:
@@ -91,7 +93,7 @@ class blockbot(api.module):
         try:
             if self.msglist[0][0]==self.msglist[1][0]==self.msglist[2][0]:
                 if (self.msglist[0][1]-self.msglist[2][1])<self.wait:
-                    self.kick(nick,channel,'No Flooding! If you keep doing this, you will be banned.')
+                    self.kick(nick,channel,'It is against the rules to flood, you have been banned.')
                 if msg.split()>1:
                     if (self.msglist[0][2]==self.msglist[1][2]==self.msglist[2][2]) and (self.msglist[0][1]-self.msglist[1][1]<self.repeat_time):
                         self.kick(nick,channel,'Please do not repeat!')
@@ -107,15 +109,27 @@ class blockbot(api.module):
             if (self.lastnot[1]-self.olastnot[1])<self.wait:
                 self.kick(nick,channel,'Please do not use the notice command so much')
         for each in self.findlist:
-            if ldata.find(each)!=-1:
-                self.kick(nick,channel,'You have matched a spam string. Please avoid saying that again.')
-    def loop(self):
-        self.check_hilight()
-        self.loops+=1
-        if self.loops==10:
-            self.refresh_nicklists()
-    def refresh_nicklists(self):
-        pass
-    def check_hilight(self):
-        pass
+            if re.search(each,ldata):
+                self.kick(nick,channel,'You have matched a spam string and have been banned. Please PM a channel opperator to be unbanned')
+                self.mode(nick,channel,'+b')
+    def check_hilight(self,nick,data,channel):
+        '''Check to see if this person has pinged/hilighted over self.hilight_limit people, and if so, kick them'''
+        print colorz.encode('Checking hilight spam','cayn')
+        ldata=data[data.find(' :')+2:].lower()
+        if not channel in self.nicklists:
+            self.nicklists[channel]=[nick]
+        found=0
+        for each in self.nicklists[channel]:
+            if each.lower() in ldata:
+                found+=1
+        if found>self.hilight_limit:
+            self.kick(nick,channel,'Please do not ping that many people at one time.')
+        print colorz.encode('Found: %s'%found,'cayn')
+    def get_raw(self,type,data):
+        if type=='PART':
+            try:
+                if data[0] in self.nicklists[data[2]]:
+                    self.nicklisst[data[2]].pop(self.nicklists[data[2]].index(nick))
+            except:
+                pass
 module=blockbot
