@@ -126,18 +126,29 @@ class blockbot(api.module):
             self.kick(nick,channel,'Please do not ping that many people at one time.')
         print colorz.encode('Found: %s'%found,'cayn')
     def get_raw(self,type,data):
+        print colorz.encode('Type: %s, Data: %s'%(type,data),'cayn')
         if type=='PART' or type=='KICK':
             try:
                 if data[0] in self.nicklists[data[2]]:
-                    self.nicklisst[data[2]].pop(self.nicklists[data[2]].index(nick))
+                    self.nicklists[data[2]].pop(self.nicklists[data[2]].index(data[0]))
             except:
                 pass
         elif type=='QUIT':
-            try:
-                for channel in self.nicklists:
-                    for nick in channel:
-                        if data[0]==nick:
-                            self.nicklists[channel].pop(self.nicklists[channel].index(nick))
-            except:
-                pass
+#            try:
+            for channel in self.nicklists:
+                print colorz.encode('Checking %s'%channel,'yellow')
+                print colorz.encode(str(self.nicklists[channel]),'yellow')
+                if data[0] in self.nicklists[channel]:
+                    print colorz.encode('In %s'%channel,'green')
+                    self.nicklists[channel].pop(self.nicklists[channel].index(data[0]))
+#            except Exception,e:
+#                print colorz.encode('%s,%s'%(type(e),e.args),'red')
+        elif type=='CODE' and data[0]=='353':
+            channel=data[1][data[1].find('= ')+2:data[1].find(' :')]
+            names=data[1][data[1].find(' :')+2:].split()
+            safe_names=[]
+            for each in names:
+                safe_names.append(each.strip('@+%'))#Add amp and tilda and parse 005
+            for each in safe_names:
+                self.nicklists[channel].append(each)
 module=blockbot

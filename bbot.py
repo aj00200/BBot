@@ -1,7 +1,7 @@
 #! /usr/bin/python
 #this bot is licensed under the GNU GPL v3.0
 #http://www.gnu.org/licenses/gpl.html
-version='3.1'
+version='4.0rc1'
 import q
 import config
 #import socket
@@ -43,9 +43,9 @@ def reload_module(name,server):
 			if isinstance(each,eval(name+'.module')):
 				networks[server].pop(networks[server].index(each))
 		reload(eval(name))
-		networks[server].append(eval(name+'.module(%s)'%config.network))
+		networks[server].append(eval(name+'.module("%s")'%config.network))
 	except Exception,e:
-		q.append(config.network,((config.error_chan,'BBot has crashed with error: %s; args %s'%(type(e),e.args))))
+		q.append(config.network,((config.error_chan,'BBot has crashed with error: %s; args %s; in bbot.py'%(type(e),e.args))))
 jhandlers=[bb,tb]#Run on Join
 lhandlers=[]#Run every loop
 nhandlers=[bb]
