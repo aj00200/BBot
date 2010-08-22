@@ -19,7 +19,7 @@ class debatebot(api.module):
                 self.drop(nick)
             elif ldata.find('?debate help')!=-1:
                 self.help(nick)
-    def loop():
+    def loop(self):
         if time.time()-self.claimed_at>3600:
             self.cutof(self.floor)
     def claim(self,nick,channel):

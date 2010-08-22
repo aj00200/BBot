@@ -143,6 +143,8 @@ class blockbot(api.module):
             safe_names=[]
             for each in names:
                 safe_names.append(each.strip('@+%'))#Add amp and tilda and parse 005
+            if channel not in self.nicklists:
+                self.nicklists[channel]=[]
             for each in safe_names:
                 self.nicklists[channel].append(each)
 module=blockbot
