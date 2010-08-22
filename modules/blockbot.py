@@ -114,7 +114,6 @@ class blockbot(api.module):
                 self.mode(nick,channel,'+b')
     def check_hilight(self,nick,data,channel):
         '''Check to see if this person has pinged/hilighted over self.hilight_limit people, and if so, kick them'''
-        print colorz.encode('Checking hilight spam','cayn')
         ldata=data[data.find(' :')+2:].lower()
         if not channel in self.nicklists:
             self.nicklists[channel]=[nick]
@@ -124,9 +123,7 @@ class blockbot(api.module):
                 found+=1
         if found>self.hilight_limit:
             self.kick(nick,channel,'Please do not ping that many people at one time.')
-        print colorz.encode('Found: %s'%found,'cayn')
     def get_raw(self,type,data):
-        print colorz.encode('Type: %s, Data: %s'%(type,data),'cayn')
         if type=='PART' or type=='KICK':
             try:
                 if data[0] in self.nicklists[data[2]]:
@@ -134,15 +131,12 @@ class blockbot(api.module):
             except:
                 pass
         elif type=='QUIT':
-#            try:
-            for channel in self.nicklists:
-                print colorz.encode('Checking %s'%channel,'yellow')
-                print colorz.encode(str(self.nicklists[channel]),'yellow')
-                if data[0] in self.nicklists[channel]:
-                    print colorz.encode('In %s'%channel,'green')
-                    self.nicklists[channel].pop(self.nicklists[channel].index(data[0]))
-#            except Exception,e:
-#                print colorz.encode('%s,%s'%(type(e),e.args),'red')
+            try:
+                for channel in self.nicklists:
+                    if data[0] in self.nicklists[channel]:
+                        self.nicklists[channel].pop(self.nicklists[channel].index(data[0]))
+            except Exception,e:
+                pass
         elif type=='CODE' and data[0]=='353':
             channel=data[1][data[1].find('= ')+2:data[1].find(' :')]
             names=data[1][data[1].find(' :')+2:].split()
