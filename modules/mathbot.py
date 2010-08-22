@@ -55,9 +55,9 @@ class mathbot(api.module):
         api.module.__init__(self,server)
     def go(self,nick,data,channel):
         self.ldata=data.lower()
-        if self.ldata.find(':?math help')!=-1:
+        if ':?math help' in self.ldata:
             self.append((channel,nick+' : +, -, *, /, %, sqrt, pow, ceil, floor, log, asin, acos, atan, atan2, sin, cos, tan'))
-        elif self.ldata.find(':?math ')!=-1:
+        elif ':?math ' in self.ldata:
             self.e=self.ldata[self.ldata.find('?math ')+6:].strip('\r\n')
             self.e=self.e.replace('!pi','3.1415926535897931')
             self.e=self.e.replace('!e',str(math.e))
@@ -76,13 +76,13 @@ class mathbot(api.module):
             except Exception,e:
                 self.report_error(channel,e)
                 self.append((channel,self.e))
-        elif self.ldata.find(':?hex ')!=-1:
+        elif ':?hex ' in self.ldata:
             try:
                 self.e=self.ldata[self.ldata.find(':?hex ')+6:]
                 self.append((channel,str(hex2dec(self.e))))
             except Exception,e:
                 self.report_error(channel,e)
-        elif self.ldata.find(':?dec ')!=-1:
+        elif ':?dec ' in self.ldata:
             try:
                 self.e=int(self.ldata[self.ldata.find(':?dec ')+6:])
                 self.append((channel,str(dec2hex(self.e))))

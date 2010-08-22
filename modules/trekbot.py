@@ -17,68 +17,67 @@ class trekbot(api.module):
         ldata=data.lower()
         self.superuser=api.checkIfSuperUser(data,config.superusers)
         if self.superuser:
-            if ldata.find(':?op')!=-1:
-                if ldata.find('?op ')!=-1:
+            if ':?op' in ldata:
+                if '?op ' in ldata:
                     nick=ldata[ldata.find('?op')+4:].strip('\r\n')
                 self.mode(nick,channel,'+o')
-            if ldata.find(':?deop')!=-1:
-                if ldata.find('?deop ')!=-1:
+            elif ':?deop' in ldata:
+                if '?deop ' in ldata:
                     nick=ldata[ldata.find('?deop ')+6:].strip('\r\n')
                 self.mode(nick,channel,'-o')
-            elif ldata.find(':?voice')!=-1:
-                if ldata.find('?voice ')!=-1:
+            elif ':?voice' in ldata:
+                if '?voice ' in ldata:
                     nick=ldata[ldata.find('?voice ')+7:].strip('\r\n')
                 self.mode(nick,channel,'+v')
-            elif ldata.find(':?devoice')!=-1:
-                if ldata.find('?devoice ')!=-1:
+            elif ':?devoice' in ldata:
+                if '?devoice ' in ldata:
                     nick=ldata[ldata.find('?devoice ')+9:].strip('\r\n')
                 self.mode(nick,channel,'-v')
-            elif ldata.find(':?kick ')!=-1:
+            elif ':?kick ' in ldata:
                 name=ldata[ldata.find('?kick ')+6:].strip('\r\n')
                 self.kick(name,channel,'Requested by %s'%nick)
             elif ldata.find('?rehash')!=-1:
                 self.__init__()
             #Blacklist
-            elif ldata.find(':?blacklist ')!=-1:
+            elif ':?blacklist ':
                 name=data[data.find('?blacklist ')+11:].strip('\r\n')
                 if not name in self.blacklist:
                     self.blacklist.append(name)
                     self.write_blacklist()
-            elif ldata.find(':?unblacklist ')!=-1:
+            elif ':?unblacklist ' in ldata:
                 name=data[data.find('?unblacklist ')+13:].strip('\r\n')
                 if name in self.blacklist:
                     self.blacklist.pop(self.blacklist.index(name))
                     self.write_blacklist()
                 else:
                     self.append((nick,'That host is not blacklisted'))
-            elif ldata.find(':?listbl')!=-1:
+            elif ':?listbl' in ldata:
                 self.append((nick,str(self.blacklist)))
-            #Whitelist
-            elif ldata.find(':?whitelist ')!=-1:
+            elif ':?whitelist ' in ldata:
                 name=data[data.find('?whitelist ')+11:].strip('\r\n')
                 if not name in self.whitelist:
                     self.whitelist.append(name)
                     self.write_blacklist()
-            elif ldata.find(':?unwhitelistlist ')!=-1:
+            elif ':?unwhitelistlist ' in ldata:
                 name=data[data.find('?unwhitelist ')+13:].strip('\r\n')
                 if name in self.blacklist:
                     self.whitelist.pop(self.blacklist.index(name))
                     self.write_whitelist()
                 else:
                     self.append((nick,'That host is not whitelisted'))
-            elif ldata.find(':?listbl')!=-1:
+            elif ':?listbl' in ldata:
                 self.append((nick,str(self.blacklist)))
-            elif ldata.find(':?mode ')!=-1:
+            elif ':?mode ' in ldata:
                 self.mode('',channel,ldata[ldata.find('?mode ')+6:])
-            elif data.find(':?echo ')!=-1:
+            elif ':?echo ' in ldata:
                 self.append((channel,data[ldata.find('?echo ')+6:]))
-            elif ldata.find(':?ban ')!=-1:
+            elif ':?ban ' in ldata:
                 self.mode(data[data.find('?ban ')+5:],channel,'+b')
-            elif ldata.find(':?unban ')!=-1:
+            elif ':?unban ' in ldata:
                 self.mode(data[data.find('?unban ')+7:],channel,'-b')
-            elif data.find(':?topic ')!=-1:
+            elif ':?topic ' in ldata:
                 self.raw('TOPIC %s :%s'%(channel,data[data.find('?topic ')+7:]))
-            elif data.find(':?nick ')!=-1:
+            elif ':?nick ' in ldata:
                 self.nick(data[data.find('?nick ')+6:])
     def write_blacklist(self):
         self.blconfig=open('trekbot/blacklist','w')

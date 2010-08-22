@@ -10,7 +10,7 @@ class blockbot(api.module):
     def __init__(self,server):
         self.ignore_users_on_su_list=1#Don't kick users if they are on the superusers list
         self.nicklists={}
-        self.hilight_limit=1
+        self.hilight_limit=3
         self.config=open('blockbot-config','r')
         self.findlist=self.config.readline().split('spam-strings: ')[1].split('#')[0].split('^^^@@@^^^')
         self.proxyscan=0
