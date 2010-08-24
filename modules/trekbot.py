@@ -87,7 +87,9 @@ class trekbot(api.module):
         self.wlconfig=open('trekbot/whitelist','w')
         for each in self.whitelist:
             self.wlconfig.write(each+'\n')
-    def join(self,nick,channel,ip,user):
+    def get_join(self,nick,channel,ip,user):
+        print "GOT JOIN"
+        
         if not ip in self.blacklist:
             if not ip in self.whitelist:
                 self.scan(ip,channel,nick)

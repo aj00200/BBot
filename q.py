@@ -88,7 +88,7 @@ class connection(asynchat.async_chat,queue_class):
             nick=data.split('!')[0][1:]
             if nick.find('#')==-1:
                 channel=data[data.find(' :#')+2:]
-                ip=data[data.find('@'):data.find(' JOIN ')]
+                ip=data[data.find('@')+1:data.find(' JOIN ')]
                 user=data[data.find('!'):data.find('@')]
                 for handler in bbot.networks[self.server]:
                     handler.get_join(nick,channel,ip,user)
