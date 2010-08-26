@@ -1,7 +1,7 @@
 import q
 import api
 class proxy(api.module):
-    chan='#bbot'
+    chan='#amberlamp'
     net1='irc.fossnet.info'
     net2='irc.freenode.net'
     def __init__(self,server):

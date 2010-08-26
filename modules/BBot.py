@@ -7,6 +7,7 @@ dict={}
 class bbot(api.module):
 	def __init__(self,server):
 		self.read_dict()
+		self.info_bots=['bekbot','gpy','aj00200','JCSMarlen']
 		self.q=''
 		self.goog='http://www.google.com/search?q=%s'
 		self.wiki='http://www.en.wikipedia.org/wiki/%s'
@@ -64,6 +65,8 @@ class bbot(api.module):
 			self.q=ldata[ldata.find(':'+config.mynick.lower()+': ')+3+len(config.mynick):].strip('\r\n')
 			if self.q in dict:
 				self.append((channel,dict[self.q]))
+			else:
+				self.infobot_query(self.q,nick)
 			return 0
 		if re.search('(what|who|where) (is|was|are|am) ',ldata):
 			self.ldata=ldata.replace(' was ',' is ')
@@ -76,6 +79,8 @@ class bbot(api.module):
 			self.q=self.ldata[self.ldata.find(' is ')+4:].strip('?.\r\n:')
 			if self.q in dict:
 				self.append((channel,nick+': '+dict[self.q]))
+			else:
+				self.infobot_query(self.q,nick)
 			return 0
 		if data.find(':?')!=-1:
 			if data.find(':?goog ')!=-1:
@@ -123,7 +128,33 @@ class bbot(api.module):
 				nick=nick[1]
 			if self.q in dict:
 				self.append((channel,nick+': '+dict[self.q]))
-			return 0
+				return 0
+			else:
+				self.infobot_query(self.q,nick)
+		elif ':INFOBOT:' in data:
+			if ':INFOBOT:REPLY' in data:
+				for each in self.info_bots:
+					if each==nick:
+						self.infobot_parse_reply(data)
+			elif ':INFOBOT:QUERY' in data:
+				self.infobot_reply(data,nick)
+	def infobot_query(self,query,nick):
+		for each in self.info_bots:
+			self.append((each,'INFOBOT:QUERY %s %s'%(nick,query)))
+	def infobot_parse_reply(self,query):
+		print 'PARSING REPLY'
+		q=query[query.find('INFOBOT:REPLY ')+14:]
+		q=q[q.find(' ')+1:]
+		print 'ADDING FACTOID %s'%q.split(' = ')
+		self.add_factoid(q.split(' = ',1))
+	def infobot_reply(self,query,sender):
+		q=query[query.find('INFOBOT:QUERY ')+14:]
+		nick=q[:q.find(' ')]
+		self.q=q[q.find(' ')+1:]
+		if self.q in dict:
+			q.append((sender,'INFOBOT:REPLY %s %s = %s'%(nick,self.q,dict[self.q])))
+		else:
+			q.append((sender,'INFOBOT:DUNNO %s %s'%(nick,self.q)))
 	def add_factoid(self,query):
 		dict[query[0].lower()]=query[1]
 	def del_factoid(self,query):
