@@ -161,13 +161,16 @@ class bbot(api.module):
 		print 'ADDING FACTOID %s'%q.split(' = ')
 		self.add_factoid(q.split(' = ',1))
 	def infobot_reply(self,query,sender):
-		q=query[query.find('INFOBOT:QUERY ')+14:]
-		nick=q[:q.find(' ')]
-		self.q=q[q.find(' ')+1:]
-		if self.q in dict:
-			self.append((sender,'INFOBOT:REPLY %s %s = %s'%(nick,self.q,dict[self.q])))
-		else:
-			self.append((sender,'INFOBOT:DUNNO %s %s'%(nick,self.q)))
+		try:
+			q=query[query.find('INFOBOT:QUERY ')+14:]
+			nick=q[:q.find(' ')]
+			self.q=q[q.find(' ')+1:]
+			if self.q in dict:
+				self.append((sender,'INFOBOT:REPLY %s %s = %s'%(nick,self.q,dict[self.q])))
+			else:
+				self.append((sender,'INFOBOT:DUNNO %s %s'%(nick,self.q)))
+		except Exception,e:
+			self.append((channel,'Error %s; with args %s;'%(type(e),e.args)))
 	def add_factoid(self,query):
 		dict[query[0].lower()]=query[1]
 	def del_factoid(self,query):
