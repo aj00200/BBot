@@ -5,6 +5,7 @@ import math
 import config
 import mathwiz as geo
 class mathbot(api.module):
+    commands=['math','math help','hex','dec']
     def __init__(self,server=config.network):
         self.allow={
             ')':'..0..',

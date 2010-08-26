@@ -3,11 +3,24 @@ import api
 import re
 import config
 import bbot as BBot
+import time
+import thread
 dict={}
 class bbot(api.module):
+	commands=['goog','wiki','pb','upb','kb','hit','?<query>','add','del','writedict','load','reload','py','connect']
+	def get_command_list(self):
+		try:
+			time.sleep(5)
+			self.command_list=[]
+			for module in BBot.networks[self.__server__]:
+				for command in module.commands:
+					self.command_list.append(command)
+		except Exception,e:
+			print 'Error: %s; with args: %s;'%(type(e),e.args)
 	def __init__(self,server):
+		thread.start_new_thread(self.get_command_list,())
 		self.read_dict()
-		self.info_bots=['bekbot','gpy','aj00200','JCSMarlen']
+		self.info_bots=['gpy','aj00200','BBot']
 		self.q=''
 		self.goog='http://www.google.com/search?q=%s'
 		self.wiki='http://www.en.wikipedia.org/wiki/%s'
@@ -126,7 +139,7 @@ class bbot(api.module):
 				nick=self.q.split(' | ')
 				self.q=nick[0]
 				nick=nick[1]
-			if self.q in dict:
+			if self.q in dict and self.q[:data.find(' ')] not in self.command_list:
 				self.append((channel,nick+': '+dict[self.q]))
 				return 0
 			else:
@@ -181,4 +194,3 @@ class bbot(api.module):
 		if query in dict:
 			return dict[query]
 module=bbot
-commands=['<query>','wiki','pb','upn','kb','goog','hit']

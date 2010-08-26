@@ -7,6 +7,7 @@ import colorz
 import re
 proxyscan=1
 class blockbot(api.module):
+    commands=['slower','faster','?;','setspeed','rehash','protect']
     def __init__(self,server):
         self.ignore_users_on_su_list=1#Don't kick users if they are on the superusers list
         self.nicklists={}

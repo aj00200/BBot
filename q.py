@@ -109,9 +109,7 @@ class connection(asynchat.async_chat,queue_class):
             code=data.split()[1]
             for each in bbot.networks[self.server]:
                 each.get_raw('CODE',(code,data))
-        for handler in bbot.lhandlers:
-            handler.loop()
-        if data.find(' KILL ')!=-1:
+        elif data.find(' KILL ')!=-1:
             raise die('BBot has been killed')
     def collect_incoming_data(self,data):
         self.data+=data

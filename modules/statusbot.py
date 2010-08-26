@@ -3,6 +3,7 @@ import api
 import time
 import thread
 class statusbot(api.module):
+    commands=['status','whereis','notify','timer','rawtimer']
     def __init__(self,server):
         self.statuses={}
         api.module.__init__(self,server)

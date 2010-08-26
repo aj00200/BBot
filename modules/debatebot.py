@@ -2,6 +2,7 @@ import q
 import api
 import time
 class debatebot(api.module):
+    commands=['claim','drop','debate help']
     def __init__(self,server):
         self.channel='#debate'
         self.floor=''

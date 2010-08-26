@@ -1,7 +1,7 @@
 #! /usr/bin/python
 #this bot is licensed under the GNU GPL v3.0
 #http://www.gnu.org/licenses/gpl.html
-version='4.0'
+version='4.3'
 import q
 import config
 #import socket
@@ -23,10 +23,8 @@ import statusbot
 import globalbot
 import debatebot
 
-bb=blockbot.module(config.network)
-tb=trekbot.module(config.network)
-handlers=[bb,tb,BBot.module(config.network),proxy.module(config.network),mathbot.module(config.network),debatebot.module(config.network),statusbot.module(config.network),globalbot.module(config.network)]#Run on msg
-networks={config.network: handlers}
+networks={config.network: [blockbot.module(config.network),trekbot.module(config.network),BBot.module(config.network),proxy.module(config.network),mathbot.module(config.network),debatebot.module(config.network),statusbot.module(config.network),globalbot.module(config.network)]}
+#networks={config.network: handlers}
 def add_network(name):
 	print colorz.encode('Adding Network "%s"'%name,'yellow')
 	networks[name]=[BBot.module(name)]
@@ -46,10 +44,6 @@ def reload_module(name,server):
 		networks[server].append(eval(name+'.module("%s")'%config.network))
 	except Exception,e:
 		q.append(config.network,((config.error_chan,'BBot has crashed with error: %s; args %s; in bbot.py'%(type(e),e.args))))
-jhandlers=[bb,tb]#Run on Join
-lhandlers=[]#Run every loop
-nhandlers=[bb]
-codes=[]#wb
 continuepgm=1
 lastloop=time.time()-10
 def loop():
