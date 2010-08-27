@@ -20,7 +20,7 @@ class bbot(api.module):
 	def __init__(self,server):
 		thread.start_new_thread(self.get_command_list,())
 		self.read_dict()
-		self.info_bots=['gpy','aj00200','BBot']
+		self.info_bots=['gpy','aj00200','BBot|Dev']
 		self.q=''
 		self.goog='http://www.google.com/search?q=%s'
 		self.wiki='http://www.en.wikipedia.org/wiki/%s'

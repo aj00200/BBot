@@ -40,7 +40,7 @@ class trekbot(api.module):
             elif ldata.find('?rehash')!=-1:
                 self.__init__()
             #Blacklist
-            elif ':?blacklist ':
+            elif ':?blacklist ' in data:
                 name=data[data.find('?blacklist ')+11:].strip('\r\n')
                 if not name in self.blacklist:
                     self.blacklist.append(name)
