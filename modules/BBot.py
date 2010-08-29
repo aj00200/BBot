@@ -7,11 +7,10 @@ import time
 import thread
 dict={}
 class bbot(api.module):
-	commands=['goog','wiki','pb','upb','kb','hit','?<query>','add','del','writedict','load','reload','py','connect']
+	commands=['help','goog','wiki','pb','upb','kb','hit','?<query>','add','del','writedict','load','reload','py','connect']
 	def get_command_list(self):
 		try:
-			time.sleep(5)
-			self.command_list=[]
+			time.sleep(3)
 			for module in BBot.networks[self.__server__]:
 				for command in module.commands:
 					self.command_list.append(command)
@@ -20,8 +19,9 @@ class bbot(api.module):
 	def __init__(self,server):
 		thread.start_new_thread(self.get_command_list,())
 		self.read_dict()
-		self.info_bots=['gpy','aj00200','BBot|Dev']
+		self.info_bots=['gpy','aj00200','BBot','JCSMarlen']
 		self.q=''
+		self.command_list=[]
 		self.goog='http://www.google.com/search?q=%s'
 		self.wiki='http://www.en.wikipedia.org/wiki/%s'
 		self.pb='http://www.pastebin.com/%s'
@@ -96,33 +96,38 @@ class bbot(api.module):
 				self.infobot_query(self.q,nick)
 			return 0
 		if data.find(':?')!=-1:
-			if data.find(':?goog ')!=-1:
+			if ':?help' in data and ':?help ' not in data:
+				w=''
+				for cmd in self.command_list:
+					w+='%s, '%cmd
+				self.append((channel,'%s: %s'%(nick,w[0:-2])))
+			if ':?goog ' in data:
 				w=data.split(':?goog ')[-1].replace(' ','+')
 				self.append((channel,self.goog%w))
 				return 0
-			elif data.find(':?wiki ')!=-1:
+			elif ':?wiki ' in data:
 				w=data.split(':?wiki ')[-1].replace(' ','_')
 				self.append((channel,self.wiki%w))
 				return 0
-			elif data.find(':?pb ')!=-1:
+			elif ':?pb ' in data:
 				w=data.split(':?pb ')[-1]
 				self.append((channel,self.pb%w))
 				return 0
-			elif data.find(':?upb ')!=-1:
+			elif ':?upb ' in data:
 				w=data.split(':?upb ')[-1]
 				self.append((channel,self.upb%w))
 				return 0
-			elif data.find(':?kb ')!=-1:
+			elif ':?kb 'in data:
 				w=data[data.find(':?kb ')+5:]
 				self.append((channel,self.kb%w))
 				return 0
-			elif data.find(':?hit ')!=-1:
+			elif ':?hit ' in data:
 				words=data[data.find(':?hit ')+6:]
 				if words.lower().find(config.mynick.lower())!=-1 or words.lower()=='aj00200':
 					words=nick
 				self.append((channel,'\x01ACTION kicks %s\x01'%words))
 				return 0
-			elif data.find(':?version')!=-1:
+			elif ':?version' in data:
 				self.append((channel,'I am version %s.'%BBot.version))
 				return 0
 			self.q=ldata[data.find(':?')+2:].strip('\r\n')
@@ -139,16 +144,16 @@ class bbot(api.module):
 				nick=self.q.split(' | ')
 				self.q=nick[0]
 				nick=nick[1]
-			if self.q in dict and self.q[:data.find(' ')] not in self.command_list:
-				self.append((channel,nick+': '+dict[self.q]))
-				return 0
-			else:
-				self.infobot_query(self.q,nick)
+			if self.q[:self.q.find(' ')] not in self.command_list:
+				if self.q in dict:
+					self.append((channel,nick+': '+dict[self.q]))
+					return 0
+				else:
+					self.infobot_query(self.q,nick)
 		elif ':INFOBOT:' in data:
 			if ':INFOBOT:REPLY' in data:
-				for each in self.info_bots:
-					if each==nick:
-						self.infobot_parse_reply(data)
+				if nick in self.info_bots:
+					self.infobot_parse_reply(data)
 			elif ':INFOBOT:QUERY' in data:
 				self.infobot_reply(data,nick)
 	def infobot_query(self,query,nick):
@@ -157,7 +162,9 @@ class bbot(api.module):
 	def infobot_parse_reply(self,query):
 		print 'PARSING REPLY'
 		q=query[query.find('INFOBOT:REPLY ')+14:]
-		q=q[q.find(' ')+1:]
+		q=q[q.find(' ')+1:].replace('<ACTION>','\x01ACTION')
+		if '\x01' in q:
+			q+='\x01'
 		print 'ADDING FACTOID %s'%q.split(' = ')
 		self.add_factoid(q.split(' = ',1))
 	def infobot_reply(self,query,sender):
