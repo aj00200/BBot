@@ -19,6 +19,7 @@ def pong(data):
 def add_networkk(server):
     bbot.add_network(server)
 class module():
+    commands=[]
     def __init__(self,server):
         self.__server__=server
     def append(self,data):
