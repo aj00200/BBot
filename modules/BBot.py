@@ -19,7 +19,8 @@ class bbot(api.module):
 	def __init__(self,server):
 		thread.start_new_thread(self.get_command_list,())
 		self.read_dict()
-		self.info_bots=['gpy','aj00200','BBot','JCSMarlen','Bekbot']
+		self.info_bots=['gpy','aj00200','BBot','JCSMarlen']
+		self.info_old=['Bekbot']#Compatibility for true Infobot
 		self.q=''
 		self.command_list=[]
 		self.goog='http://www.google.com/search?q=%s'
@@ -77,7 +78,7 @@ class bbot(api.module):
 		if ldata.find(':'+config.mynick.lower()+': ')!=-1:
 			self.q=ldata[ldata.find(':'+config.mynick.lower()+': ')+3+len(config.mynick):].strip('\r\n')
 			if self.q in dict:
-				self.append((channel,dict[self.q]))
+				self.query(self.q,nick,channel)
 			else:
 				self.infobot_query(self.q,nick)
 			return 0
@@ -91,7 +92,7 @@ class bbot(api.module):
 			self.ldata=self.ldata.replace(' am ',' is ')
 			self.q=self.ldata[self.ldata.find(' is ')+4:].strip('?.\r\n:')
 			if self.q in dict:
-				self.append((channel,nick+': '+dict[self.q]))
+				self.query(self.q,nick,channel)
 			else:
 				self.infobot_query(self.q,nick)
 			return 0
@@ -146,7 +147,7 @@ class bbot(api.module):
 				nick=nick[1]
 			if self.q[:self.q.find(' ')] not in self.command_list:
 				if self.q in dict:
-					self.append((channel,nick+': '+dict[self.q]))
+					self.query(self.q,nick,channel)
 					return 0
 				else:
 					self.infobot_query(self.q,nick)
@@ -162,7 +163,8 @@ class bbot(api.module):
 	def infobot_parse_reply(self,query):
 		print 'PARSING REPLY'
 		q=query[query.find('INFOBOT:REPLY ')+14:]
-		q=q[q.find(' ')+1:].replace('<ACTION>','\x01ACTION')
+		q=q[q.find(' ')+1:].replace('<ACTION>','\x01ACTION ')
+		q=q.replace(config.mynick,'%n')
 		if '\x01' in q:
 			q+='\x01'
 		print 'ADDING FACTOID %s'%q.split(' = ')
@@ -203,4 +205,7 @@ class bbot(api.module):
 		'''
 		if query in dict:
 			return dict[query]
+	def query(self,query,nick,channel):
+		if query in dict:
+			self.append((channel,dict[query].replace('%n',nick)))
 module=bbot
