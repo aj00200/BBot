@@ -34,36 +34,36 @@ class bbot(api.module):
 			channel=nick.lower()
 		ldata=data.lower()
 		if api.checkIfSuperUser(data,config.superusers):
-			if ldata.find('raw ')!=-1:
+			if 'raw ' in ldata:
 				self.raw(data.split('raw ')[-1])
 				return 0 #Just for speed
-			elif ldata.find('leave')!=-1:
-				words=ldata.split('leave ')
+			elif 'part' in ldata:
+				words=ldata[ldata.find('part ')+5:]
 				self.raw('PART %s' % words)
 				return 0
-			elif data.find(':?add ')!=-1:
+			elif ':?add ' in ldata:
 				self.q=data[ldata.find('?add ')+5:].strip('\r\n')
 				self.q=self.q.split(':::')
 				self.add_factoid(self.q)
 				return 0
-			elif data.find(':?del ')!=-1:
+			elif ':?del ' in ldata:
 				self.q=data[data.find('?del ')+5:].strip('\r\n')
 				self.del_factoid(self.q)
 				return 0
-			elif ldata.find(':?writedict')!=-1:
+			elif ':?writedict' in ldata:
 				self.write_dict()
 				return 0
-			elif ldata.find(':?connect ')!=-1:
+			elif ':?connect ' in ldata:
 				self.q=str(ldata[ldata.find(':?connect ')+10:].strip('\r\n'))
 				self.append((channel,'Connecting to "%s"'%self.q))
 				BBot.add_network(self.q)
 				q.connections[self.q]=q.connection(self.q)
 				return 0
-			elif ldata.find(':?load ')!=-1:
+			elif ':?load ' in ldata:
 				self.q=ldata[ldata.find('?load ')+6:].strip('\r\n')
 				BBot.load_module(str(self.q),str(self.__server__))
 				return 0
-			elif data.find(':?py ')!=-1:
+			elif ':?py ' in ldata:
 				self.q=data[data.find('?py ')+4:].strip('\r\n')
 				try:
 					ret=str(eval(self.q))
@@ -71,7 +71,7 @@ class bbot(api.module):
 					ret='Error: %s; Args: %s'%(type(e),e.args)
 				self.append((channel,ret))
 				return 0
-			elif data.find(':?reload ')!=-1:
+			elif ':?reload ' in ldata:
 				self.q=data[data.find(':?reload ')+9:].strip('\r\n')
 				BBot.reload_module(self.q,str(self.__server__))
 				return 0

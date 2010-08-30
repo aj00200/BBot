@@ -1,14 +1,30 @@
 import q
+import re
 import api
 import time
 import config
 import thread
 import colorz
-import re
+import sqlite3
 proxyscan=1
 class blockbot(api.module):
-    commands=['slower','faster','?;','setspeed','rehash','protect']
+    commands=['slower','faster','?;','setspeed','rehash','protect','sql']
+    def sql(self):
+        self.db=sqlite3.connect(':memory:')
+        self.c=self.db.cursor()
+        try:
+            self.c.execute('create table lines (username text, line0 text, ts0 integer, line1 text, ts1 integer, line3 text, ts3 integer, line4 text, ts4 integer)')
+        except:
+            pass
+        try:
+            self.c.execute('''create table recent (string, count, ts)''')
+            self.c.commit()
+        except:
+            pass
+        self.c=self.db.cursor()
+        self.db.commit()
     def __init__(self,server):
+        self.sql()
         self.ignore_users_on_su_list=1#Don't kick users if they are on the superusers list
         self.nicklists={}
         self.hilight_limit=3
@@ -24,7 +40,7 @@ class blockbot(api.module):
         self.wait=float(self.line.split('-speed: ')[-1].split(' #')[0])
         self.config.close()
         self.repeatlimit=3
-        self.repeat_time=2
+        self.repeat_time=3
         self.repeat_1word=4
         self.msglist=[]
         self.lastnot=('BBot',time.time(),'sdkljfls')
@@ -77,6 +93,8 @@ class blockbot(api.module):
                 self.__init__(self.__server__)
             elif ':?protect' in self.ldata:
                 self.mode('',channel,'+mz')
+            elif ':?sql ' in  data:
+                self.c.execute(data[data.find('?sql ')+5])
         elif not self.superuser:
             self.checkforspam(nick,data,channel)
     def checkforspam(self,nick,data,channel):
@@ -101,29 +119,68 @@ class blockbot(api.module):
                         self.mode('*!*@%s'%api.getHost(data),channel,'+b')
         except IndexError:
             pass
+        #//////////////////////////////////////////////////////////////
+        #///////////////////////////SQLite Code////////////////////////
+        #//////////////////////////////////////////////////////////////
+        msg=ldata[data.find(' :'):]
+        current=['0',0,'0',0,'0',0]
+        try:
+            self.c.execute('''select * from lines where username=?''',(nick,))
+            for row in self.c:
+                count=0
+                print colorz.encode(str(row),'green')
+                for each in range(0,len(row)):
+                    if row[each]==msg:
+                        count+=1
+                if count>=self.repeatlimit-1:
+                    self.kick(nick,channel,'Don\'t repeat yourself. We all heard the first time')
+                    thread.start_new_thread(self.sql_add_str,(msg))
+                if str(row[0])==nick:
+                    current[0]=row[1]
+                    current[1]=row[2]
+                    current[2]=row[3]
+                    current[3]=row[4]
+                    current[4]=row[5]
+                    current[5]=row[6]
+            self.c.execute('''delete from lines where username=?''',(nick,))
+            self.c.execute('''insert into lines values (?,?,?,?,?,?,?,?,?)''',(nick,msg,time.time(),current[0],current[1],current[2],current[3],current[4],current[5]))
+        except Exception,e:
+            print colorz.encode('Error: %s; %s'%(type(e),e.args),'red')
+    #/////////////////////////END SQLite Code/////////////////////////
     def get_notice(self,nick,channel,data):
-        print colorz.encode('NOTICE Nick: %s; Channel: %s, Data: %s'%(nick,channel,data),'red')
         ldata=data.lower()
-        self.olastnot=(self.lastnot[0:])
+        self.olastnot=(self.lastnot[:])
         self.lastnot=(nick,time.time())
         if self.olastnot[0]==self.lastnot[0]:
             if (self.lastnot[1]-self.olastnot[1])<self.wait:
-                self.kick(nick,channel,'Please do not use the notice command so much')
+                self.kick(nick,channel,'Please don\'t use the notice command so much')
+                self.mode(nick,channel,'+q')
         for each in self.findlist:
             if re.search(each,ldata):
-                self.kick(nick,channel,'You have matched a spam string and have been banned. Please PM a channel opperator to be unbanned')
+                self.kick(nick,channel,'You have matched a spam string and have been banned. If this was a mistake, please contact a channel op to get unbanned')
                 self.mode(nick,channel,'+b')
     def check_hilight(self,nick,data,channel):
-        '''Check to see if this person has pinged/hilighted over self.hilight_limit people, and if so, kick them'''
+        '''Check if nick has pinged more than self.hilight_limit people, and if so, kick them'''
         ldata=data[data.find(' :')+2:].lower()
-        if not channel in self.nicklists:
+        if channel not in self.nicklists:
             self.nicklists[channel]=[nick]
         found=0
         for each in self.nicklists[channel]:
             if each.lower() in ldata:
                 found+=1
         if found>self.hilight_limit:
-            self.kick(nick,channel,'Please do not ping that many people at one time.')
+            self.kick(nick,channel,'Please do not ping that many people')
+    def sql_add_str(self,msg):
+        self.c.execute('''select * from recent where string=?''',(msg,))
+        if len(self.c)>0:
+            c=self.c[0][1]
+            if c>2:
+                self.findlist.append(msg[1:])
+                self.c.execute('''delete from recent where string=?''',(msg,))
+            else:
+                c+=1
+                self.c.execute('''delete from recent where string=?''',(msg,))
+                self.c.execute('''insert into recent values(? ? ))''',(msg,c,time.time()))
     def get_raw(self,type,data):
         if type=='PART' or type=='KICK':
             try:

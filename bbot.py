@@ -24,7 +24,6 @@ import globalbot
 import debatebot
 
 networks={config.network: [blockbot.module(config.network),trekbot.module(config.network),BBot.module(config.network),proxy.module(config.network),mathbot.module(config.network),debatebot.module(config.network),statusbot.module(config.network),globalbot.module(config.network)]}
-#networks={config.network: handlers}
 def add_network(name):
 	print colorz.encode('Adding Network "%s"'%name,'yellow')
 	networks[name]=[BBot.module(name)]
