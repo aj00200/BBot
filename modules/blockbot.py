@@ -10,12 +10,9 @@ proxyscan=1
 class blockbot(api.module):
     commands=['slower','faster','?;','setspeed','rehash','protect','sql']
     def sql(self):
-        self.db=sqlite3.connect(':memory:')
+        self.db=sqlite3.connect('database.sqlite')
         self.c=self.db.cursor()
-        try:
-            self.c.execute('create table lines (username text, line0 text, ts0 integer, line1 text, ts1 integer, line3 text, ts3 integer, line4 text, ts4 integer)')
-        except:
-            pass
+        self.c.execute('create table if not exists lines (username text, line0 text, ts0 integer, line1 text, ts1 integer, line3 text, ts3 integer, line4 text, ts4 integer, line5 text, ts5 integer, line6 text, ts6 integer, line7 text, ts7 integer, line8 text, ts8)')
         try:
             self.c.execute('''create table recent (string, count, ts)''')
             self.c.commit()
@@ -123,7 +120,7 @@ class blockbot(api.module):
         #///////////////////////////SQLite Code////////////////////////
         #//////////////////////////////////////////////////////////////
         msg=ldata[data.find(' :'):]
-        current=['0',0,'0',0,'0',0]
+        current=['0',0,'0',0,'0',0,'0',0,'0',0,'0',0,'0',0]
         try:
             self.c.execute('''select * from lines where username=?''',(nick,))
             for row in self.c:
@@ -132,7 +129,7 @@ class blockbot(api.module):
                 for each in range(0,len(row)):
                     if row[each]==msg:
                         count+=1
-                if count>=self.repeatlimit-1:
+                if count>=self.repeatlimit-1: ##SQL Repeat Limit
                     self.kick(nick,channel,'Don\'t repeat yourself. We all heard the first time')
                     thread.start_new_thread(self.sql_add_str,(msg))
                 if str(row[0])==nick:
@@ -142,8 +139,15 @@ class blockbot(api.module):
                     current[3]=row[4]
                     current[4]=row[5]
                     current[5]=row[6]
+                    current[6]=row[7]
+                    current[7]=row[8]
+                    current[8]=row[9]
+                    current[9]=row[10]
+                    current[10]=row[11]
+                    current[11]=row[12]
+                    current[12]=row[13]
             self.c.execute('''delete from lines where username=?''',(nick,))
-            self.c.execute('''insert into lines values (?,?,?,?,?,?,?,?,?)''',(nick,msg,time.time(),current[0],current[1],current[2],current[3],current[4],current[5]))
+            self.c.execute('''insert into lines values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',(nick,msg,time.time(),current[0],current[1],current[2],current[3],current[4],current[5],current[6],current[7],current[8],current[9],current[10],current[11],current[11],current[12]))
         except Exception,e:
             print colorz.encode('Error: %s; %s'%(type(e),e.args),'red')
     #/////////////////////////END SQLite Code/////////////////////////
