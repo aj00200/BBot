@@ -21,7 +21,7 @@ sleep_after_join=float(cline.split('wait-after-identify: ')[-1].strip())
 cline=config.readline()
 wait_recv=int(cline[cline.find(' '):].strip('\r\n'))
 cline=config.readline()
-cmd_char=cline[cline.find(' '):].strip('\r\n')
+cmd_char=cline[cline.find(' ')+1:].strip('\r\n')
 cline=config.readline()
 error_chan=cline[cline.find(' '):].strip('\r\n')
 

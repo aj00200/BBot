@@ -34,10 +34,10 @@ class bbot(api.module):
 			channel=nick.lower()
 		ldata=data.lower()
 		if api.checkIfSuperUser(data,config.superusers):
-			if 'raw ' in ldata:
+			if config.cmd_char+'raw ' in ldata:
 				self.raw(data.split('raw ')[-1])
 				return 0 #Just for speed
-			elif 'part' in ldata:
+			elif config.cmd_char+'part' in ldata:
 				words=ldata[ldata.find('part ')+5:]
 				self.raw('PART %s' % words)
 				return 0
