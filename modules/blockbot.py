@@ -20,6 +20,7 @@ class blockbot(api.module):
             pass
         self.c=self.db.cursor()
         self.db.commit()
+        self.db.close()
     def __init__(self,server):
         self.sql()
         self.ignore_users_on_su_list=1#Don't kick users if they are on the superusers list
@@ -105,7 +106,7 @@ class blockbot(api.module):
         for each in self.findlist:
             if re.search(each,ldata):
                 self.mode('*!*@%s'%api.getHost(data),channel,'+b')
-                self.kick(nick,channel,'You have matched a spam string and have been banned from the channel, if you think this is a mistake, contact a channel op about being unbaned')
+                self.kick(nick,channel,'You have matched a spam string and have been banned from the channel, if you think this is a mistake, contact a channel op about being unbanned')
         try:
             if self.msglist[0][0]==self.msglist[1][0]==self.msglist[2][0]:
                 if (self.msglist[0][1]-self.msglist[2][1])<self.wait:
@@ -116,12 +117,38 @@ class blockbot(api.module):
                         self.mode('*!*@%s'%api.getHost(data),channel,'+b')
         except IndexError:
             pass
+
+    def get_notice(self,nick,channel,data):
+        ldata=data.lower()
+        self.olastnot=(self.lastnot[:])
+        self.lastnot=(nick,time.time())
+        if self.olastnot[0]==self.lastnot[0]:
+            if (self.lastnot[1]-self.olastnot[1])<self.wait:
+                self.kick(nick,channel,'Please don\'t use the notice command so much')
+                self.mode(nick,channel,'+q')
+        for each in self.findlist:
+            if re.search(each,ldata):
+                self.kick(nick,channel,'You have matched a spam string and have been banned. If this was a mistake, please contact a channel op to get unbanned')
+                self.mode(nick,channel,'+b')
+    def check_hilight(self,nick,data,channel):
+        '''Check if nick has pinged more than self.hilight_limit people, and if so, kick them'''
+        ldata=data[data.find(' :')+2:].lower()
+        if channel not in self.nicklists:
+            self.nicklists[channel]=[nick]
+        found=0
+        for each in self.nicklists[channel]:
+            if each.lower() in ldata:
+                found+=1
+        if found>self.hilight_limit:
+            self.kick(nick,channel,'Please do not ping that many people')
         #//////////////////////////////////////////////////////////////
         #///////////////////////////SQLite Code////////////////////////
         #//////////////////////////////////////////////////////////////
-        msg=ldata[data.find(' :'):]
-        current=['0',0,'0',0,'0',0,'0',0,'0',0,'0',0,'0',0]
         try:
+            self.db=sqlite3.connect('database.sqlite')
+            self.c=self.db.cursor()
+            msg=ldata[data.find(' :'):]
+            current=['0',0,'0',0,'0',0,'0',0,'0',0,'0',0,'0',0]
             self.c.execute('''select * from lines where username=?''',(nick,))
             for row in self.c:
                 count=0
@@ -151,29 +178,6 @@ class blockbot(api.module):
         except Exception,e:
             print colorz.encode('Error: %s; %s'%(type(e),e.args),'red')
     #/////////////////////////END SQLite Code/////////////////////////
-    def get_notice(self,nick,channel,data):
-        ldata=data.lower()
-        self.olastnot=(self.lastnot[:])
-        self.lastnot=(nick,time.time())
-        if self.olastnot[0]==self.lastnot[0]:
-            if (self.lastnot[1]-self.olastnot[1])<self.wait:
-                self.kick(nick,channel,'Please don\'t use the notice command so much')
-                self.mode(nick,channel,'+q')
-        for each in self.findlist:
-            if re.search(each,ldata):
-                self.kick(nick,channel,'You have matched a spam string and have been banned. If this was a mistake, please contact a channel op to get unbanned')
-                self.mode(nick,channel,'+b')
-    def check_hilight(self,nick,data,channel):
-        '''Check if nick has pinged more than self.hilight_limit people, and if so, kick them'''
-        ldata=data[data.find(' :')+2:].lower()
-        if channel not in self.nicklists:
-            self.nicklists[channel]=[nick]
-        found=0
-        for each in self.nicklists[channel]:
-            if each.lower() in ldata:
-                found+=1
-        if found>self.hilight_limit:
-            self.kick(nick,channel,'Please do not ping that many people')
     def sql_add_str(self,msg):
         self.c.execute('''select * from recent where string=?''',(msg,))
         if len(self.c)>0:
