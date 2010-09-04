@@ -139,7 +139,7 @@ class bbot(api.module):
 					channel=self.nick[1]
 					nick='From %s'%nick
 				else:
-					self.append((channel,nick+': All abuse is logged: %s'%data))
+					self.notice((nick,'All abuse is logged: %s'%data))
 					return 1
 			elif ' | ' in self.q:
 				nick=self.q.split(' | ')
