@@ -99,15 +99,15 @@ class bbot(api.module):
 			else:
 				self.infobot_query(self.q,nick)
 			return 0
-		if ':\x01VERSION\x01' in data:
+		elif ':\x01VERSION\x01' in data:
 			self.append((nick,'\x01VERSION BBot Version %s\x01'%BBot.version))
-		if data.find(':?')!=-1:
+		elif ':?' in data:
 			if ':?help' in data and ':?help ' not in data:
 				w=''
 				for cmd in self.command_list:
 					w+='%s, '%cmd
 				self.append((channel,'%s: %s'%(nick,w[0:-2])))
-			if ':?goog ' in data:
+			elif ':?goog ' in data:
 				w=data.split(':?goog ')[-1].replace(' ','+')
 				self.append((channel,self.goog%w))
 				return 0
@@ -147,7 +147,7 @@ class bbot(api.module):
 					self.notice((nick,'All abuse is logged: %s'%data))
 					return 1
 			elif ' | ' in data:
-				nick=data.split(' | ')
+				nick=self.q.split(' | ')
 				self.q=nick[0].lower()
 				nick=nick[1]
 			if self.q[:self.q.find(' ')] not in self.command_list:
