@@ -149,7 +149,7 @@ class blockbot(api.module):
             self.c=self.db.cursor()
             msg=ldata[data.find(' :'):]
             current=['0',0,'0',0,'0',0,'0',0,'0',0,'0',0,'0',0]
-            self.c.execute('''select * from lines where username=?''',(nick,))
+            self.c.execute('''select * from lines''')
             for row in self.c:
                 count=0
                 print colorz.encode(str(row),'green')
