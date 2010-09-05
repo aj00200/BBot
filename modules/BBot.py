@@ -37,21 +37,21 @@ class bbot(api.module):
 			if config.cmd_char+'raw ' in ldata:
 				self.raw(data.split('raw ')[-1])
 				return 0 #Just for speed
-			elif config.cmd_char+'%spart' in ldata:
+			elif config.cmd_char+'part' in ldata:
 				words=ldata[ldata.find('part ')+5:]
 				self.raw('PART %s' % words)
 				return 0
-			elif config.cmd_char+'?add ' in ldata:
+			elif config.cmd_char+'add ' in ldata:
 				self.q=data[ldata.find('?add ')+5:].strip('\r\n')
 				self.q=self.q.split(':::')
 				self.add_factoid(self.q)
 				self.notice((channel,'<<Added %s>>'%self.q))
 				return 0
-			elif config.cmd_char+'?del ' in ldata:
+			elif config.cmd_char+'del ' in ldata:
 				self.q=data[data.find('?del ')+5:].strip('\r\n')
 				self.del_factoid(self.q)
 				return 0
-			elif ':?writedict' in ldata:
+			elif config.cmd_char+'writedict' in ldata:
 				self.write_dict()
 				self.notice((channel,'<<Wrote Dict>>'))
 				return 0
