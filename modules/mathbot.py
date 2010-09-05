@@ -5,7 +5,7 @@ import math
 import config
 import mathwiz as geo
 class mathbot(api.module):
-    commands=['math','math help','hex','dec']
+    commands=['math','math help','hex','dec2hex','dec2oct']
     def __init__(self,server=config.network):
         self.allow={
             ')':'..0..',
@@ -28,7 +28,8 @@ class mathbot(api.module):
             '.area(':'..17..',
             '.perimeter(':'..18..',
             'undefined':'..19..',
-            'geo.square(':'..20..'
+            'geo.square(':'..20..',
+            'num(':'..21..'
         }
         self.invert={
             '..0..':')',
@@ -51,7 +52,8 @@ class mathbot(api.module):
             '..17..':'.area(',
             '..18..':'.perimeter(',
             '..19..':'geo.undefined()',
-            '..20..':'geo.square('
+            '..20..':'geo.square(',
+            '..21..':'num('
             }
         api.module.__init__(self,server)
     def go(self,nick,data,channel):
@@ -59,12 +61,12 @@ class mathbot(api.module):
         if ':?math help' in self.ldata:
             self.append((channel,nick+' : +, -, *, /, %, sqrt, pow, ceil, floor, log, asin, acos, atan, atan2, sin, cos, tan'))
         elif ':?math ' in self.ldata:
-            self.e=self.ldata[self.ldata.find('?math ')+6:].strip('\r\n')
+            self.e=data[data.find('?math ')+6:].strip('\r\n')
             self.e=self.e.replace('!pi','3.1415926535897931')
             self.e=self.e.replace('!e',str(math.e))
             for each in self.allow:
                 self.e=self.e.replace(each,self.allow[each])
-            self.chars='_abcdefghijklmnopqrstuvwxyz#@$\'\"!:='
+            self.chars='_abcdefghijklmnopqrstuvwyz#@$\'\"!:=GHIJKLMNOPQRSTUVWYZ'
             for each in self.chars:
                 self.e=self.e.replace(each,'')
             for each in self.invert:
@@ -83,10 +85,22 @@ class mathbot(api.module):
                 self.append((channel,str(hex2dec(self.e))))
             except Exception,e:
                 self.report_error(channel,e)
-        elif ':?dec ' in self.ldata:
+        elif ':?dec2hex ' in self.ldata:
             try:
-                self.e=int(self.ldata[self.ldata.find(':?dec ')+6:])
+                self.e=float(self.ldata[self.ldata.find('?dec2hex ')+9:])
                 self.append((channel,str(dec2hex(self.e))))
+            except Exception,e:
+                self.report_error(channel,e)
+        elif ':?dec2oct ' in self.ldata:
+            try:
+                self.e=float(self.ldata[self.ldata.find('?dec2oct ')+9:])
+                self.append((channel,'%s: %s'%(nick,dec2oct(self.e))))
+            except Exception,e:
+                self.report_error(channel,e)
+        elif '?oct ' in self.ldata:
+            try:
+                self.e=self.ldata[self.ldata.find(':?oct ')+6:]
+                self.append((channel,'%s: %s'%(nick,oct2dec(self.e))))
             except Exception,e:
                 self.report_error(channel,e)
     def report_error(self,channel,e):
@@ -95,9 +109,20 @@ class Disallowed(Exception):
     def __init__(self,string):
         self.args=['%s is not allowed!'%string]
 #===Custom Functions===
+class num(int):
+    def __init__(self,num):
+        self.hex=hex(num)
+        self.dec=int(num)
+        self.oct=oct(num)
+        self.bin=bin(num)
+    def __str__(self):
+        return '<hex %s; dec %s; oct %s; bin %s;>'%(self.hex,self.dec,self.oct,self.bin)
 def hex2dec(hex):
     return int(hex,16)
 def dec2hex(dec):
     return '%X'%dec
-
+def dec2oct(dec):
+    return '%o'%dec
+def oct2dec(oct):
+    return int(oct)
 module=mathbot
