@@ -4,6 +4,12 @@ import config
 import colorz
 def getHost(data):
     return data[data.find('@')+1:data.find(' ')]
+def getNick(data):
+    return data[1:data.find('!')]
+def getIdent(data):
+    return data[data.find('!')+1:data.find('@')]
+def getMessage(data):
+    return data[data.find(' :')+2:]
 def hostInList(data,list):
     host=getHost(data)
     for su in list:

@@ -59,9 +59,4 @@ def loop():
 if __name__ == '__main__':
 	thread.start_new_thread(loop,())
 	import q
-	while 1:
-		if time.time()-lastloop<5.1:
-			break
-		asyncore.loop()
-		lastloop=time.time()
-		time.sleep(5)
+	asyncore.loop()

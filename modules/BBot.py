@@ -45,6 +45,7 @@ class bbot(api.module):
 				self.q=data[ldata.find('?add ')+5:].strip('\r\n')
 				self.q=self.q.split(':::')
 				self.add_factoid(self.q)
+				self.notice((channel,'<<Added %s>>'%self.q))
 				return 0
 			elif config.cmd_char+'?del ' in ldata:
 				self.q=data[data.find('?del ')+5:].strip('\r\n')
@@ -52,10 +53,11 @@ class bbot(api.module):
 				return 0
 			elif ':?writedict' in ldata:
 				self.write_dict()
+				self.notice((channel,'<<Wrote Dict>>'))
 				return 0
 			elif ':?connect ' in ldata:
 				self.q=str(ldata[ldata.find(':?connect ')+10:].strip('\r\n'))
-				self.append((channel,'Connecting to "%s"'%self.q))
+				self.notice((channel,'<<Connecting to "%s>>"'%self.q))
 				BBot.add_network(self.q)
 				q.connections[self.q]=q.connection(self.q)
 				return 0
@@ -82,6 +84,7 @@ class bbot(api.module):
 			else:
 				self.infobot_query(self.q,nick)
 			return 0
+		ldata=ldata.replace('whats','what is').replace('what\'s','what is')
 		if re.search('(what|who|where) (is|was|are|am) ',ldata):
 			self.ldata=ldata.replace(' was ',' is ')
 			self.ldata=self.ldata.replace(' a ',' ')
@@ -96,6 +99,8 @@ class bbot(api.module):
 			else:
 				self.infobot_query(self.q,nick)
 			return 0
+		if ':\x01VERSION\x01' in data:
+			self.append((nick,'\x01VERSION BBot Version %s\x01'%BBot.version))
 		if data.find(':?')!=-1:
 			if ':?help' in data and ':?help ' not in data:
 				w=''
