@@ -37,16 +37,16 @@ class bbot(api.module):
 			if config.cmd_char+'raw ' in ldata:
 				self.raw(data.split('raw ')[-1])
 				return 0 #Just for speed
-			elif config.cmd_char+'part' in ldata:
+			elif config.cmd_char+'%spart' in ldata:
 				words=ldata[ldata.find('part ')+5:]
 				self.raw('PART %s' % words)
 				return 0
-			elif ':?add ' in ldata:
+			elif config.cmd_char+'?add ' in ldata:
 				self.q=data[ldata.find('?add ')+5:].strip('\r\n')
 				self.q=self.q.split(':::')
 				self.add_factoid(self.q)
 				return 0
-			elif ':?del ' in ldata:
+			elif config.cmd_char+'?del ' in ldata:
 				self.q=data[data.find('?del ')+5:].strip('\r\n')
 				self.del_factoid(self.q)
 				return 0
@@ -141,9 +141,9 @@ class bbot(api.module):
 				else:
 					self.notice((nick,'All abuse is logged: %s'%data))
 					return 1
-			elif ' | ' in self.q:
-				nick=self.q.split(' | ')
-				self.q=nick[0]
+			elif ' | ' in data:
+				nick=data.split(' | ')
+				self.q=nick[0].lower()
 				nick=nick[1]
 			if self.q[:self.q.find(' ')] not in self.command_list:
 				if self.q in dict:
