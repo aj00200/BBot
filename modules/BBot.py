@@ -100,13 +100,14 @@ class bbot(api.module):
 				self.infobot_query(self.q,nick)
 			return 0
 		elif ':\x01VERSION\x01' in data:
-			self.append((nick,'\x01VERSION BBot Version %s\x01'%BBot.version))
+			self.notice((nick,'\x01VERSION BBot Version %s\x01'%BBot.version))
 		elif ':?' in data:
 			if ':?help' in data and ':?help ' not in data:
 				w=''
 				for cmd in self.command_list:
 					w+='%s, '%cmd
-				self.append((channel,'%s: %s'%(nick,w[0:-2])))
+				self.append((nick,'%s: %s'%(nick,w[0:-2])))
+				self.notice((channel,'<%s: Please see the PM I sent you>'%nick))
 			elif ':?goog ' in data:
 				w=data.split(':?goog ')[-1].replace(' ','+')
 				self.append((channel,self.goog%w))
