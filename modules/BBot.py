@@ -94,10 +94,7 @@ class bbot(api.module):
 			self.ldata=self.ldata.replace(' are ',' is ')
 			self.ldata=self.ldata.replace(' am ',' is ')
 			self.q=self.ldata[self.ldata.find(' is ')+4:].strip('?.\r\n:')
-			if self.q in dict:
-				self.query(self.q,nick,channel)
-			else:
-				self.infobot_query(self.q,nick)
+			self.query(self.q,nick,channel)
 			return 0
 		elif ':\x01VERSION\x01' in data:
 			self.notice((nick,'\x01VERSION BBot Version %s\x01'%BBot.version))
@@ -152,29 +149,40 @@ class bbot(api.module):
 				self.q=nick[0].lower()
 				nick=nick[1]
 			if self.q[:self.q.find(' ')] not in self.command_list:
-				if self.q in dict:
-					self.query(self.q,nick,channel)
-					return 0
-				else:
-					self.infobot_query(self.q,nick)
+				self.query(self.q,nick,channel)
+				return 0
 		elif ':INFOBOT:' in data:
 			if ':INFOBOT:REPLY' in data:
 				if nick in self.info_bots:
 					self.infobot_parse_reply(data)
 			elif ':INFOBOT:QUERY' in data:
 				self.infobot_reply(data,nick)
-	def infobot_query(self,query,nick):
+	def infobot_query(self,query,nick,channel):
 		for each in self.info_bots:
-			self.append((each,'INFOBOT:QUERY %s %s'%(nick,query)))
+			self.append((each,'INFOBOT:QUERY %s %s'%('20%'+nick+';'+channel+':',query)))
 	def infobot_parse_reply(self,query):
 		print 'PARSING REPLY'
-		q=query[query.find('INFOBOT:REPLY ')+14:]
-		q=q[q.find(' ')+1:].replace('<ACTION>','\x01ACTION ')
-		q=q.replace(config.mynick,'%n')
-		if '\x01' in q:
-			q+='\x01'
-		print 'ADDING FACTOID %s'%q.split(' = ')
-		self.add_factoid(q.split(' = ',1))
+		if re.search('INFOBOT:REPLY (.)+ (.)+ = [a-zA-Z0-9]+',query):
+			if re.search('INFOBOT:REPLY [0-9]+%(.)+:',query):	#Its a BBot INFOBOT Reply
+				self.notice(('#spam','Advanced INFOBOT Query'))
+				return_path=query[query.find(':REPLY ')+7:]			#5%aj00200;#bots:nick@network hi = hello world
+				ttl=int(return_path[:return_path.find('%')])-1
+				if ttl>-1:
+					return_path=return_path[return_path.find(':')+1:return_path.find(' ')]	#nick@network
+					return_net=''
+					if ':' in return_path:
+						return_net=return_path.split(':')[-1]
+					return_path='.'.join(return_path.split(':')[0:-1])+':'
+					self.notice(('#spam','RETURN PATH IS: %s; TTL is: %s'%(return_path,ttl)))
+					self.notice(('#spam','RETURN NET IS: %s;'%return_net))
+					
+			else:
+				q=query[query.find('INFOBOT:REPLY ')+14:]				#5%aj00200;#bots hi = hello world
+				q=q[q.find(' ')+1:].replace('<ACTION>','\x01ACTION ')	#hi = hello world
+				q=q.replace(config.mynick,'%n')							#
+				if '\x01' in q:											#
+					q+='\x01'											#
+				self.add_factoid(q.split(' = ',1))						#('hi','hello world')
 	def infobot_reply(self,query,sender):
 		try:
 			q=query[query.find('INFOBOT:QUERY ')+14:]
@@ -195,7 +203,7 @@ class bbot(api.module):
 		self.dict=open('bbot/dict','w')
 		for each in dict:
 			self.dict.write('%s:::%s\r\n'%(each,dict[each]))
-		self.dict.close()
+		self.dict.close()																							
 	def clear_dict(self):
 		dict={}
 	def read_dict(self):
@@ -213,5 +221,7 @@ class bbot(api.module):
 			return dict[query]
 	def query(self,query,nick,channel):
 		if query in dict:
-			self.append((channel,dict[query].replace('%n',nick)))
+			self.append((channel,dict[query.lower()].replace('%n',nick)))
+		else:
+			self.infobot_query(query,nick,channel)
 module=bbot
