@@ -136,11 +136,11 @@ class bbot(api.module):
 			elif ':?version' in data:
 				self.append((channel,'I am version %s.'%BBot.version))
 				return 0
-			self.q=ldata[data.find(':?')+2:].strip('\r\n')
+			self.q=data[data.find(':?')+2:]
 			if ' > ' in self.q:
 				if ' | ' not in self.q:
 					self.nick=self.q.split(' > ')
-					self.q=self.nick[0]
+					self.q=self.nick[0].lower()
 					channel=self.nick[1]
 					nick='From %s'%nick
 				else:

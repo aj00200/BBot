@@ -29,8 +29,9 @@ class mathbot(api.module):
             '.perimeter(':'..18..',
             'undefined':'..19..',
             'geo.square(':'..20..',
-            'num(':'..21..'
-        }
+            'num(':'..21..',
+            'geo.line(':'..22..'
+       }
         self.invert={
             '..0..':')',
             '..1..':'math.sqrt(',
@@ -53,7 +54,8 @@ class mathbot(api.module):
             '..18..':'.perimeter(',
             '..19..':'geo.undefined()',
             '..20..':'geo.square(',
-            '..21..':'num('
+            '..21..':'num(',
+            '..22..':'geo.line('
             }
         api.module.__init__(self,server)
     def go(self,nick,data,channel):
@@ -66,7 +68,7 @@ class mathbot(api.module):
             self.e=self.e.replace('!e',str(math.e))
             for each in self.allow:
                 self.e=self.e.replace(each,self.allow[each])
-            self.chars='_abcdefghijklmnopqrstuvwyz#@$\'\"!:=GHIJKLMNOPQRSTUVWYZ'
+            self.chars='_ghijklmnopqrstuvwyz#@$\'\"!:=GHIJKLMNOPQRSTUVWYZ'
             for each in self.chars:
                 self.e=self.e.replace(each,'')
             for each in self.invert:
@@ -78,7 +80,6 @@ class mathbot(api.module):
                 self.append((channel,str(eval(self.e))))
             except Exception,e:
                 self.report_error(channel,e)
-                self.append((channel,self.e))
         elif ':?hex ' in self.ldata:
             try:
                 self.e=self.ldata[self.ldata.find(':?hex ')+6:]
@@ -114,7 +115,10 @@ class num(int):
         self.hex=hex(num)
         self.dec=int(num)
         self.oct=oct(num)
-        self.bin=bin(num)
+        try:
+            self.bin=bin(num)
+        except:
+            self.bin='Upgrade to python2.6 or 2.7 please'
     def __str__(self):
         return '<hex %s; dec %s; oct %s; bin %s;>'%(self.hex,self.dec,self.oct,self.bin)
 def hex2dec(hex):
@@ -124,5 +128,5 @@ def dec2hex(dec):
 def dec2oct(dec):
     return '%o'%dec
 def oct2dec(oct):
-    return int(oct)
+    return int(oct(oct))
 module=mathbot

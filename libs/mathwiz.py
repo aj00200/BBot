@@ -60,6 +60,20 @@ def regular_polygn(sides,length=undefined()):
     pass
 def distance(x1,y1,x2,y2):
     return math.sqrt(math.pow(x1-x2,2)+math.pow(y1-y2,2))
+class slope():
+    def __init__(self,x1,y1,x2,y2):
+        self.slope_rise=y2-y1
+        self.slope_run=x2-x1
+        if self.slope_rise<0 and self.slope_run<0:
+            self.slope_rise=self.slope_rise*-1
+            self.slope_run=self.slope_run*-1
+    def __repr__(self):
+        return '%s/%s'%(self.slope_rise,self.slope_run)
+class line():
+    def __init__(self,x1,y1,x2,y2):
+        self.slope=slope(x1,1,x2,y2)
+    def __repr__(self):
+        return '<line slope=%s;>'%self.slope
 class polygon():
     def __init__(self):
         pass
