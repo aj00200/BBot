@@ -77,8 +77,8 @@ class bbot(api.module):
 				self.q=data[data.find(':?reload ')+9:].strip('\r\n')
 				BBot.reload_module(self.q,str(self.__server__))
 				return 0
-		if ldata.find(':'+config.mynick.lower()+': ')!=-1:
-			self.q=ldata[ldata.find(':'+config.mynick.lower()+': ')+3+len(config.mynick):].strip('\r\n')
+		if re.search(':'+config.mynick.lower()+'(:|,) ',ldata):
+			self.q=ldata[ldata.find(':'+config.mynick.lower())+3+len(config.mynick):]
 			if self.q in dict:
 				self.query(self.q,nick,channel)
 			else:
