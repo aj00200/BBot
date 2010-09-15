@@ -37,10 +37,13 @@ class test_api(unittest.TestCase):
     def test_getHost(self):
         self.assertEqual(api.getHost(':aj00200!aj00200@Fossnet/staff/aj00200 PRIVMSG #bots: hi'),'Fossnet/staff/aj00200','api.getHost() isn\'t returning hosts inside PRIVMSGs')
         self.assertEqual(api.getHost(':aj00200!aj00200@127.0.0.1 NOTICE #bots :Hi!'),'127.0.0.1','api.getHost() isn\'t returning hosts inside NOTICEs')
-
+class test_mathwiz(unittest.TestCase):
+    def test_slope(self):
+        self.assertEqual(str(mathwiz.slope(0,0,1,1)),'1/1')
 from BBot import bbot
 import api
 import mathbot
+import mathwiz
 if __name__ == '__main__':
     unittest.main()
 

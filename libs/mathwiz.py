@@ -71,7 +71,7 @@ class slope():
         return '%s/%s'%(self.slope_rise,self.slope_run)
 class line():
     def __init__(self,x1,y1,x2,y2):
-        self.slope=slope(x1,1,x2,y2)
+        self.slope=slope(x1,y1,x2,y2)
     def __repr__(self):
         return '<line slope=%s;>'%self.slope
 class polygon():
