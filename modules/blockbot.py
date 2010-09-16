@@ -109,11 +109,13 @@ class blockbot(api.module):
             if re.search(each,ldata):
                 self.mode('*!*@%s'%api.getHost(data),channel,'+b')
                 self.kick(nick,channel,'You have matched a spam string and have been banned from the channel, if you think this is a mistake, contact a channel op about being unbanned')
+                return 0
         try:
             if self.msglist[0][0]==self.msglist[1][0]==self.msglist[2][0]:
                 if (self.msglist[0][1]-self.msglist[2][1])<self.wait:
                     self.kick(nick,channel,'It is against the rules to flood, you have been banned.')
-                if msg.split()>1:
+                    return 0
+                elif msg.split()>1:
                     if (self.msglist[0][2]==self.msglist[1][2]==self.msglist[2][2]) and (self.msglist[0][1]-self.msglist[1][1]<self.repeat_time):
                         self.kick(nick,channel,'Please do not repeat!')
                         self.mode('*!*@%s'%api.getHost(data),channel,'+b')

@@ -82,7 +82,7 @@ class bbot(api.module):
 			if self.q in dict:
 				self.query(self.q,nick,channel)
 			else:
-				self.infobot_query(self.q,nick)
+				self.infobot_query(self.q,nick,channel)
 			return 0
 		ldata=ldata.replace('whats','what is').replace('what\'s','what is')
 		if re.search('(what|who|where) (is|was|are|am) ',ldata):
