@@ -1,11 +1,21 @@
-nick: BotsNickname
-username: NickservUsername
-password: NickservPassword
-network: irc.NETWORK.com
-port: 6667
-channels: #bots #bbot
-super-user: YOUR-HOST-HERE SECOND-HOST-HERE #keep-this-comment-here
-wait-after-identify: 3
-read-wait: 1024
-command-char: $
-error-channel: #bots
+[main]
+nick: Nickname			;The bots nickname
+username: usernae		;The bots nickserv username
+password: password 	     	;The bots nickserv password
+network: irc.network.com 	;The network to connect to
+port: 6667			;The port to connect on
+channels: #bots			;The channels to join on connect
+super-users: staff/ host.host.isp.com ## ;Trusted hosts, keep the ##!
+wait-after-identify: 5		;Time to wait after iding to nickserv
+read-wait: 1024	     		;Number of bytes to read each time
+command-char: ?			;Command character
+report-error: #bots		;Channel or nicks to report error to
+allow-invite:False 		;Allow the bot to be invited places
+
+[BBot]
+ttl: 10				;The InfoBot2 TTL value
+infobots: JCSMarlen BBot aj00200 ;The bots to send Infobot queires to
+[BlockBot]
+hilight-limit: 5		;Mass-hilight limit
+proxy-scan: False		;Have BBotport scan users for proxies?
+botnet-only: False		;Only be strict on new joins 
