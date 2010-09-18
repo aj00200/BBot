@@ -29,7 +29,7 @@ class blockbot(api.module):
         self.config=open('blockbot-config','r')
         self.findlist=self.config.readline().lower()
         self.findlist=self.findlist[self.findlist.find(' ')+1:self.findlist.find('#')].split('^^^@@@^^^')
-        self.proxyscan=api.getConfigBool
+        self.proxyscan=api.getConfigBool('BlockBot','proxy-scan')
         if self.proxyscan:
             import nmap #Can be found at: http://xael.org/norman/python/python-nmap/
         self.line=self.config.readline()
