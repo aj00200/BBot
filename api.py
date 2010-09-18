@@ -2,6 +2,14 @@ import q
 import bbot
 import config
 import colorz
+def getConfigStr(cat,name):
+    return config.c.get(cat,name)
+def getConfigInt(cat,name):
+    return config.c.getint(cat,name)
+def getConfigFloat(cat,name):
+    return config.c.getfloat(cat,name)
+def getConfigBool(cat,name):
+    return config.c.getboolean(cat,name)
 def getHost(data):
     '''Returns the hostname (IP address) of the person who sent the message passed to the variable data'''
     return data[data.find('@')+1:data.find(' ')]

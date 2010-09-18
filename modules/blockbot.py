@@ -25,14 +25,11 @@ class blockbot(api.module):
         self.sql()
         self.ignore_users_on_su_list=1#Don't kick if they are on the superusers list
         self.nicklists={}
-        self.hilight_limit=4
+        self.hilight_limit=api.getConfigInt('BlockBot','hilight-limit')
         self.config=open('blockbot-config','r')
         self.findlist=self.config.readline().lower()
         self.findlist=self.findlist[self.findlist.find(' ')+1:self.findlist.find('#')].split('^^^@@@^^^')
-        if 'yes' in self.config.readline().lower():
-            self.proxyscan=1
-        else:
-            self.proxyscan=0
+        self.proxyscan=api.getConfigBool
         if self.proxyscan:
             import nmap #Can be found at: http://xael.org/norman/python/python-nmap/
         self.line=self.config.readline()

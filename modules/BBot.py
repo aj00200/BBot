@@ -19,7 +19,7 @@ class bbot(api.module):
 	def __init__(self,server):
 		thread.start_new_thread(self.get_command_list,())
 		self.read_dict()
-		self.info_bots=['gpy','aj00200','BBot','JCSMarlen']
+		self.info_bots=api.getConfigStr('BBot','infobots').split()
 		self.info_old=['Bekbot']#Compatibility for true Infobot
 		self.q=''
 		self.command_list=[]
@@ -28,9 +28,12 @@ class bbot(api.module):
 		self.pb='http://www.pastebin.com/%s'
 		self.upb='http://paste.ubuntu.com/%s'
 		self.kb='http://www.kb.aj00200.heliohost.org/index.py?q=%s'
+		self.funcs={'hit':self.hit,
+			    'version':self.version
+		}
 		api.module.__init__(self,server)
 	def go(self,nick,data,channel):
-		if channel.find('#')==-1:#Detect if the message is a PM to the Bot
+		if channel.find('#')==-1:#Detect if the message is a PM
 			channel=nick.lower()
 		ldata=data.lower()
 		if api.checkIfSuperUser(data,config.superusers):
@@ -125,16 +128,13 @@ class bbot(api.module):
 				w=data[data.find(':?kb ')+5:]
 				self.append((channel,self.kb%w))
 				return 0
-			elif ':?hit ' in data:
-				words=data[data.find(':?hit ')+6:]
-				if words.lower().find(config.mynick.lower())!=-1 or words.lower()=='aj00200':
-					words=nick
-				self.append((channel,'\x01ACTION kicks %s\x01'%words))
-				return 0
-			elif ':?version' in data:
-				self.append((channel,'I am version %s.'%BBot.version))
-				return 0
 			self.q=data[data.find(':?')+2:]
+			if ' ' in self.q:
+				self.q2=self.q[:self.q.find(' ')]
+			else:
+				self.q2=self.q
+			if self.q2 in self.funcs:
+				self.funcs[self.q2](nick,data,channel)
 			if ' > ' in self.q:
 				if ' | ' not in self.q:
 					self.nick=self.q.split(' > ')
@@ -235,4 +235,11 @@ class bbot(api.module):
 			self.append((channel,dict[query.lower()].replace('%n',nick)))
 		else:
 			self.infobot_query(query,nick,channel)
+
+	#////////Single Functions/////////
+	def hit(self,nick,data,channel):
+		who=data[data.find('hit ')+4:]
+		self.append((channel,'\x01ACTION punches %s'%who))
+	def version(self,nick,data,channel):
+		self.append((channel,'I am version %s'%BBot.version))
 module=bbot
