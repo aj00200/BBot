@@ -5,6 +5,7 @@ import config
 import bbot as BBot
 import time
 import thread
+import sqlite3
 dict={}
 class bbot(api.module):
 	commands=['help','goog','wiki','pb','upb','kb','hit','?<query>','add','del','writedict','load','reload','py','connect']
@@ -225,9 +226,7 @@ class bbot(api.module):
 			dict[self.q[0]]=self.q[1]
 		self.dict.close()
 	def query_dict(self,query):
-		'''
-		Primarily for the unittester
-		'''
+		'''Primarily for the unittester	'''
 		if query in dict:
 			return dict[query]
 	def query(self,query,nick,channel):
@@ -235,6 +234,7 @@ class bbot(api.module):
 			self.append((channel,dict[query.lower()].replace('%n',nick)))
 		else:
 			self.infobot_query(query,nick,channel)
+
 
 	#////////Single Functions/////////
 	def hit(self,nick,data,channel):
