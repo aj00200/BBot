@@ -160,34 +160,45 @@ class bbot(api.module):
 	def infobot_query(self,query,nick,channel):
 		for each in self.info_bots:
 			self.append((each,'INFOBOT:QUERY %s %s'%('20%'+nick+';'+channel+':',query)))
-	def infobot_parse_reply(self,query):
+	def infobot_parse_reply(self,data):
 		print 'PARSING REPLY'
-		if re.search('INFOBOT:REPLY (.)+ (.)+ = [a-zA-Z0-9]+',query):
-			if re.search('INFOBOT:REPLY [0-9]+%(.)+:',query):	#Its a BBot INFOBOT Reply
-				self.notice(('#spam','Advanced INFOBOT Query'))
-				return_path=query[query.find(':REPLY ')+7:]			#5%aj00200;#bots:nick@network hi = hello world
-				ttl=int(return_path[:return_path.find('%')])-1
-				if ttl>-1:
-					return_path=return_path[return_path.find(':')+1:return_path.find(' ')]	#nick@network
-					return_net=''
-					if ':' in return_path:
-						return_net=return_path.split(':')[-1]
-					return_path='.'.join(return_path.split(':')[0:-1])+':'
-					self.notice(('#spam','RETURN PATH IS: %s; TTL is: %s'%(return_path,ttl)))
-					self.notice(('#spam','RETURN NET IS: %s;'%return_net))
-					
+		if re.search('INFOBOT:REPLY (.)+ (.)+ = [a-zA-Z0-9]+',data):
+			if re.search('INFOBOT:REPLY [0-9]+%(.)+:',data):
+				self.notice(('#pam','Advanced Query'))
+#/////////////////////-Advanced Infobot Reply-/////////////////////////
+#INFOBOT:REPLY 20%aj00200;#spam:bot@net:bot2@net2 blah = blah
+				ib=data[data.find('REPLY ')+6:]
+				ib=ib[:ib.find(' ')]
+				ttl=int(ib[:ib.find('%')])-1
+				if ttl<0:
+					return
+				id=ib[ib.find('%')+1:ib.find(':')]
+				return_path=ib[ib.find(':')+1:]
+				return_path=return_path.split(':')
+				return_to=return_path.pop()
+				return_path=':'.join(return_path)
+				#/////^Does not contain leading ://////
+				address=return_to.split('@')
+				query=data[data.find('INFOBOT:REPLY ')+14:].split()
+				#^1:query, 2: = 3:factoid
+				message='INFOBOT:REPLY '+str(ttl)+'%'+id+':'+return_path+' '+query[1]+' = '+query[3]
+				try:
+					self.notice(('#spam','Network is: %s'%address[1]))
+					q.append(address[1],(address[0],message))
+				except Exception,e:
+					self.notice(('#spam','BBot crashed with error %s and args %s'%(type(e),e.args)))
 			else:
-				q=query[query.find('INFOBOT:REPLY ')+14:]				#5%aj00200;#bots hi = hello world
-				q=q[q.find(' ')+1:].replace('<ACTION>','\x01ACTION ')	#hi = hello world
-				q=q.replace(config.mynick,'%n')							#
-				if '\x01' in q:											#
-					q+='\x01'											#
-				self.add_factoid(q.split(' = ',1))						#('hi','hello world')
+				qu=data[data.find('INFOBOT:REPLY ')+14:]				#5%aj00200;#bots hi = hello world
+				qu=q[qu.find(' ')+1:].replace('<ACTION>','\x01ACTION ')	#hi = hello world
+				qu=qu.replace(config.mynick,'%n')							#
+				if '\x01' in qu:
+					qu+='\x01'
+				self.add_factoid(qu.split(' = ',1))						#('hi','hello world')
 	def infobot_reply(self,query,sender):
 		try:
-			q=query[query.find('INFOBOT:QUERY ')+14:]
-			nick=q[:q.find(' ')]
-			self.q=q[q.find(' ')+1:]
+			qu=query[query.find('INFOBOT:QUERY ')+14:]
+			nick=qu[:qu.find(' ')]
+			self.q=qu[qu.find(' ')+1:]
 			if self.q in dict:
 				self.append((sender,'INFOBOT:REPLY %s %s = %s'%(nick,self.q,dict[self.q])))
 			else:
@@ -203,7 +214,7 @@ class bbot(api.module):
 		self.dict=open('bbot/dict','w')
 		for each in dict:
 			self.dict.write('%s:::%s\r\n'%(each,dict[each]))
-		self.dict.close()																							
+		self.dict.close()
 	def clear_dict(self):
 		dict={}
 	def read_dict(self):
