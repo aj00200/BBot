@@ -3,14 +3,19 @@ import bbot
 import config
 import colorz
 def getHost(data):
+    '''Returns the hostname (IP address) of the person who sent the message passed to the variable data'''
     return data[data.find('@')+1:data.find(' ')]
 def getNick(data):
+    '''Returns the nickname of the person who sent the message passed to this function'''
     return data[1:data.find('!')]
 def getIdent(data):
+    '''Returns the ident of the person who sent the message passed to this function'''
     return data[data.find('!')+1:data.find('@')]
 def getMessage(data):
+    '''Returns the actual message that was sent without the nickname, hostname, and so on'''
     return data[data.find(' :')+2:]
 def hostInList(data,list):
+    '''Tells you if the host of the person who sent the message that is pased as the first arg is in the list of hosts which is the second arg'''
     host=getHost(data)
     for su in list:
         if host.find(su)!=-1:
