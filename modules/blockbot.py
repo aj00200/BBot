@@ -15,7 +15,6 @@ class blockbot(api.module):
         self.c.execute('create table if not exists lines (username text, line0 text, ts0 integer, line1 text, ts1 integer, line3 text, ts3 integer, line4 text, ts4 integer, line5 text, ts5 integer, line6 text, ts6 integer, line7 text, ts7 integer, line8 text, ts8)')
         try:
             self.c.execute('''create table recent (string, count, ts)''')
-            self.c.commit()
         except:
             pass
         self.c=self.db.cursor()

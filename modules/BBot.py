@@ -6,7 +6,7 @@ import bbot as BBot
 import time
 import thread
 import sqlite3
-dict={}
+dict=sqlite3.connect('bbot.sqlite3')
 class bbot(api.module):
 	commands=['help','goog','wiki','pb','upb','kb','hit','?<query>','add','del','writedict','load','reload','py','connect']
 	def get_command_list(self):
@@ -21,7 +21,7 @@ class bbot(api.module):
 		thread.start_new_thread(self.get_command_list,())
 		self.read_dict()
 		self.info_bots=api.getConfigStr('BBot','infobots').split()
-		self.info_old=['Bekbot']#Compatibility for true Infobot
+		self.ttl=api.getConfigInt('BBot','ttl')
 		self.q=''
 		self.command_list=[]
 		self.goog='http://www.google.com/search?q=%s'
@@ -48,7 +48,7 @@ class bbot(api.module):
 			elif config.cmd_char+'add ' in ldata:
 				self.q=data[ldata.find('?add ')+5:].strip('\r\n')
 				self.q=self.q.split(':::')
-				self.add_factoid(self.q)
+				self.add_factoid(self.q,nick)
 				self.notice((channel,'<<Added %s>>'%self.q))
 				return 0
 			elif config.cmd_char+'del ' in ldata:
@@ -83,10 +83,7 @@ class bbot(api.module):
 				return 0
 		if re.search(':'+config.mynick.lower()+'(:|,) ',ldata):
 			self.q=ldata[ldata.find(':'+config.mynick.lower())+3+len(config.mynick):]
-			if self.q in dict:
-				self.query(self.q,nick,channel)
-			else:
-				self.infobot_query(self.q,nick,channel)
+			self.query(self.q,nick,channel)
 			return 0
 		ldata=ldata.replace('whats','what is').replace('what\'s','what is')
 		if re.search('(what|who|where) (is|was|are|am) ',ldata):
@@ -149,23 +146,27 @@ class bbot(api.module):
 				nick=self.q.split(' | ')
 				self.q=nick[0].lower()
 				nick=nick[1]
-			if self.q[:self.q.find(' ')] not in self.command_list:
+			if self.q not in self.command_list:
 				self.query(self.q,nick,channel)
 				return 0
 		elif ':INFOBOT:' in data:
-			if ':INFOBOT:REPLY' in data:
+			if ':INFOBOT:DUNNO' in data:
+				pass
+			elif ':INFOBOT:REPLY' in data:
 				if nick in self.info_bots:
 					self.infobot_parse_reply(data)
 			elif ':INFOBOT:QUERY' in data:
 				self.infobot_reply(data,nick)
-	def infobot_query(self,query,nick,channel):
+	def send_infobot_query(self,query,nick,channel):
+		message='INFOBOT:QUERY '+str(self.ttl)+'%'+nick+';'+channel+': '+query
+		if 'infobot:dunno' in query.lower(): #Prevents looping
+			return
 		for each in self.info_bots:
-			self.append((each,'INFOBOT:QUERY %s %s'%('20%'+nick+';'+channel+':',query)))
+			self.append((each,message))
 	def infobot_parse_reply(self,data):
-		print 'PARSING REPLY'
 		if re.search('INFOBOT:REPLY (.)+ (.)+ = [a-zA-Z0-9]+',data):
 			if re.search('INFOBOT:REPLY [0-9]+%(.)+:',data):
-				self.notice(('#pam','Advanced Query'))
+				self.notice(('#spam','Advanced Query'))
 #/////////////////////-Advanced Infobot Reply-/////////////////////////
 #INFOBOT:REPLY 20%aj00200;#spam:bot@net:bot2@net2 blah = blah
 				ib=data[data.find('REPLY ')+6:]
@@ -177,6 +178,8 @@ class bbot(api.module):
 				return_path=ib[ib.find(':')+1:]
 				return_path=return_path.split(':')
 				return_to=return_path.pop()
+				if return_to in return_path:
+					return #loop protection
 				return_path=':'.join(return_path)
 				#/////^Does not contain leading ://////
 				address=return_to.split('@')
@@ -206,40 +209,42 @@ class bbot(api.module):
 				self.append((sender,'INFOBOT:DUNNO %s %s'%(nick,self.q)))
 		except Exception,e:
 			self.append((channel,'Error %s; with args %s;'%(type(e),e.args)))
-	def add_factoid(self,query):
-		dict[query[0].lower()]=query[1]
+	def add_factoid(self,query,nick):
+		self.c.execute('delete from factoids where key=?',(query[0],))
+		self.c.execute('insert into factoids values (?,?,?,?)',(query[0],query[1],nick,time.time()))
 	def del_factoid(self,query):
 		if query in dict:
 			del dict[query]
 	def write_dict(self):
-		self.dict=open('bbot/dict','w')
-		for each in dict:
-			self.dict.write('%s:::%s\r\n'%(each,dict[each]))
-		self.dict.close()
+		dict.commit()
 	def clear_dict(self):
-		dict={}
+		pass
 	def read_dict(self):
-		self.clear_dict()
-		self.dict=open('bbot/dict','r')
-		for line in self.dict.readlines():
-			self.q=line.strip('\r\n').split(':::')
-			dict[self.q[0]]=self.q[1]
-		self.dict.close()
+		self.c=dict.cursor()
+		self.c.execute('''create table if not exists factoids (key, value, by, ts)''')
+		dict.commit()
 	def query_dict(self,query):
 		'''Primarily for the unittester	'''
-		if query in dict:
-			return dict[query]
+		self.c=dict.cursor()
+		self.c.execute('''select * from factoids where key=?''',(query,))
+		results=self.c.fetchall()
+		if len(results)>0:
+			return results[0][1]
 	def query(self,query,nick,channel):
-		if query in dict:
-			self.append((channel,dict[query.lower()].replace('%n',nick)))
+		'''Querys the database for the factoid 'query', and returns its value to the channel if it is found'''
+		self.c.execute('''select * from factoids where key=?''',(query,))
+		results=self.c.fetchall()[:]
+		if len(results)>0:
+			self.append((channel,str(results[0][1]).replace('%n',nick)))
 		else:
-			self.infobot_query(query,nick,channel)
-
+			self.send_infobot_query(query,nick,channel)
 
 	#////////Single Functions/////////
 	def hit(self,nick,data,channel):
+		'''Causes BBot to punch someone'''
 		who=data[data.find('hit ')+4:]
 		self.append((channel,'\x01ACTION punches %s'%who))
 	def version(self,nick,data,channel):
+		'''Sends BBot's version number to the channel'''
 		self.append((channel,'I am version %s'%BBot.version))
 module=bbot
