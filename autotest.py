@@ -14,20 +14,13 @@ class test_bbot(unittest.TestCase):
     def test_read_dict(self):
         self.assertEqual(self.bbot.read_dict(),None)
     def test_add_factoid(self):
-        self.bbot.add_factoid(('abcdefg','gfedcba'))
+        self.bbot.add_factoid(('abcdefg','gfedcba'),'unittester')
         self.assertEqual(self.bbot.query_dict('abcdefg'),'gfedcba')
+        self.assertEqual(self.bbot.del_factoid('abcdefg'),None,'Can not delete factoid that exists')
     def test_del_factoid(self):
-        self.bbot.add_factoid(('abc','abc'))
+        self.bbot.add_factoid(('abc','abc'),'unittester')
         self.bbot.del_factoid('abc')
         self.assertEqual(self.bbot.query_dict('abc'),None,'Factoids are not being deleted')
-    def test_io(self):
-        self.bbot.add_factoid(('hi','Hi!'))
-        self.bbot.write_dict()
-        self.bbot.read_dict()
-        self.assertEqual(self.bbot.query_dict('hi'),'Hi!','Error with reading or writing factoids')
-        self.bbot.del_factoid('hi')
-        self.bbot.read_dict()
-        self.assertEqual(self.bbot.query_dict('hi'),'Hi!')
     def test_main_module(self):
         self.assertEqual(self.bbot.go('aj00200',':aj00200!aj00200@FOSSnet/staff/oper/aj00200 PRIVMSG #bots :abcdefg','#bots'),None)#Do a quick check to make sure it works
         self.assertEqual(self.bbot.go('aj00200',':aj00200!aj00200@FOSSnet/staff/oper/aj00200 PRIVMSG #bots :?hi','#bots'),0)
@@ -37,6 +30,8 @@ class test_api(unittest.TestCase):
     def test_getHost(self):
         self.assertEqual(api.getHost(':aj00200!aj00200@Fossnet/staff/aj00200 PRIVMSG #bots: hi'),'Fossnet/staff/aj00200','api.getHost() isn\'t returning hosts inside PRIVMSGs')
         self.assertEqual(api.getHost(':aj00200!aj00200@127.0.0.1 NOTICE #bots :Hi!'),'127.0.0.1','api.getHost() isn\'t returning hosts inside NOTICEs')
+    def test_getConfigInt(self):
+        self.assertEqual(str(type(api.getConfigInt('main','read-wait'))),'<type \'int\'>')
 class test_mathwiz(unittest.TestCase):
     def test_slope(self):
         self.assertEqual(str(mathwiz.slope(0,0,1,1)),'1/1')

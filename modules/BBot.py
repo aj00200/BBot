@@ -200,20 +200,19 @@ class bbot(api.module):
 				self.add_factoid(qu.split(' = ',1))						#('hi','hello world')
 	def infobot_reply(self,query,sender):
 		qu=query[query.find('INFOBOT:QUERY ')+14:]
-		nick=qu[:qu.find(' ')]
+		id=qu[:qu.find(' ')]
 		self.q=qu[qu.find(' ')+1:]
-		self.c.execute('''select * from factoids where key=?''',(query,))
+		self.c.execute('''select * from factoids where key=?''',(self.q,))
 		finds=self.c.fetchall()
 		if len(finds)>0:
-			self.append((sender,'INFOBOT:REPLY %s %s = %s'%(nick,self.q,finds[0][1])))
+			self.append((sender,'INFOBOT:REPLY %s %s = %s'%(id,self.q,finds[0][1])))
 		else:
-			self.append((sender,'INFOBOT:DUNNO %s %s'%(nick,self.q)))
+			self.append((sender,'INFOBOT:DUNNO %s %s'%(id,self.q)))
 	def add_factoid(self,query,nick):
 		self.c.execute('delete from factoids where key=?',(query[0],))
 		self.c.execute('insert into factoids values (?,?,?,?)',(query[0],query[1],nick,time.time()))
 	def del_factoid(self,query):
-		if query in dict:
-			del dict[query]
+		self.c.execute('delete from factoids where key=?',(query,))
 	def write_dict(self):
 		dict.commit()
 	def clear_dict(self):
