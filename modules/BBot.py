@@ -204,7 +204,7 @@ class bbot(api.module):
 		self.q=qu[qu.find(' ')+1:]
 		self.c.execute('''select * from factoids where key=?''',(query,))
 		finds=self.c.fetchall()
-		if len(self.c)>0:
+		if len(finds)>0:
 			self.append((sender,'INFOBOT:REPLY %s %s = %s'%(nick,self.q,finds[0][1])))
 		else:
 			self.append((sender,'INFOBOT:DUNNO %s %s'%(nick,self.q)))
