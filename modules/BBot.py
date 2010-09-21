@@ -208,7 +208,7 @@ class bbot(api.module):
 			else:
 				self.append((sender,'INFOBOT:DUNNO %s %s'%(nick,self.q)))
 		except Exception,e:
-			self.append((channel,'Error %s; with args %s;'%(type(e),e.args)))
+			self.append((config.error_chan,'Error %s; with args %s;'%(type(e),e.args)))
 	def add_factoid(self,query,nick):
 		self.c.execute('delete from factoids where key=?',(query[0],))
 		self.c.execute('insert into factoids values (?,?,?,?)',(query[0],query[1],nick,time.time()))

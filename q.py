@@ -2,6 +2,7 @@ import bbot
 import config
 import asynchat
 import asyncore
+import traceback
 import socket
 import time
 import api
@@ -57,6 +58,8 @@ class connection(asynchat.async_chat,queue_class):
         return r
     def found_terminator(self):
         data=self.get_data()
+        if re.search(config.ignore,data):
+            return #Ignore this
         print data
         if data[:4]==('PING'):
             self.push('PONG %s\r\n'%data[5:])
@@ -84,6 +87,7 @@ class connection(asynchat.async_chat,queue_class):
                     handler.go(nick,data,channel)
                 except Exception,e:
                     append(config.network,(config.error_chan,'Error: %s; With args: %s; in %s'%(type(e),e.args,handler)))
+                    append(config.network,(config.error_chan,'Traceback: %s'%traceback.format_exc().replace('\n',' -- ')))
         elif ' JOIN :#' in data:
             nick=data.split('!')[0][1:]
             if nick.find('#')==-1:

@@ -11,7 +11,7 @@ read-wait: 1024	     		;Number of bytes to read each time
 command-char: ?			;Command character
 report-error: #bots		;Channel or nicks to report error to
 allow-invite:False 		;Allow the bot to be invited places
-
+ignore-re:			;Regex of messages to ignore
 [BBot]
 ttl: 10				;The InfoBot2 TTL value
 infobots: JCSMarlen BBot aj00200 ;The bots to send Infobot queires to
