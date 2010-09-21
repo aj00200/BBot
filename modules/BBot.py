@@ -18,12 +18,12 @@ class bbot(api.module):
 		except Exception,e:
 			print 'Error: %s; with args: %s;'%(type(e),e.args)
 	def __init__(self,server):
+		self.command_list=[]
 		thread.start_new_thread(self.get_command_list,())
 		self.read_dict()
 		self.info_bots=api.getConfigStr('BBot','infobots').split()
 		self.ttl=api.getConfigInt('BBot','ttl')
 		self.q=''
-		self.command_list=[]
 		self.goog='http://www.google.com/search?q=%s'
 		self.wiki='http://www.en.wikipedia.org/wiki/%s'
 		self.pb='http://www.pastebin.com/%s'
@@ -34,7 +34,7 @@ class bbot(api.module):
 		}
 		api.module.__init__(self,server)
 	def go(self,nick,data,channel):
-		if channel.find('#')==-1:#Detect if the message is a PM
+		if '#' not in data: #Detect if the message is a PM
 			channel=nick.lower()
 		ldata=data.lower()
 		if api.checkIfSuperUser(data,config.superusers):
@@ -44,6 +44,10 @@ class bbot(api.module):
 			elif config.cmd_char+'part' in ldata:
 				words=ldata[ldata.find('part ')+5:]
 				self.raw('PART %s' % words)
+				return 0
+			elif config.cmd_char+'join' in ldata:
+				words=ldata[ldata.find('join ')+5:]
+				self.raw('JOIN %s'%words)
 				return 0
 			elif config.cmd_char+'add ' in ldata:
 				self.q=data[ldata.find('?add ')+5:].strip('\r\n')
