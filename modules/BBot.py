@@ -193,11 +193,11 @@ class bbot(api.module):
 					self.notice(('#spam','BBot crashed with error %s and args %s'%(type(e),e.args)))
 			else:
 				qu=data[data.find('INFOBOT:REPLY ')+14:]				#5%aj00200;#bots hi = hello world
-				qu=q[qu.find(' ')+1:].replace('<ACTION>','\x01ACTION ')	#hi = hello world
+				qu=qu[qu.find(' ')+1:].replace('<ACTION>','\x01ACTION ')
 				qu=qu.replace(config.mynick,'%n')							#
 				if '\x01' in qu:
 					qu+='\x01'
-				self.add_factoid(qu.split(' = ',1))						#('hi','hello world')
+					self.add_factoid(qu.split(' = ',1))    
 	def infobot_reply(self,query,sender):
 		qu=query[query.find('INFOBOT:QUERY ')+14:]
 		id=qu[:qu.find(' ')]
