@@ -60,7 +60,7 @@ class mathbot(api.module):
         api.module.__init__(self,server)
     def go(self,nick,data,channel):
         self.ldata=data.lower()
-        if ':?math help' in self.ldata:
+        if ':'+config.cmd_char+'math help' in self.ldata:
             self.append((channel,nick+' : +, -, *, /, %, sqrt, pow, ceil, floor, log, asin, acos, atan, atan2, sin, cos, tan'))
         elif ':?math ' in self.ldata:
             self.e=data[data.find('?math ')+6:].strip('\r\n')

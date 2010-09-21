@@ -203,9 +203,9 @@ class bbot(api.module):
 		id=qu[:qu.find(' ')]
 		self.q=qu[qu.find(' ')+1:]
 		self.c.execute('''select * from factoids where key=?''',(self.q,))
-		finds=self.c.fetchall()
-		if len(finds)>0:
-			self.append((sender,'INFOBOT:REPLY %s %s = %s'%(id,self.q,finds[0][1])))
+		found=self.c.fetchall()
+		if len(found)>0:
+			self.append((sender,'INFOBOT:REPLY %s %s = %s'%(id,self.q,found[0][1])))
 		else:
 			self.append((sender,'INFOBOT:DUNNO %s %s'%(id,self.q)))
 	def add_factoid(self,query,nick):
@@ -215,8 +215,6 @@ class bbot(api.module):
 		self.c.execute('delete from factoids where key=?',(query,))
 	def write_dict(self):
 		dict.commit()
-	def clear_dict(self):
-		pass
 	def read_dict(self):
 		self.c=dict.cursor()
 		self.c.execute('''create table if not exists factoids (key, value, by, ts)''')
