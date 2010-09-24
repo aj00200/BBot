@@ -32,22 +32,24 @@ class bbot(api.module):
 		self.funcs={'hit':self.hit,
 			    'version':self.version
 		}
+		self.sufuncs={'join':self.su_join,
+			      'writedict':self.su_writedict,
+			      'raw':self.su_raw
+		}
 		api.module.__init__(self,server)
 	def go(self,nick,data,channel):
 		if '#' not in data: #Detect if the message is a PM
 			channel=nick.lower()
 		ldata=data.lower()
 		if api.checkIfSuperUser(data,config.superusers):
-			if config.cmd_char+'raw ' in ldata:
-				self.raw(data.split('raw ')[-1])
-				return 0 #Just for speed
+			if ':'+config.cmd_char in data:
+				command=data[data.find(':'+config.cmd_char)+len(config.cmd_char)+1:]
+				command=command[:command.find(' ')]
+				if command in self.sufuncs:
+					self.sufuncs[command](nick,data,channel)
 			elif config.cmd_char+'part' in ldata:
 				words=ldata[ldata.find('part ')+5:]
 				self.raw('PART %s' % words)
-				return 0
-			elif config.cmd_char+'join' in ldata:
-				words=ldata[ldata.find('join ')+5:]
-				self.raw('JOIN %s'%words)
 				return 0
 			elif config.cmd_char+'add ' in ldata:
 				self.q=data[ldata.find('?add ')+5:].strip('\r\n')
@@ -58,10 +60,6 @@ class bbot(api.module):
 			elif config.cmd_char+'del ' in ldata:
 				self.q=data[data.find('?del ')+5:].strip('\r\n')
 				self.del_factoid(self.q)
-				return 0
-			elif config.cmd_char+'writedict' in ldata:
-				self.write_dict()
-				self.notice((channel,'<<Wrote Dict>>'))
 				return 0
 			elif ':?connect ' in ldata:
 				self.q=str(ldata[ldata.find(':?connect ')+10:].strip('\r\n'))
@@ -232,7 +230,7 @@ class bbot(api.module):
 			return results[0][1]
 	def query(self,query,nick,channel):
 		'''Querys the database for the factoid 'query', and returns its value to the channel if it is found'''
-		self.c.execute('''select * from factoids where key=?''',(query,))
+		self.c.execute('''select * from factoids where key=?''',(query.lower(),))
 		results=self.c.fetchall()[:]
 		if len(results)>0:
 			self.append((channel,str(results[0][1]).replace('%n',nick)))
@@ -247,4 +245,13 @@ class bbot(api.module):
 	def version(self,nick,data,channel):
 		'''Sends BBot's version number to the channel'''
 		self.append((channel,'I am version %s'%BBot.version))
+	def su_join(self,nick,data,channel):
+		'''Makes BBot join the channel which is the param'''
+		self.raw('JOIN %s'%data[data.find('join ')+5:])
+	def su_writedict(self,nick,data,channel):
+		'''Writes the factoids database to the harddrive'''
+		self.write_dict()
+		self.notice((channel,'<<Wrote Dict>>'))
+	def su_raw(self,nick,data,channel):
+		self.raw(data[data.find('raw ')+4:])
 module=bbot
