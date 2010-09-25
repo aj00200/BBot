@@ -45,9 +45,7 @@ def reload_module(name,server):
 continuepgm=1
 lastloop=time.time()-10
 def loop():
-	'''
-	Calls the loop() method of each module every 5 seconds + execution time
-	'''
+	'''	Calls the loop() method of each module every 5 seconds + execution time	'''
 	try:
 		time.sleep(5)
 		for network in networks:

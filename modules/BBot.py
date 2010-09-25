@@ -9,6 +9,11 @@ import sqlite3
 dict=sqlite3.connect('bbot.sqlite3')
 class bbot(api.module):
 	commands=['help','goog','wiki','pb','upb','kb','hit','?<query>','add','del','writedict','load','reload','py','connect']
+	goog='http://www.google.com/search?q=%s'
+	wiki='http://www.en.wikipedia.org/wiki/%s'
+	pb='http://www.pastebin.com/%s'
+	upb='http://paste.ubuntu.com/%s'
+	kb='http://www.kb.aj00200.heliohost.org/index.py?q=%s'
 	def get_command_list(self):
 		try:
 			time.sleep(3)
@@ -24,17 +29,16 @@ class bbot(api.module):
 		self.info_bots=api.getConfigStr('BBot','infobots').split()
 		self.ttl=api.getConfigInt('BBot','ttl')
 		self.q=''
-		self.goog='http://www.google.com/search?q=%s'
-		self.wiki='http://www.en.wikipedia.org/wiki/%s'
-		self.pb='http://www.pastebin.com/%s'
-		self.upb='http://paste.ubuntu.com/%s'
-		self.kb='http://www.kb.aj00200.heliohost.org/index.py?q=%s'
-		self.funcs={'hit':self.hit,
-			    'version':self.version
+		self.funcs={
+				'hit':self.hit,
+				'version':self.version
 		}
-		self.sufuncs={'join':self.su_join,
-			      'writedict':self.su_writedict,
-			      'raw':self.su_raw
+		self.sufuncs={
+				'join':self.su_join,
+				'writedict':self.su_writedict,
+				'raw':self.su_raw,
+				'part':self.su_part,
+				'add':self.su_add
 		}
 		api.module.__init__(self,server)
 	def go(self,nick,data,channel):
@@ -44,19 +48,10 @@ class bbot(api.module):
 		if api.checkIfSuperUser(data,config.superusers):
 			if ':'+config.cmd_char in data:
 				command=data[data.find(':'+config.cmd_char)+len(config.cmd_char)+1:]
-				command=command[:command.find(' ')]
+				if ' ' in command:
+					command=command[:command.find(' ')]
 				if command in self.sufuncs:
 					self.sufuncs[command](nick,data,channel)
-			elif config.cmd_char+'part' in ldata:
-				words=ldata[ldata.find('part ')+5:]
-				self.raw('PART %s' % words)
-				return 0
-			elif config.cmd_char+'add ' in ldata:
-				self.q=data[ldata.find('?add ')+5:].strip('\r\n')
-				self.q=self.q.split(':::')
-				self.add_factoid(self.q,nick)
-				self.notice((channel,'<<Added %s>>'%self.q))
-				return 0
 			elif config.cmd_char+'del ' in ldata:
 				self.q=data[data.find('?del ')+5:].strip('\r\n')
 				self.del_factoid(self.q)
@@ -167,6 +162,7 @@ class bbot(api.module):
 			self.append((each,message))
 	def infobot_parse_reply(self,data):
 		if re.search('INFOBOT:REPLY (.)+ (.)+ = [a-zA-Z0-9]+',data):
+			self.notice(('#spam','REPLY received'))
 			if re.search('INFOBOT:REPLY [0-9]+%(.)+:',data):
 				self.notice(('#spam','Advanced Query'))
 #/////////////////////-Advanced Infobot Reply-/////////////////////////
@@ -254,4 +250,11 @@ class bbot(api.module):
 		self.notice((channel,'<<Wrote Dict>>'))
 	def su_raw(self,nick,data,channel):
 		self.raw(data[data.find('raw ')+4:])
+	def su_part(self,nick,data,channel):
+		self.raw('PART %s'%data[data.find('part ')+5:])
+	def su_add(self,nick,data,channel):
+		query=data[data.find(' :')+2:]
+		query=query[query.find('add ')+4:].split(':::')
+		self.add_factoid(query,nick)
+		self.notice((channel,'<<Added %s>>'))
 module=bbot
