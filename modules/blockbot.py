@@ -109,11 +109,11 @@ class blockbot(api.module):
         try:
             if self.msglist[0][0]==self.msglist[1][0]==self.msglist[2][0]:
                 if (self.msglist[0][1]-self.msglist[2][1])<self.wait:
-                    self.kick(nick,channel,'It is against the rules to flood, you have been banned.')
+                    self.kick(nick,channel,'It is against the rules to flood')
                     return 0
                 elif msg.split()>1:
                     if (self.msglist[0][2]==self.msglist[1][2]==self.msglist[2][2]) and (self.msglist[0][1]-self.msglist[1][1]<self.repeat_time):
-                        self.kick(nick,channel,'Please do not repeat!')
+                        self.kick(nick,channel,'Please do not repeat')
                         self.mode('*!*@%s'%api.getHost(data),channel,'+b')
         except IndexError:
             pass
