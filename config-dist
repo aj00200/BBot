@@ -1,6 +1,6 @@
 [main]
 nick: Nickname			;The bots nickname
-username: usernae		;The bots nickserv username
+username: username		;The bots nickserv username
 password: password 	     	;The bots nickserv password
 network: irc.network.com 	;The network to connect to
 port: 6667			;The port to connect on
