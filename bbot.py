@@ -32,8 +32,8 @@ def add_network(name):
 def load_module(name,server):
 	print colorz.encode('Loading module "%s" for server "%s"'%(name,server),'yellow')
 	try:
-		__import__(name,globals(),locals(),[],-1)
-		networks[server].append(__import__(name).module(server))
+		globals()[name]=__import__(name,globals(),locals(),[],-1)
+		networks[server].append(eval(name).module(server))
 	except Exception,e:
 		q.append(config.network,((config.error_chan,'BBot has crashed with error: %s; and args: %s'%(type(e),e.args)))) 
 def reload_module(name,server):
