@@ -16,8 +16,8 @@ class bbot(api.module):
 	kb='http://www.kb.aj00200.heliohost.org/index.py?q=%s'
 	def get_command_list(self):
 		try:
-			time.sleep(3)
-			for module in BBot.networks[self.__server__]:
+			time.sleep(5)
+			for module in BBot.networks[config.network]:
 				for command in module.commands:
 					self.command_list.append(command)
 		except Exception,e:
@@ -40,6 +40,7 @@ class bbot(api.module):
 				'part':self.su_part,
 				'add':self.su_add,
 				'load':self.su_load,
+				'reload':self.su_reload,
 				'py':self.su_py,
 				'connect':self.su_connect,
 				'del':self.su_del
@@ -121,9 +122,8 @@ class bbot(api.module):
 				nick=self.q.split(' | ')
 				self.q=nick[0].lower()
 				nick=nick[1]
-			if self.q not in self.command_list:
+			if self.q[:self.q.find(' ')] not in self.command_list:
 				self.query(self.q,nick,channel)
-				return 0
 		elif ':INFOBOT:' in data:
 			if ':INFOBOT:DUNNO' in data:
 				pass
@@ -253,6 +253,7 @@ class bbot(api.module):
 		q.connections[tmp]=q.connection(tmp)
 	def su_reload(self,nick,data,channel):
 		tmp=data[data.find('reload ')+7:]
+		self.notice((channel,'<<Reloading %s>>'%tmp))
 		BBot.reload_module(tmp,self.__server__)
 	def su_del(self,nick,data,channel):
 		tmp=data[data.find('del ')+4:]

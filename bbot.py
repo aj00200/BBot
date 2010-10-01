@@ -1,7 +1,7 @@
 #! /usr/bin/python
 #this bot is licensed under the GNU GPL v3.0
 #http://www.gnu.org/licenses/gpl.html
-version='5.0 beta 1'
+version='5.0 beta 2'
 import q
 import config
 #import socket
@@ -22,6 +22,9 @@ import blockbot
 import statusbot
 import globalbot
 import debatebot
+
+import traceback
+
 networks={config.network: [blockbot.module(config.network),trekbot.module(config.network),BBot.module(config.network),proxy.module(config.network),mathbot.module(config.network),debatebot.module(config.network),statusbot.module(config.network),globalbot.module(config.network)]}
 def add_network(name):
 	print colorz.encode('Adding Network "%s"'%name,'yellow')
@@ -29,7 +32,7 @@ def add_network(name):
 def load_module(name,server):
 	print colorz.encode('Loading module "%s" for server "%s"'%(name,server),'yellow')
 	try:
-		__import__(name)
+		__import__(name,globals(),locals(),[],-1)
 		networks[server].append(__import__(name).module(server))
 	except Exception,e:
 		q.append(config.network,((config.error_chan,'BBot has crashed with error: %s; and args: %s'%(type(e),e.args)))) 
@@ -38,10 +41,12 @@ def reload_module(name,server):
 		for each in networks[server]:
 			if isinstance(each,eval(name+'.module')):
 				networks[server].pop(networks[server].index(each))
-		reload(eval(name))
-		networks[server].append(eval(name+'.module("%s")'%config.network))
+				reload(eval(name))
+				networks[server].append(eval(name+'.module("%s")'%config.network))
+				break
 	except Exception,e:
-		q.append(config.network,((config.error_chan,'BBot has crashed with error: %s; args %s; in bbot.py'%(type(e),e.args))))
+		q.append(config.network,(config.error_chan,'Traceback: %s'%traceback.format_exc().replace('\n',' -- ')))
+		#q.append(config.network,((config.error_chan,'BBot has crashed with error: %s; args %s; in bbot.py'%(type(e),e.args))))
 continuepgm=1
 lastloop=time.time()-10
 def loop():
