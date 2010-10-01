@@ -8,7 +8,7 @@ import thread
 import sqlite3
 dict=sqlite3.connect('bbot.sqlite3')
 class bbot(api.module):
-	commands=['help','goog','wiki','pb','upb','kb','hit','?<query>','add','del','writedict','load','reload','py','connect']
+	commands=['help','goog','wiki','pb','upb','kb','hit','?<query>','add','del','writedict','load','reload','py','connect','version']
 	goog='http://www.google.com/search?q=%s'
 	wiki='http://www.en.wikipedia.org/wiki/%s'
 	pb='http://www.pastebin.com/%s'
@@ -38,7 +38,11 @@ class bbot(api.module):
 				'writedict':self.su_writedict,
 				'raw':self.su_raw,
 				'part':self.su_part,
-				'add':self.su_add
+				'add':self.su_add,
+				'load':self.su_load,
+				'py':self.su_py,
+				'connect':self.su_connect,
+				'del':self.su_del
 		}
 		api.module.__init__(self,server)
 	def go(self,nick,data,channel):
@@ -52,32 +56,6 @@ class bbot(api.module):
 					command=command[:command.find(' ')]
 				if command in self.sufuncs:
 					self.sufuncs[command](nick,data,channel)
-			elif config.cmd_char+'del ' in ldata:
-				self.q=data[data.find('?del ')+5:].strip('\r\n')
-				self.del_factoid(self.q)
-				return 0
-			elif ':?connect ' in ldata:
-				self.q=str(ldata[ldata.find(':?connect ')+10:].strip('\r\n'))
-				self.notice((channel,'<<Connecting to "%s>>"'%self.q))
-				BBot.add_network(self.q)
-				q.connections[self.q]=q.connection(self.q)
-				return 0
-			elif ':?load ' in ldata:
-				self.q=ldata[ldata.find('?load ')+6:].strip('\r\n')
-				BBot.load_module(str(self.q),str(self.__server__))
-				return 0
-			elif ':?py ' in ldata:
-				self.q=data[data.find('?py ')+4:].strip('\r\n')
-				try:
-					ret=str(eval(self.q))
-				except Exception,e:
-					ret='Error: %s; Args: %s'%(type(e),e.args)
-				self.append((channel,ret))
-				return 0
-			elif ':?reload ' in ldata:
-				self.q=data[data.find(':?reload ')+9:].strip('\r\n')
-				BBot.reload_module(self.q,str(self.__server__))
-				return 0
 		if re.search(':'+config.mynick.lower()+'(:|,) ',ldata):
 			self.q=ldata[ldata.find(':'+config.mynick.lower())+3+len(config.mynick):]
 			self.query(self.q,nick,channel)
@@ -256,5 +234,28 @@ class bbot(api.module):
 		query=data[data.find(' :')+2:]
 		query=query[query.find('add ')+4:].split(':::')
 		self.add_factoid(query,nick)
-		self.notice((channel,'<<Added %s>>'))
+		self.notice((channel,'<<Added %s>>'%query))
+	def su_load(self,nick,data,channel):
+		self.q=data[data.find('load ')+5:]
+		BBot.load_module(self.q,self.__server__)
+		self.notice(('#spam','<<Loaded %s>>'%self.q))
+	def su_py(self,nick,data,channel):
+		self.q=data[data.find('py ')+3:]
+		try:
+			ret=str(eval(self.q))
+		except Exception,e:
+			ret='<<Error %s; %s>>'%(type(e),e.args)
+		self.append((channel,ret))
+	def su_connect(self,nick,data,channel):
+		tmp=data[data.find('connect ')+8:]
+		self.notice((channel,'<<Connecting to %s>>'%tmp))
+		BBot.add_network(tmp)
+		q.connections[tmp]=q.connection(tmp)
+	def su_reload(self,nick,data,channel):
+		tmp=data[data.find('reload ')+7:]
+		BBot.reload_module(tmp,self.__server__)
+	def su_del(self,nick,data,channel):
+		tmp=data[data.find('del ')+4:]
+		self.del_factoid(tmp)
+		self.notice((channel,'<<Delete %s>>'%tmp))
 module=bbot
