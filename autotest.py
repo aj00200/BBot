@@ -23,8 +23,8 @@ class test_bbot(unittest.TestCase):
         self.assertEqual(self.bbot.query_dict('abc'),None,'Factoids are not being deleted')
     def test_main_module(self):
         self.assertEqual(self.bbot.go('aj00200',':aj00200!aj00200@FOSSnet/staff/oper/aj00200 PRIVMSG #bots :abcdefg','#bots'),None)#Do a quick check to make sure it works
-        self.assertEqual(self.bbot.go('aj00200',':aj00200!aj00200@FOSSnet/staff/oper/aj00200 PRIVMSG #bots :?hi','#bots'),0)
-        self.assertEqual(self.bbot.go('aj00200',':aj00200!aj00200@FOSSnet/staff/oper/aj00200 PRIVMSG #bots :?add test:::test','#bots'),0)
+        self.assertEqual(self.bbot.go('aj00200',':aj00200!aj00200@FOSSnet/staff/oper/aj00200 PRIVMSG #bots :?hi','#bots'),None)
+        self.assertEqual(self.bbot.go('aj00200',':aj00200!aj00200@FOSSnet/staff/oper/aj00200 PRIVMSG #bots :?add test:::test','#bots'),None)
         self.assertEqual(self.bbot.query_dict('test'),'test','?add Command seems broken')
 class test_api(unittest.TestCase):
     def test_getHost(self):

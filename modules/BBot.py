@@ -8,7 +8,7 @@ import thread
 import sqlite3
 dict=sqlite3.connect('bbot.sqlite3')
 class bbot(api.module):
-	commands=['help','goog','wiki','pb','upb','kb','hit','?<query>','add','del','writedict','load','reload','py','connect','version']
+	commands=['help','goog','wiki','pb','upb','kb','hit','?<query>','add','del','writedict','load','reload','version','connect','py']
 	goog='http://www.google.com/search?q=%s'
 	wiki='http://www.en.wikipedia.org/wiki/%s'
 	pb='http://www.pastebin.com/%s'
