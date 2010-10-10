@@ -2,14 +2,7 @@
 #this bot is licensed under the GNU GPL v3.0
 #http://www.gnu.org/licenses/gpl.html
 version='5.0 beta 2'
-import q
-import config
-#import socket
-import sys
-import re
-import time
-import thread
-import colorz
+import q,config,sys,re,time,thread,colorz
 import api#BBot API Functions
 import asyncore
 sys.path.insert(1,'%s/libs'%sys.path[0])
@@ -40,6 +33,7 @@ def reload_module(name,server):
 	try:
 		for each in networks[server]:
 			if isinstance(each,eval(name+'.module')):
+				each.destroy()
 				networks[server].pop(networks[server].index(each))
 				reload(eval(name))
 				networks[server].append(eval(name+'.module("%s")'%config.network))
