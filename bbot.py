@@ -2,14 +2,7 @@
 #this bot is licensed under the GNU GPL v3.0
 #http://www.gnu.org/licenses/gpl.html
 version='5.0 beta 2'
-import q
-import config
-#import socket
-import sys
-import re
-import time
-import thread
-import colorz
+import q,config,sys,re,time,thread,colorz
 import api#BBot API Functions
 import asyncore
 sys.path.insert(1,'%s/libs'%sys.path[0])
@@ -32,7 +25,7 @@ def add_network(name):
 def load_module(name,server):
 	print colorz.encode('Loading module "%s" for server "%s"'%(name,server),'yellow')
 	try:
-		globals()[name]=__import__(name,globals(),locals(),[],-1)
+		globals()[name]=__import__(name)
 		networks[server].append(eval(name).module(server))
 	except Exception,e:
 		q.append(config.network,((config.error_chan,'BBot has crashed with error: %s; and args: %s'%(type(e),e.args)))) 
@@ -40,6 +33,7 @@ def reload_module(name,server):
 	try:
 		for each in networks[server]:
 			if isinstance(each,eval(name+'.module')):
+				each.destroy()
 				networks[server].pop(networks[server].index(each))
 				reload(eval(name))
 				networks[server].append(eval(name+'.module("%s")'%config.network))
@@ -58,6 +52,8 @@ def loop():
 				module.loop()
 	except Exception,e:
 		q.append(config.network,((config.error_chan,'BBot has crashed with error: %s; args %s'%(type(e),e.args))))
+	q.append(config.network,('#spam',str(networks)))
+	thread.start_new_thread(loop,())
 if __name__ == '__main__':
 	thread.start_new_thread(loop,())
 	import q

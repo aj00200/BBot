@@ -1,11 +1,6 @@
-import q
-import api
-import re
-import config
+import q,api,re,config
 import bbot as BBot
-import time
-import thread
-import sqlite3
+import time,thread,sqlite3
 dict=sqlite3.connect('bbot.sqlite3')
 class bbot(api.module):
 	commands=['help','goog','wiki','pb','upb','kb','hit','?<query>','add','del','writedict','load','reload','version','connect','py']
@@ -210,7 +205,9 @@ class bbot(api.module):
 			self.append((channel,str(results[0][1]).replace('%n',nick)))
 		else:
 			self.send_infobot_query(query,nick,channel)
-
+	def destroy(self):
+		self.notice(('#spam','Destroyed BBot'))
+		dict.close()
 	#////////Single Functions/////////
 	def hit(self,nick,data,channel):
 		'''Causes BBot to punch someone'''
@@ -253,8 +250,8 @@ class bbot(api.module):
 		q.connections[tmp]=q.connection(tmp)
 	def su_reload(self,nick,data,channel):
 		tmp=data[data.find('reload ')+7:]
-		self.notice((channel,'<<Reloading %s>>'%tmp))
 		BBot.reload_module(tmp,self.__server__)
+		self.notice((channel,'<<Reloaded %s>>'%tmp))
 	def su_del(self,nick,data,channel):
 		tmp=data[data.find('del ')+4:]
 		self.del_factoid(tmp)

@@ -63,13 +63,18 @@ class module():
     def raw(self,data):
         q.raw(self.__server__,data)
     def go(self,nick,data,channel):
+        '''Called every time a message is received'''
         pass
     def get_notice(self,nick,channel,data):
         pass
     def get_raw(self,type,data):
         pass
     def get_join(self,nick,channel,ip,user):
+        '''Called eveery time someone joins a channel'''
         pass
     def loop(self):
+        '''Called every 5 seconds'''
         pass
-
+    def destroy(self):
+        '''Called when the module is unloaded'''
+        pass

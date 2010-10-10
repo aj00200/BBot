@@ -14,6 +14,7 @@ allow-invite:False 		;Allow the bot to be invited to new channels
 ignore-re:			;Regex of messages to ignore
 [BBot]
 ttl: 10				;The InfoBot2 TTL value
+infobot: false			;Send Infobot queries
 infobots: JCSMarlen BBot aj00200 ;The bots to send Infobot queries
 [BlockBot]
 hilight-limit: 5		;Mass-hilight limit
