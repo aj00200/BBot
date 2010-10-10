@@ -8,7 +8,7 @@ class WhoBot(api.module):
                 print nick
                 self.raw('WHOIS %s'%nick)
     def code(self,code,data):
-        if code=='CODE'
+        if code=='CODE':
             if data[0]=='311':
                 self.data=data[1].split(mynick)[-1].split()
                 self.h=self.data[2]
