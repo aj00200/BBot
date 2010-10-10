@@ -18,7 +18,7 @@ class WhoBot(api.module):
                 if self.h.find('webchat/')!=-1:
                     self.ident='!'.join(self.data[1:2])
                     print 'IDENT: %s'%self.ident
-                    self.append(('operserv','AKILL ADD !T 6400 %s@%s Spam is offtopic on FOSSnet. Email kline@fossnet.info for help'%(self.ident,self.h)))
+                    self.append(('operserv','AKILL ADD %s@%s !T 6400 Spam is offtopic on FOSSnet. Email kline@fossnet.info for help'%(self.ident,self.h)))
                 else:
-                    self.append(('operserv','AKILL ADD !T 6400 *@'+self.h+' Spam is offtopic on FOSSnet. Email kline@fossnet.info for help.'))
+                    self.append(('operserv','AKILL ADD *@'+self.h+' !T 6400 Spam is offtopic on FOSSnet. Email kline@fossnet.info for help.'))
 module=WhoBot
