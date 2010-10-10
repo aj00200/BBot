@@ -1,16 +1,18 @@
 import q
 import api
 class WhoBot(api.module):
+    def __init__(self,server):
+        api.module.__init__(self,server)
     def go(self,nick,data,channel):
-        if nick.lower()=='evilbikcmp' or nick.lower()=='mithos':
+        if api.checkIfSuperUser(data):
             if data.find('?kline ')!=-1:
                 nick=data[data.find('?kline ')+7:]
                 print nick
                 self.raw('WHOIS %s'%nick)
-    def code(self,code,data):
-        if code=='CODE'
+    def get_raw(self,code,data):
+        if code=='CODE':
             if data[0]=='311':
-                self.data=data[1].split(mynick)[-1].split()
+                self.data=data[1].split()[3:]
                 self.h=self.data[2]
                 print 'HOST %s'%self.h
                 if self.h.find('webchat/')!=-1:

@@ -250,8 +250,8 @@ class bbot(api.module):
 		q.connections[tmp]=q.connection(tmp)
 	def su_reload(self,nick,data,channel):
 		tmp=data[data.find('reload ')+7:]
-		self.notice((channel,'<<Reloading %s>>'%tmp))
 		BBot.reload_module(tmp,self.__server__)
+		self.notice((channel,'<<Reloaded %s>>'%tmp))
 	def su_del(self,nick,data,channel):
 		tmp=data[data.find('del ')+4:]
 		self.del_factoid(tmp)
