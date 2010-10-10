@@ -1,3 +1,4 @@
+#Note:  This code is intended to be used on a server running charybdis, and the bot /oper'ed up with the oper:auspex priv.  Otherwise, it WILL NOT WORK.
 import q
 import api
 class WhoBot(api.module):
@@ -11,9 +12,10 @@ class WhoBot(api.module):
                 self.raw('WHOIS %s'%nick)
     def get_raw(self,code,data):
         if code=='CODE':
-            if data[0]=='311':
+            if data[0]=='378':
+				#:h1.FOSSnet.info 378 Mithos bikhero :is connecting from *@68-246-26-98.pools.spcsdns.net 68.246.26.98
                 self.data=data[1].split()[3:]
-                self.h=self.data[2]
+                self.h=self.data[5]
                 print 'HOST %s'%self.h
                 if self.h.find('webchat/')!=-1:
                     self.ident='!'.join(self.data[1:2])
