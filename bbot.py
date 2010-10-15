@@ -52,7 +52,6 @@ def loop():
 				module.loop()
 	except Exception,e:
 		q.append(config.network,((config.error_chan,'BBot has crashed with error: %s; args %s'%(type(e),e.args))))
-	q.append(config.network,('#spam',str(networks)))
 	thread.start_new_thread(loop,())
 if __name__ == '__main__':
 	thread.start_new_thread(loop,())

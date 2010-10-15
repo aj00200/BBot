@@ -20,33 +20,35 @@ class trekbot(api.module):
         if self.superuser:
             if ':?op' in ldata:
                 if '?op ' in ldata:
-                    nick=ldata[ldata.find('?op')+4:].strip('\r\n')
+                    nick=ldata[ldata.find('?op')+4:]
                 self.mode(nick,channel,'+o')
             elif ':?deop' in ldata:
                 if '?deop ' in ldata:
-                    nick=ldata[ldata.find('?deop ')+6:].strip('\r\n')
+                    nick=ldata[ldata.find('?deop ')+6:]
                 self.mode(nick,channel,'-o')
             elif ':?voice' in ldata:
                 if '?voice ' in ldata:
-                    nick=ldata[ldata.find('?voice ')+7:].strip('\r\n')
+                    nick=ldata[ldata.find('?voice ')+7:]
                 self.mode(nick,channel,'+v')
-            elif ':?devoice' in ldata:
-                if '?devoice ' in ldata:
-                    nick=ldata[ldata.find('?devoice ')+9:].strip('\r\n')
+            elif ':?devoice ' in ldata:
+                nick=ldata[ldata.find('?devoice ')+9:]
                 self.mode(nick,channel,'-v')
+            elif ':?quiet ' in ldata:
+                nick=ldata[ldata.find('?quiet ')+7:]
+                self.mode(nick,channel,'+q')
             elif ':?kick ' in ldata:
-                name=ldata[ldata.find('?kick ')+6:].strip('\r\n')
+                name=ldata[ldata.find('?kick ')+6:]
                 self.kick(name,channel,'Requested by %s'%nick)
             elif ldata.find('?rehash')!=-1:
                 self.__init__()
             #Blacklist
             elif ':?blacklist ' in data:
-                name=data[data.find('?blacklist ')+11:].strip('\r\n')
+                name=data[data.find('?blacklist ')+11:]
                 if not name in self.blacklist:
                     self.blacklist.append(name)
                     self.write_blacklist()
             elif ':?unblacklist ' in ldata:
-                name=data[data.find('?unblacklist ')+13:].strip('\r\n')
+                name=data[data.find('?unblacklist ')+13:]
                 if name in self.blacklist:
                     self.blacklist.pop(self.blacklist.index(name))
                     self.write_blacklist()
@@ -55,12 +57,12 @@ class trekbot(api.module):
             elif ':?listbl' in ldata:
                 self.append((nick,str(self.blacklist)))
             elif ':?whitelist ' in ldata:
-                name=data[data.find('?whitelist ')+11:].strip('\r\n')
+                name=data[data.find('?whitelist ')+11:]
                 if not name in self.whitelist:
                     self.whitelist.append(name)
                     self.write_blacklist()
             elif ':?unwhitelistlist ' in ldata:
-                name=data[data.find('?unwhitelist ')+13:].strip('\r\n')
+                name=data[data.find('?unwhitelist ')+13:]
                 if name in self.blacklist:
                     self.whitelist.pop(self.blacklist.index(name))
                     self.write_whitelist()
