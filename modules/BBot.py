@@ -119,66 +119,66 @@ class bbot(api.module):
 				nick=nick[1]
 			if self.q[:self.q.find(' ')] not in self.command_list:
 				self.query(self.q,nick,channel)
-		elif ':INFOBOT:' in data:
-			if ':INFOBOT:DUNNO' in data:
-				pass
-			elif ':INFOBOT:REPLY' in data:
-				if nick in self.info_bots:
-					self.infobot_parse_reply(data)
-			elif ':INFOBOT:QUERY' in data:
-				self.infobot_reply(data,nick)
-	def send_infobot_query(self,query,nick,channel):
-		message='INFOBOT:QUERY '+str(self.ttl)+'%'+nick+';'+channel+': '+query
-		if 'infobot:dunno' in query.lower(): #Prevents looping
-			return
-		for each in self.info_bots:
-			self.append((each,message))
-	def infobot_parse_reply(self,data):
-		if re.search('INFOBOT:REPLY (.)+ (.)+ = [a-zA-Z0-9]+',data):
-			self.notice(('#spam','REPLY received'))
-			if re.search('INFOBOT:REPLY [0-9]+%(.)+:',data):
-				self.notice(('#spam','Advanced Query'))
-#/////////////////////-Advanced Infobot Reply-/////////////////////////
-#INFOBOT:REPLY 20%aj00200;#spam:bot@net:bot2@net2 blah = blah
-				ib=data[data.find('REPLY ')+6:]
-				ib=ib[:ib.find(' ')]
-				ttl=int(ib[:ib.find('%')])-1
-				if ttl<0:
-					return
-				id=ib[ib.find('%')+1:ib.find(':')]
-				return_path=ib[ib.find(':')+1:]
-				return_path=return_path.split(':')
-				return_to=return_path.pop()
-				if return_to in return_path:
-					return #loop protection
-				return_path=':'.join(return_path)
-				#/////^Does not contain leading ://////
-				address=return_to.split('@')
-				query=data[data.find('INFOBOT:REPLY ')+14:].split()
-				#^1:query, 2: = 3:factoid
-				message='INFOBOT:REPLY '+str(ttl)+'%'+id+':'+return_path+' '+query[1]+' = '+query[3]
-				try:
-					self.notice(('#spam','Network is: %s'%address[1]))
-					q.append(address[1],(address[0],message))
-				except Exception,e:
-					self.notice(('#spam','BBot crashed with error %s and args %s'%(type(e),e.args)))
-			else:
-				qu=data[data.find('INFOBOT:REPLY ')+14:]				#5%aj00200;#bots hi = hello world
-				qu=qu[qu.find(' ')+1:].replace('<ACTION>','\x01ACTION ')
-				qu=qu.replace(config.mynick,'%n')							#
-				if '\x01' in qu:
-					qu+='\x01'
-					self.add_factoid(qu.split(' = ',1))    
-	def infobot_reply(self,query,sender):
-		qu=query[query.find('INFOBOT:QUERY ')+14:]
-		id=qu[:qu.find(' ')]
-		self.q=qu[qu.find(' ')+1:]
-		self.c.execute('''select * from factoids where key=?''',(self.q,))
-		found=self.c.fetchall()
-		if len(found)>0:
-			self.append((sender,'INFOBOT:REPLY %s %s = %s'%(id,self.q,found[0][1])))
-		else:
-			self.append((sender,'INFOBOT:DUNNO %s %s'%(id,self.q)))
+#		elif ':INFOBOT:' in data:
+#			if ':INFOBOT:DUNNO' in data:
+#				pass
+#			elif ':INFOBOT:REPLY' in data:
+#				if nick in self.info_bots:
+#					self.infobot_parse_reply(data)
+#			elif ':INFOBOT:QUERY' in data:
+#				self.infobot_reply(data,nick)
+#	def send_infobot_query(self,query,nick,channel):
+#		message='INFOBOT:QUERY '+str(self.ttl)+'%'+nick+';'+channel+': '+query
+#		if 'infobot:dunno' in query.lower(): #Prevents looping
+#			return
+#		for each in self.info_bots:
+#			self.append((each,message))
+#	def infobot_parse_reply(self,data):
+#		if re.search('INFOBOT:REPLY (.)+ (.)+ = [a-zA-Z0-9]+',data):
+#			self.notice(('#spam','REPLY received'))
+#			if re.search('INFOBOT:REPLY [0-9]+%(.)+:',data):
+#				self.notice(('#spam','Advanced Query'))
+##/////////////////////-Advanced Infobot Reply-/////////////////////////
+##INFOBOT:REPLY 20%aj00200;#spam:bot@net:bot2@net2 blah = blah
+#				ib=data[data.find('REPLY ')+6:]
+#				ib=ib[:ib.find(' ')]
+#				ttl=int(ib[:ib.find('%')])-1
+#				if ttl<0:
+#					return
+#				id=ib[ib.find('%')+1:ib.find(':')]
+#				return_path=ib[ib.find(':')+1:]
+#				return_path=return_path.split(':')
+#				return_to=return_path.pop()
+#				if return_to in return_path:
+#					return #loop protection
+#				return_path=':'.join(return_path)
+#				#/////^Does not contain leading ://////
+#				address=return_to.split('@')
+#				query=data[data.find('INFOBOT:REPLY ')+14:].split()
+#				#^1:query, 2: = 3:factoid
+#				message='INFOBOT:REPLY '+str(ttl)+'%'+id+':'+return_path+' '+query[1]+' = '+query[3]
+#				try:
+#					self.notice(('#spam','Network is: %s'%address[1]))
+#					q.append(address[1],(address[0],message))
+#				except Exception,e:
+#					self.notice(('#spam','BBot crashed with error %s and args %s'%(type(e),e.args)))
+#			else:
+#				qu=data[data.find('INFOBOT:REPLY ')+14:]				#5%aj00200;#bots hi = hello world
+#				qu=qu[qu.find(' ')+1:].replace('<ACTION>','\x01ACTION ')
+#				qu=qu.replace(config.mynick,'%n')							#
+#				if '\x01' in qu:
+#					qu+='\x01'
+#					self.add_factoid(qu.split(' = ',1))    
+#	def infobot_reply(self,query,sender):
+#		qu=query[query.find('INFOBOT:QUERY ')+14:]
+#		id=qu[:qu.find(' ')]
+#		self.q=qu[qu.find(' ')+1:]
+#		self.c.execute('''select * from factoids where key=?''',(self.q,))
+#		found=self.c.fetchall()
+#		if len(found)>0:
+#			self.append((sender,'INFOBOT:REPLY %s %s = %s'%(id,self.q,found[0][1])))
+#		else:
+#			self.append((sender,'INFOBOT:DUNNO %s %s'%(id,self.q)))
 	def add_factoid(self,query,nick):
 		self.c.execute('delete from factoids where key=?',(query[0],))
 		self.c.execute('insert into factoids values (?,?,?,?)',(query[0],query[1],nick,time.time()))
@@ -203,8 +203,8 @@ class bbot(api.module):
 		results=self.c.fetchall()[:]
 		if len(results)>0:
 			self.append((channel,str(results[0][1]).replace('%n',nick)))
-		else:
-			self.send_infobot_query(query,nick,channel)
+#		else:
+#			self.send_infobot_query(query,nick,channel)
 	def destroy(self):
 		self.notice(('#spam','Destroyed BBot'))
 		dict.close()

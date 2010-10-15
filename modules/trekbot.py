@@ -99,7 +99,7 @@ class trekbot(api.module):
             else:
                 self.mode(nick,channel,'+v')
         else:
-            self.kick(nick,channel,'Your on the blacklist, please message a channel op about getting removed from the list')
+            self.kick(nick,channel,'You are on the blacklist, please message a channel op about getting removed from the list')
     def scan(self,ip,channel,nick):
         self.scansafe=1
         try:
