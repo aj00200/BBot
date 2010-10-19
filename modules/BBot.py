@@ -76,7 +76,7 @@ class bbot(api.module):
 				for cmd in self.command_list:
 					w+='%s, '%cmd
 				self.append((nick,'%s: %s'%(nick,w[0:-2])))
-				self.notice((channel,'<%s: Please see the PM I sent you>'%nick))
+				self.append((channel,'%s: Please see the PM I sent you'%nick))
 			elif ':?goog ' in data:
 				w=data.split(':?goog ')[-1].replace(' ','+')
 				self.append((channel,self.goog%w))

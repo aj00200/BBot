@@ -2,23 +2,21 @@
 #this bot is licensed under the GNU GPL v3.0
 #http://www.gnu.org/licenses/gpl.html
 version='5.0 beta 2'
-import q,config,sys,re,time,thread,colorz
-import api#BBot API Functions
-import asyncore
-sys.path.insert(1,'%s/libs'%sys.path[0])
-sys.path.insert(0,'%s/modules'%sys.path[0])
-import BBot
-import proxy
-import mathbot
-import trekbot
-import blockbot
-import statusbot
-import globalbot
-import debatebot
+import q,config,sys,re,time,thread,colorz,traceback,api,asyncore
+def setup_path():
+	sys.path.insert(1,'%s/libs'%sys.path[0])
+	sys.path.insert(0,'%s/modules'%sys.path[0])
+setup_path()
 
-import traceback
+#Modules
+#import BBot,import proxy,import mathbot,import trekbot,import blockbot,import statusbot,import globalbot,import debatebot
 
-networks={config.network: [blockbot.module(config.network),trekbot.module(config.network),BBot.module(config.network),proxy.module(config.network),mathbot.module(config.network),debatebot.module(config.network),statusbot.module(config.network),globalbot.module(config.network)]}
+networks={config.network: []}
+module_list=api.getConfigStr('main','modules').split()
+for module in module_list:
+	globals()[module]=__import__(module)
+	networks[config.network].append(eval(module+'.module(config.network)'))
+#networks={config.network: [blockbot.module(config.network),trekbot.module(config.network),BBot.module(config.network),proxy.module(config.network),mathbot.module(config.network),debatebot.module(config.network),statusbot.module(config.network),globalbot.module(config.network)]}
 def add_network(name):
 	print colorz.encode('Adding Network "%s"'%name,'yellow')
 	networks[name]=[BBot.module(name)]
