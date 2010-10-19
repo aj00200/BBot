@@ -4,7 +4,7 @@ import time,thread,sqlite3
 dict=sqlite3.connect('bbot.sqlite3')
 class bbot(api.module):
 	commands=['help','goog','wiki','pb','upb','kb','hit','?<query>','add','del','writedict','load','reload','version','connect','py']
-	goog='http://www.google.com/search?q=%s'
+	goog='https://www.encrypted.google.com/search?q=%s'
 	wiki='http://www.en.wikipedia.org/wiki/%s'
 	pb='http://www.pastebin.com/%s'
 	upb='http://paste.ubuntu.com/%s'
@@ -180,8 +180,11 @@ class bbot(api.module):
 #		else:
 #			self.append((sender,'INFOBOT:DUNNO %s %s'%(id,self.q)))
 	def add_factoid(self,query,nick):
-		self.c.execute('delete from factoids where key=?',(query[0],))
-		self.c.execute('insert into factoids values (?,?,?,?)',(query[0],query[1],nick,time.time()))
+		tmp=query
+		if '<ACTION>'in query[1]:
+			tmp[1]=tmp[1].replace('<ACTION>','\x01ACTION ')+'\x01'
+		self.c.execute('delete from factoids where key=?',(tmp[0],))
+		self.c.execute('insert into factoids values (?,?,?,?)',(tmp[0],tmp[1],nick,time.time()))
 	def del_factoid(self,query):
 		self.c.execute('delete from factoids where key=?',(query,))
 	def write_dict(self):
