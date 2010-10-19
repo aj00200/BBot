@@ -82,10 +82,13 @@ class connection(asynchat.async_chat,queue_class):
         elif ' PRIVMSG ' in data:
             channel=data[data.find(' PRIVMSG ')+9:data.find(' :')]
             nick=data[1:data.find('!')]
-            for handler in bbot.networks[self.server]:
+            for module in bbot.networks[self.server]:
                 try:
-                    handler.go(nick,data,channel)
+                    module.go(nick,data,channel)
                 except Exception,e:
+                    if 'die' in e.args:
+                        append(config.network,(config.error_chat,'Unrecoverable error raised by %s; It gave args: %s'%(module,type(e),e.args)))
+                        raise die('An error occured in a module and the module requested that the bot be shutdown.')
                     append(config.network,(config.error_chan,'Error: %s; With args: %s; in %s'%(type(e),e.args,handler)))
                     append(config.network,(config.error_chan,'Traceback: %s'%traceback.format_exc().replace('\n',' -- ')))
         elif ' JOIN :#' in data:
