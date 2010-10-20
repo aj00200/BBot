@@ -80,30 +80,6 @@ class mathbot(api.module):
                 self.append((channel,str(eval(self.e))))
             except Exception,e:
                 self.report_error(channel,e)
-        elif ':?hex ' in self.ldata:
-            try:
-                self.e=self.ldata[self.ldata.find(':?hex ')+6:]
-                self.append((channel,str(hex2dec(self.e))))
-            except Exception,e:
-                self.report_error(channel,e)
-        elif ':?dec2hex ' in self.ldata:
-            try:
-                self.e=float(self.ldata[self.ldata.find('?dec2hex ')+9:])
-                self.append((channel,str(dec2hex(self.e))))
-            except Exception,e:
-                self.report_error(channel,e)
-        elif ':?dec2oct ' in self.ldata:
-            try:
-                self.e=float(self.ldata[self.ldata.find('?dec2oct ')+9:])
-                self.append((channel,'%s: %s'%(nick,dec2oct(self.e))))
-            except Exception,e:
-                self.report_error(channel,e)
-        elif '?oct ' in self.ldata:
-            try:
-                self.e=self.ldata[self.ldata.find(':?oct ')+6:]
-                self.append((channel,'%s: %s'%(nick,oct2dec(self.e))))
-            except Exception,e:
-                self.report_error(channel,e)
     def report_error(self,channel,e):
         self.append((channel,'Error %s; with arguments %s'%(type(e),e.args)))
 class Disallowed(Exception):

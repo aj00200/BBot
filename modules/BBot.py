@@ -4,8 +4,8 @@ import time,thread,sqlite3
 dict=sqlite3.connect('bbot.sqlite3')
 class bbot(api.module):
 	commands=['help','goog','wiki','pb','upb','kb','hit','?<query>','add','del','writedict','load','reload','version','connect','py']
-	goog='https://www.encrypted.google.com/search?q=%s'
-	wiki='http://www.en.wikipedia.org/wiki/%s'
+	goog='https://encrypted.google.com/search?q=%s'
+	wiki='https://secure.wikimedia.org/wikipedia/en/wiki/%s'
 	pb='http://www.pastebin.com/%s'
 	upb='http://paste.ubuntu.com/%s'
 	kb='http://www.kb.aj00200.heliohost.org/index.py?q=%s'
@@ -26,11 +26,12 @@ class bbot(api.module):
 		self.q=''
 		self.funcs={
 				'hit':self.hit,
-				'version':self.version
+				'version':self.version,
+				'goog':self.goog
 		}
 		self.sufuncs={
 				'join':self.su_join,
-				'writedict':self.su_writedict,
+				'writedb':self.su_writedb,
 				'raw':self.su_raw,
 				'part':self.su_part,
 				'add':self.su_add,
@@ -77,10 +78,6 @@ class bbot(api.module):
 					w+='%s, '%cmd
 				self.append((nick,'%s: %s'%(nick,w[0:-2])))
 				self.append((channel,'%s: Please see the PM I sent you'%nick))
-			elif ':?goog ' in data:
-				w=data.split(':?goog ')[-1].replace(' ','+')
-				self.append((channel,self.goog%w))
-				return 0
 			elif ':?wiki ' in data:
 				w=data.split(':?wiki ')[-1].replace(' ','_')
 				self.append((channel,self.wiki%w))
@@ -219,13 +216,17 @@ class bbot(api.module):
 	def version(self,nick,data,channel):
 		'''Sends BBot's version number to the channel'''
 		self.append((channel,'I am version %s'%BBot.version))
+	def goog(self,nick,data,channel):
+		w=data[data.find('goog '):].replace(' ','+')
+		self.append((channel,self.goog%w))
+		return 0
 	def su_join(self,nick,data,channel):
 		'''Makes BBot join the channel which is the param'''
 		self.raw('JOIN %s'%data[data.find('join ')+5:])
-	def su_writedict(self,nick,data,channel):
+	def su_writedb(self,nick,data,channel):
 		'''Writes the factoids database to the harddrive'''
-		self.write_dict()
-		self.notice((channel,'<<Wrote Dict>>'))
+		thread.start_new_thread(self.write_dict,())
+		self.notice((channel,'<<Writing Database>>'))
 	def su_raw(self,nick,data,channel):
 		self.raw(data[data.find('raw ')+4:])
 	def su_part(self,nick,data,channel):

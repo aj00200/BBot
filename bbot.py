@@ -1,15 +1,12 @@
 #! /usr/bin/python
 #this bot is licensed under the GNU GPL v3.0
 #http://www.gnu.org/licenses/gpl.html
-version='5.0 beta 2'
+version='5.0'
 import q,config,sys,re,time,thread,colorz,traceback,api,asyncore
 def setup_path():
 	sys.path.insert(1,'%s/libs'%sys.path[0])
 	sys.path.insert(0,'%s/modules'%sys.path[0])
 setup_path()
-
-#Modules
-#import BBot,import proxy,import mathbot,import trekbot,import blockbot,import statusbot,import globalbot,import debatebot
 
 networks={config.network: []}
 module_list=api.getConfigStr('main','modules').split()
@@ -51,7 +48,10 @@ def loop():
 	except Exception,e:
 		q.append(config.network,((config.error_chan,'<<BBot system error "bbot.py - loop()" with error: %s; args %s'%(type(e),e.args))))
 	thread.start_new_thread(loop,())
-if __name__ == '__main__':
+def start_bot():
 	thread.start_new_thread(loop,())
 	import q
 	asyncore.loop()
+if __name__ == '__main__':
+	start_bot()
+

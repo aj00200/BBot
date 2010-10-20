@@ -1,13 +1,4 @@
-import bbot
-import config
-import asynchat
-import asyncore
-import traceback
-import socket
-import time
-import api
-import re
-import colorz
+import bbot,config,asynchat,asyncore,traceback,socket,time,api,re,colorz
 class queue_class():
     def __init__(self):
         self.queue=[]
