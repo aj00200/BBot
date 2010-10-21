@@ -156,7 +156,6 @@ class blockbot(api.module):
                 count=0
                 print colorz.encode(str(row),'green')
                 for each in range(0,len(row)-1):
-                    print '%s==%s'%(row[each],msg)
                     if row[each]==msg:
                         count+=1
                 if count>=self.repeatlimit: ##SQL Repeat Limit
