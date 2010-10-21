@@ -132,6 +132,8 @@ class blockbot(api.module):
                 self.mode(nick,channel,'+b')
     def check_hilight(self,nick,data,channel):
         '''Check if nick has pinged more than self.hilight_limit people, and if so, kick them'''
+        db=sqlite3.connect('database.sqlite')
+        self.c=db.cursor()
         ldata=data[data.find(' :')+2:].lower()
         if channel not in self.nicklists:
             self.nicklists[channel]=[nick]
@@ -145,20 +147,21 @@ class blockbot(api.module):
         #///////////////////////////SQLite Code////////////////////////
         #//////////////////////////////////////////////////////////////
         try:
-            self.db=sqlite3.connect('database.sqlite')
-            self.c=self.db.cursor()
+            ldata=data.lower()
             msg=ldata[data.find(' :'):]
             current=['0',0,'0',0,'0',0,'0',0,'0',0,'0',0,'0',0]
-            self.c.execute('''select * from lines''')
-            for row in self.c:
+            self.c.execute('''select * from lines where username=?''',(nick,))
+            self.co=self.c.fetchall()
+            for row in self.co:
                 count=0
                 print colorz.encode(str(row),'green')
-                for each in range(0,len(row)):
+                for each in range(0,len(row)-1):
+                    print '%s==%s'%(row[each],msg)
                     if row[each]==msg:
                         count+=1
-                if count>=self.repeatlimit-1: ##SQL Repeat Limit
+                if count>=self.repeatlimit: ##SQL Repeat Limit
                     self.kick(nick,channel,'Don\'t repeat yourself. We all heard the first time')
-                    thread.start_new_thread(self.sql_add_str,(msg))
+                    #thread.start_new_thread(self.sql_add_str,(msg))
                 if str(row[0])==nick:
                     current[0]=row[1]
                     current[1]=row[2]
@@ -175,6 +178,7 @@ class blockbot(api.module):
                     current[12]=row[13]
             self.c.execute('''delete from lines where username=?''',(nick,))
             self.c.execute('''insert into lines values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',(nick,msg,time.time(),current[0],current[1],current[2],current[3],current[4],current[5],current[6],current[7],current[8],current[9],current[10],current[11],current[11],current[12]))
+            db.commit()
         except Exception,e:
             print colorz.encode('Error: %s; %s'%(type(e),e.args),'red')
     #/////////////////////////END SQLite Code/////////////////////////

@@ -80,7 +80,7 @@ class connection(asynchat.async_chat,queue_class):
                     if 'die' in e.args:
                         append(config.network,(config.error_chat,'Unrecoverable error raised by %s; It gave args: %s'%(module,type(e),e.args)))
                         raise die('An error occured in a module and the module requested that the bot be shutdown.')
-                    append(config.network,(config.error_chan,'Error: %s; With args: %s; in %s'%(type(e),e.args,handler)))
+                    append(config.network,(config.error_chan,'Error: %s; With args: %s; in %s'%(type(e),e.args,module)))
                     append(config.network,(config.error_chan,'Traceback: %s'%traceback.format_exc().replace('\n',' -- ')))
         elif ' JOIN :#' in data:
             nick=data.split('!')[0][1:]

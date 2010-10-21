@@ -32,7 +32,7 @@ class statusbot(api.module):
                 except:
                     pass
             elif data.find(':?timer ')!=-1:
-                words=data[data.find(':?timer ')+8:]
+                words=data[data.find('timer ')+8:]
                 words=words.split('m ',1)
                 thread.start_new_thread(self.timer,(words[0],'PRIVMSG %s :%s'%(channel,words[1])))
             elif data.find('?rawtimer ')!=-1:

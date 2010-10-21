@@ -1,7 +1,7 @@
 #! /usr/bin/python
 #this bot is licensed under the GNU GPL v3.0
 #http://www.gnu.org/licenses/gpl.html
-version='5.0'
+version='5.1'
 import q,config,sys,re,time,thread,colorz,traceback,api,asyncore
 def setup_path():
 	sys.path.insert(1,'%s/libs'%sys.path[0])
