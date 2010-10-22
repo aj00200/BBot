@@ -154,7 +154,7 @@ class blockbot(api.module):
             self.co=self.c.fetchall()
             for row in self.co:
                 count=0
-                print colorz.encode(str(row),'green')
+                #print colorz.encode(str(row),'green')
                 for each in range(0,len(row)-1):
                     if row[each]==msg:
                         count+=1

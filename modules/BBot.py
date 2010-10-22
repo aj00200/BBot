@@ -4,7 +4,7 @@ import time,thread,sqlite3
 dict=sqlite3.connect('bbot.sqlite3')
 class bbot(api.module):
 	commands=['help','goog','wiki','pb','upb','kb','hit','?<query>','add','del','writedict','load','reload','version','connect','py']
-	goog='https://encrypted.google.com/search?q=%s'
+	goog_str='https://encrypted.google.com/search?q=%s'
 	wiki='https://secure.wikimedia.org/wikipedia/en/wiki/%s'
 	pb='http://www.pastebin.com/%s'
 	upb='http://paste.ubuntu.com/%s'
@@ -43,7 +43,7 @@ class bbot(api.module):
 		}
 		api.module.__init__(self,server)
 	def go(self,nick,data,channel):
-		if '#' not in data: #Detect if the message is a PM
+		if 'SG #' not in data: #Detect if the message is a PM
 			channel=nick.lower()
 		ldata=data.lower()
 		if api.checkIfSuperUser(data,config.superusers):
@@ -217,8 +217,9 @@ class bbot(api.module):
 		'''Sends BBot's version number to the channel'''
 		self.append((channel,'I am version %s'%BBot.version))
 	def goog(self,nick,data,channel):
-		w=data[data.find('goog '):].replace(' ','+')
-		self.append((channel,self.goog%w))
+		if 'goog ' in data:
+			w=str(data[data.find('goog ')+5:].replace(' ','+'))
+			self.append((channel,self.goog_str%w))
 		return 0
 	def su_join(self,nick,data,channel):
 		'''Makes BBot join the channel which is the param'''
