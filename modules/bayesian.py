@@ -9,16 +9,18 @@ class module(api.module):
         self.ratio=0.01
         self.damp=0.3
         
-        self.kickat=10
-        self.spamat=15
-        self.legitat=1
+        self.kickat=3
+        self.spamat=4
+        self.legitat=0.8
         self.banat=100
         
-        self.remove=['-','.',',','_','+']
+        self.remove=['-','.',',','_','+','\'','"']
         api.module.__init__(self,server)
     def go(self,nick,data,channel):
+        data=data.lower()
         for each in self.remove:
             data=data.replace(each,'')
+            stat=self.get_stat(api.getMessage(data))
         if api.checkIfSuperUser(data):
             if '?spam ' in data:
                 self.spam(data[data.find('spam ')+5:].lower())
@@ -32,15 +34,15 @@ class module(api.module):
             elif '?zzz ' in data:
                 self.zzz(data[data.find('zzz ')+4:].lower())
                 return
-            elif '?combe' in data:
+            elif '?comba' in data:
                 self.db.commit()
                 return
         else:
-            if self.get_stat(api.getMessage(data))>self.kickat:
-                self.kick(nick,channel,'Bayesian')
-        if self.get_stat(api.getMessage(data))>self.spamat:
+            if stat>self.kickat:
+                self.kick(nick,channel,'%s'%stat)
+        if stat>self.spamat:
             self.spam(api.getMessage(data))
-        elif self.get_stat(api.getMessage(data))<self.legitat:
+        elif stat<self.legitat:
             self.legit(api.getMessage(data))
     def spam(self,data):
         for word in data.split():
@@ -61,9 +63,9 @@ class module(api.module):
     def zzz(self,data):
         for word in data.split():
             tmp=self.c.execute('''select * from stats where word=?''',(word,)).fetchall()
-            self.append((config.error_chan,str(tmp)))
+            self.append(('#bayesian',str(tmp)))
     def check(self,data):
-        self.append(('#spam','Level: %s'%self.get_stat(data)))
+        self.append(('#bayesian','Level: %s'%self.get_stat(data)))
     def get_stat(self,data):
         total=0
         for word in data.split():
