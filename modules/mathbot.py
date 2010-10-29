@@ -1,12 +1,9 @@
-import q
-import re
-import api
-import math
-import config
+import q,re,api,math,config
 import mathwiz as geo
 class mathbot(api.module):
     commands=['math','math help','hex','dec2hex','dec2oct']
     def __init__(self,server=config.network):
+        self.chars='_ghijklmnopqrstuvwyz#@$\'\"!:=GHIJKLMNOPQRSTUVWYZ'
         self.allow={
             ')':'..0..',
             'sqrt(':'..1..',
@@ -68,7 +65,6 @@ class mathbot(api.module):
             self.e=self.e.replace('!e',str(math.e))
             for each in self.allow:
                 self.e=self.e.replace(each,self.allow[each])
-            self.chars='_ghijklmnopqrstuvwyz#@$\'\"!:=GHIJKLMNOPQRSTUVWYZ'
             for each in self.chars:
                 self.e=self.e.replace(each,'')
             for each in self.invert:

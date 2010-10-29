@@ -3,18 +3,16 @@
 #http://www.gnu.org/licenses/gpl.html
 version='5.1.2'
 import q,config,sys,re,time,thread,colorz,traceback,api,asyncore
-def setup_path():
-	sys.path.insert(1,'%s/libs'%sys.path[0])
-	sys.path.insert(0,'%s/modules'%sys.path[0])
-setup_path()
+sys.path.insert(1,'%s/libs'%sys.path[0])
+sys.path.insert(0,'%s/modules'%sys.path[0])
 
 networks={config.network: []}
 module_list=api.getConfigStr('main','modules').split()
 for module in module_list:
 	globals()[module]=__import__(module)
 	networks[config.network].append(eval(module+'.module(config.network)'))
-#networks={config.network: [blockbot.module(config.network),trekbot.module(config.network),BBot.module(config.network),proxy.module(config.network),mathbot.module(config.network),debatebot.module(config.network),statusbot.module(config.network),globalbot.module(config.network)]}
 def add_network(name):
+	'''Connect to a new network'''
 	print colorz.encode('Adding Network "%s"'%name,'yellow')
 	networks[name]=[BBot.module(name)]
 def load_module(name,server):
@@ -38,8 +36,6 @@ def reload_module(name,server):
 				break
 	except Exception,e:
 		q.append(config.network,(config.error_chan,'Traceback: %s'%traceback.format_exc().replace('\n',' -- ')))
-		#q.append(config.network,((config.error_chan,'BBot has crashed with error: %s; args %s; in bbot.py'%(type(e),e.args))))
-continuepgm=1
 lastloop=time.time()-10
 def loop():
 	'''	Calls the loop() method of each module every 5 seconds + execution time	'''
