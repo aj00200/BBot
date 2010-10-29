@@ -32,6 +32,8 @@ class test_api(unittest.TestCase):
         self.assertEqual(api.getHost(':aj00200!aj00200@127.0.0.1 NOTICE #bots :Hi!'),'127.0.0.1','api.getHost() isn\'t returning hosts inside NOTICEs')
     def test_getConfigInt(self):
         self.assertEqual(str(type(api.getConfigInt('main','read-wait'))),'<type \'int\'>')
+    def test_scheckIfSperUsers(self):
+        self.assertEqual(api.checkIfSuperUser('123!456@lsjdlkfjslkdf.com PRIVMSG #bots :test'),False)
 class test_mathwiz(unittest.TestCase):
     def test_slope(self):
         self.assertEqual(str(mathwiz.slope(0,0,1,1)),'1/1')
