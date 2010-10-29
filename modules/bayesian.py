@@ -9,10 +9,10 @@ class module(api.module):
         self.ratio=0.01
         self.damp=0.3
         
-        self.kickat=3
-        self.spamat=4
-        self.legitat=0.8
-        self.banat=100
+        self.kickat=1.15
+        self.spamat=1.5
+        self.legitat=1
+        self.banat=1.5
         
         self.remove=['-','.',',','_','+','\'','"']
         api.module.__init__(self,server)
@@ -20,7 +20,7 @@ class module(api.module):
         data=data.lower()
         for each in self.remove:
             data=data.replace(each,'')
-            stat=self.get_stat(api.getMessage(data))
+        stat=self.get_stat(api.getMessage(data))
         if api.checkIfSuperUser(data):
             if '?spam ' in data:
                 self.spam(data[data.find('spam ')+5:].lower())
@@ -40,6 +40,8 @@ class module(api.module):
         else:
             if stat>self.kickat:
                 self.kick(nick,channel,'%s'%stat)
+                if stat>self.banat:
+                    self.mode(nick,channel,'+b')
         if stat>self.spamat:
             self.spam(api.getMessage(data))
         elif stat<self.legitat:

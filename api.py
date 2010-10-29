@@ -50,7 +50,7 @@ class module():
     def kick(self,nick,channel,message=''):
         q.kick(self.__server__,nick,channel,message)
     def nick(self,nick):
-        q.append(self.__server__,'NICK %s'%nick)
+        q.raw(self.__server__,'NICK %s'%nick)
         bbot.mynick=nick[:]
     def notice(self,data):
         q.raw(self.__server__,'NOTICE '+data[0]+' :'+data[1])
