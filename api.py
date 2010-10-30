@@ -1,14 +1,15 @@
-import q
-import bbot
-import config
-import colorz
+import q,bbot,config,colorz
 def getConfigStr(cat,name):
+    '''Return a string value from the config file in the catagory cat and the key name'''
     return config.c.get(cat,name)
 def getConfigInt(cat,name):
+    '''Return a integer value from the config file in the catagory cat and the key name'''
     return config.c.getint(cat,name)
 def getConfigFloat(cat,name):
+    '''Return a floating point value from the config file in the catagory cat and the key name'''
     return config.c.getfloat(cat,name)
 def getConfigBool(cat,name):
+    '''Return a boolean value from the config file in the catagory cat and the key name'''
     return config.c.getboolean(cat,name)
 def getHost(data):
     '''Returns the hostname (IP address) of the person who sent the message passed to the variable data'''
@@ -31,13 +32,17 @@ def hostInList(data,list):
     else:
         return False
 def checkIfSuperUser(data,superusers=config.superusers):
+    '''Check if the user who send the message, data, is in the superusers list. The list my optionally be supplied'''
     return hostInList(data,superusers)
 def pong(data):
+    '''If data contains a PING, reply to the server with a PONG'''
     if data.find ('PING')!=-1:
         q.queue.raw('PONG '+data.split()[ 1 ]+'\r\n') #Return the PING to the server
 def add_networkk(server):
+    '''Connect to the network located at server'''
     bbot.add_network(server)
 class module():
+    '''Base class that all modules should use to maintain best compatibility with future versions of the API'''
     commands=[]
     def __init__(self,server):
         self.__server__=server
@@ -50,7 +55,7 @@ class module():
     def kick(self,nick,channel,message=''):
         q.kick(self.__server__,nick,channel,message)
     def nick(self,nick):
-        q.append(self.__server__,'NICK %s'%nick)
+        q.raw(self.__server__,'NICK %s'%nick)
         bbot.mynick=nick[:]
     def notice(self,data):
         q.raw(self.__server__,'NOTICE '+data[0]+' :'+data[1])

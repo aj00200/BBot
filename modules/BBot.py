@@ -239,8 +239,8 @@ class bbot(api.module):
 		self.notice((channel,'<<Added %s>>'%query))
 	def su_load(self,nick,data,channel):
 		self.q=data[data.find('load ')+5:]
-		BBot.load_module(self.q,self.__server__)
-		self.notice(('#spam','<<Loaded %s>>'%self.q))
+		if BBot.load_module(self.q,self.__server__):
+			self.notice(('#spam','<<Loaded %s>>'%self.q))
 	def su_py(self,nick,data,channel):
 		self.q=data[data.find('py ')+3:]
 		try:
