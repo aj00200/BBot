@@ -17,24 +17,24 @@ class module(api.module):
         self.remove=['-','.',',','_','+','\'','"']
         api.module.__init__(self,server)
     def go(self,nick,data,channel):
-        data=data.lower()
+        d=str(data.lower())
         for each in self.remove:
-            data=data.replace(each,'')
-        stat=self.get_stat(api.getMessage(data))
-        if api.checkIfSuperUser(data):
-            if '?spam ' in data:
-                self.spam(data[data.find('spam ')+5:].lower())
+            d=d.replace(each,'')
+        stat=self.get_stat(api.getMessage(d))
+        if api.checkIfSuperUser(d):
+            if '?spam ' in d:
+                self.spam(d[d.find('spam ')+5:].lower())
                 return
-            elif '?legit ' in data:
-                self.legit(data[data.find('legit ')+6:].lower())
+            elif '?legit ' in d:
+                self.legit(d[d.find('legit ')+6:].lower())
                 return
-            elif '?check ' in data:
-                self.check(data[data.find('check ')+6:].lower())
+            elif '?check ' in d:
+                self.check(d[d.find('check ')+6:].lower())
                 return
-            elif '?zzz ' in data:
-                self.zzz(data[data.find('zzz ')+4:].lower())
+            elif '?zzz ' in d:
+                self.zzz(d[d.find('zzz ')+4:].lower())
                 return
-            elif '?comba' in data:
+            elif '?comba' in d:
                 self.db.commit()
                 return
         else:
@@ -43,35 +43,37 @@ class module(api.module):
                 if stat>self.banat:
                     self.mode(nick,channel,'+b')
         if stat>self.spamat:
-            self.spam(api.getMessage(data))
+            self.spam(api.getMessage(d))
         elif stat<self.legitat:
-            self.legit(api.getMessage(data))
+            self.legit(api.getMessage(d))
     def spam(self,data):
-        for word in data.split():
-            tmp=self.c.execute('''select * from stats where word=?''',(word,)).fetchall()
+        for word in str(data).split():
+            tmp=self.c.execute('''select * from stats where word=?''',(self.safety(word),)).fetchall()
             if len(tmp)>0:
-                self.c.execute('''delete from stats where word=?''',(word,))
-                self.c.execute('''insert into stats values (?, ?, ?)''',(word,tmp[0][1]+1,tmp[0][2]))
+                self.c.execute('''delete from stats where word=?''',(self.safety(word),))
+                self.c.execute('''insert into stats values (?, ?, ?)''',(self.safety(word),tmp[0][1]+1,tmp[0][2]))
             else:
-                self.c.execute('''insert into stats values (?, ?, ?)''',(word,2,1))
+                self.c.execute('''insert into stats values (?, ?, ?)''',(self.safety(word),2,1))
     def legit(self,data):
         for word in data.split():
-            tmp=self.c.execute('''select * from stats where word=?''',(word,)).fetchall()
+            tmp=self.c.execute('''select * from stats where word=?''',(self.safety(word),)).fetchall()
             if len(tmp)>0:
-                self.c.execute('''delete from stats where word=?''',(word,))
-                self.c.execute('''insert into stats values (?, ?, ?)''',(word,tmp[0][1],tmp[0][2]+1))
+                self.c.execute('''delete from stats where word=?''',(self.safety(word),))
+                self.c.execute('''insert into stats values (?, ?, ?)''',(self.safety(word),tmp[0][1],tmp[0][2]+1))
             else:
-                self.c.execute('''insert into stats values (?, ?, ?)''',(word,1,2))
+                self.c.execute('''insert into stats values (?, ?, ?)''',(self.safety(word),1,2))
     def zzz(self,data):
         for word in data.split():
-            tmp=self.c.execute('''select * from stats where word=?''',(word,)).fetchall()
+            tmp=self.c.execute('''select * from stats where word=?''',(self.safety(word),)).fetchall()
             self.append(('#bayesian',str(tmp)))
     def check(self,data):
         self.append(('#bayesian','Level: %s'%self.get_stat(data)))
     def get_stat(self,data):
         total=0
         for word in data.split():
-            tmp=self.c.execute('''select * from stats where word=?''',(word,)).fetchall()
+            tmp=self.c.execute('''select * from stats where word=?''',(self.safety(word),)).fetchall()
             if len(tmp)>0:
                 total+=((float(tmp[0][1])/float(tmp[0][2]))*self.ratio)/self.damp
         return total
+    def safety(self,s):
+        str(s)
