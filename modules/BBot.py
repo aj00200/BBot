@@ -2,7 +2,7 @@ import q,api,re,config
 import bbot as BBot
 import time,thread,sqlite3
 dict=sqlite3.connect('bbot.sqlite3')
-class bbot(api.module):
+class module(api.module):
 	commands=['help','goog','wiki','pb','upb','kb','hit','?<query>','add','del','writedict','load','reload','version','connect','py']
 	goog_str='https://encrypted.google.com/search?q=%s'
 	wiki='https://secure.wikimedia.org/wikipedia/en/wiki/%s'
@@ -261,4 +261,3 @@ class bbot(api.module):
 		tmp=data[data.find('del ')+4:]
 		self.del_factoid(tmp)
 		self.notice((channel,'<<Delete %s>>'%tmp))
-module=bbot

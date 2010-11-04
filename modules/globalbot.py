@@ -1,7 +1,5 @@
-import q
-import api
-import config
-class globalbot(api.module):
+import q,api,config
+class module(api.module):
     commands=['global']
     def __init__(self,server):
         api.module.__init__(self,server)
@@ -10,4 +8,3 @@ class globalbot(api.module):
             self.broadcast=data[data.find('?global ')+8:]
             for each in config.autojoin:
                 self.append((each,self.broadcast))
-module=globalbot

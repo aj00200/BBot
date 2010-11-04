@@ -1,7 +1,4 @@
-import q
-import api
-import time
-import thread
+import q,api,time,thread
 class statusbot(api.module):
     commands=['status','whereis','notify','timer','rawtimer']
     def __init__(self,server):

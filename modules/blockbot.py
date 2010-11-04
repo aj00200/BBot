@@ -1,11 +1,4 @@
-import q
-import re
-import api
-import time
-import config
-import thread
-import colorz
-import sqlite3
+import q,re,api,time,config,thread,colorz,sqlite3
 proxyscan=1
 class blockbot(api.module):
     commands=['slower','faster','?;','setspeed','rehash','protect','sql']

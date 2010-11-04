@@ -1,7 +1,5 @@
-import q
-import api
-import config
-class trekbot(api.module):
+import q,api,config
+class module(api.module):
     commands=['op','deop','kick','ban','unban','nick','echo','mode','voice','devoice','blacklist','unblacklist','listbl','whitelist','unwhitelist','topic']
     def __init__(self,server=config.network):
         self.blacklist=[]

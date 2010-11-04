@@ -1,7 +1,5 @@
-import q
-import api
-import time
-class debatebot(api.module):
+import q,api,time
+class module(api.module):
     commands=['claim','drop','debate help']
     def __init__(self,server):
         self.channel='#debate'
@@ -35,10 +33,9 @@ class debatebot(api.module):
         self.floor=''
         self.mode('',self.channel,'-mz')
     def cutof(self,nick):
-        self.mode(nick,self,channel,'-v')
+        self.mode(nick,self.channel,'-v')
         self.notice((self.channel,'<<%s\'s time has expired, the floor can be claimed with ?claim>>'))
         self.floor=''
         self.mode('',self.channel,'-v')
     def help(self,nick):
         self.append((nick,'?claim, ?drop, ?yeild -NOT ALL COMMANDS WORK YET'))
-module=debatebot
