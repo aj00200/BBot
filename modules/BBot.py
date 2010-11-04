@@ -42,6 +42,9 @@ class bbot(api.module):
 				'del':self.su_del
 		}
 		api.module.__init__(self,server)
+	def __destroy__(self):
+		self.notice(('#spam','<<BBot __destroyed__!>>'))
+		dict.close()
 	def go(self,nick,data,channel):
 		if 'SG #' not in data: #Detect if the message is a PM
 			channel=nick.lower()
@@ -205,9 +208,6 @@ class bbot(api.module):
 			self.append((channel,str(results[0][1]).replace('%n',nick)))
 #		else:
 #			self.send_infobot_query(query,nick,channel)
-	def destroy(self):
-		self.notice(('#spam','Destroyed BBot'))
-		dict.close()
 	#////////Single Functions/////////
 	def hit(self,nick,data,channel):
 		'''Causes BBot to punch someone'''

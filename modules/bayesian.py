@@ -16,6 +16,9 @@ class module(api.module):
         
         self.remove=['-','.',',','_','+','\'','"']
         api.module.__init__(self,server)
+    def __destroy__(self):
+        self.db.commit()
+        del self.db,self.c
     def go(self,nick,data,channel):
         d=str(data.lower())
         for each in self.remove:
