@@ -191,7 +191,7 @@ class bbot(api.module):
 		dict.commit()
 	def read_dict(self):
 		self.c=dict.cursor()
-		self.c.execute('''create table if not exists factoids (key, value, by, ts)''')
+		self.c.execute('''create table if not exists factoids (key, value, "by", ts)''')
 		dict.commit()
 	def query_dict(self,query):
 		'''Primarily for the unittester	'''
