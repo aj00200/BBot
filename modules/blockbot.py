@@ -72,7 +72,7 @@ class module(api.module):
         if self.superuser:
             if ':?;' in self.ldata:
                 w=data[data.find(':?; ')+4:].lower()
-                self.findlist.append(w)
+                self.findlist.append(re.compile(w))
                 self.notice((channel,'<<%s has set a ban on %s>>'%(nick,w)))
             elif ':?faster' in self.ldata:
                 print(colorz.encode('FASTER','cayn'))
