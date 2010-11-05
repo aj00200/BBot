@@ -1,6 +1,6 @@
 import q,re,api,time,config,thread,colorz,sqlite3
 proxyscan=1
-class blockbot(api.module):
+class module(api.module):
     commands=['slower','faster','?;','setspeed','rehash','protect','sql']
     def sql(self):
         self.db=sqlite3.connect('database.sqlite')
@@ -19,8 +19,11 @@ class blockbot(api.module):
         self.nicklists={}
         self.hilight_limit=api.getConfigInt('BlockBot','hilight-limit')
         self.config=open('blockbot-config','r')
-        self.findlist=self.config.readline().lower()
-        self.findlist=self.findlist[self.findlist.find(' ')+1:self.findlist.find('#')].split('^^^@@@^^^')
+        findlist=self.config.readline().lower()
+        findlist=self.findlist[self.findlist.find(' ')+1:self.findlist.find('#')].split('^^^@@@^^^')
+        self.findlist=[]
+        for each in findlist:
+            self.findlist.append(re.compile(each))
         self.proxyscan=api.getConfigBool('BlockBot','proxy-scan')
         if self.proxyscan:
             import nmap #Can be found at: http://xael.org/norman/python/python-nmap/
@@ -209,4 +212,3 @@ class blockbot(api.module):
                 self.nicklists[channel]=[]
             for each in safe_names:
                 self.nicklists[channel].append(each)
-module=blockbot

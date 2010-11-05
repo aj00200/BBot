@@ -182,11 +182,11 @@ class module(api.module):
 	def add_factoid(self,query,nick):
 		tmp=query
 		if '<ACTION>'in query[1]:
-			tmp[1]=tmp[1].replace('<ACTION>','\x01ACTION ')+'\x01'
-		self.c.execute('delete from factoids where key=?',(tmp[0],))
+			tmp[1]=str(tmp[1].replace('<ACTION>','\x01ACTION ')+'\x01')
+		self.c.execute('delete from factoids where key=?',(str(tmp[0]),))
 		self.c.execute('insert into factoids values (?,?,?,?)',(tmp[0],tmp[1],nick,time.time()))
 	def del_factoid(self,query):
-		self.c.execute('delete from factoids where key=?',(query,))
+		self.c.execute('delete from factoids where key=?',(str(query),))
 	def write_dict(self):
 		dict.commit()
 	def read_dict(self):

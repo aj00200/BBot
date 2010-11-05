@@ -1,5 +1,5 @@
 import q,api,time,thread
-class statusbot(api.module):
+class module(api.module):
     commands=['status','whereis','notify','timer','rawtimer']
     def __init__(self,server):
         self.statuses={}
@@ -39,4 +39,3 @@ class statusbot(api.module):
     def timer(self,wait,message):
         time.sleep(float(wait)*60)
         self.raw(message)
-module=statusbot
