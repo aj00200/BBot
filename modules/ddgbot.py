@@ -2,11 +2,10 @@ import q,api,config
 import urllib,thread,re
 from xml.dom.minidom import parse, parseString
 class module(api.module):
-    def __init__(self,server):
-        self.url='https://duckduckgo.com/?q=%s&o=x'
-        api.module.__init__(self,server)
+    commands=['ddg']
+    url='https://duckduckgo.com/?q=%s&o=x'
     def go(self,nick,data,channel):
-        if config.cmd_char+'ddg ' in data:
+        if ':'+config.cmd_char+'ddg ' in data:
             query=data[data.find('ddg ')+4:]
             thread.start_new_thread(self.ddg,(nick,data,channel,query))
         ldata=data.lower()

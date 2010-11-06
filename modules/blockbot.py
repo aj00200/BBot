@@ -20,7 +20,7 @@ class module(api.module):
         self.hilight_limit=api.getConfigInt('BlockBot','hilight-limit')
         self.config=open('blockbot-config','r')
         findlist=self.config.readline().lower()
-        findlist=self.findlist[self.findlist.find(' ')+1:self.findlist.find('#')].split('^^^@@@^^^')
+        findlist=findlist[self.findlist.find(' ')+1:self.findlist.find('#')].split('^^^@@@^^^')
         self.findlist=[]
         for each in findlist:
             self.findlist.append(re.compile(each))
