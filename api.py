@@ -80,6 +80,6 @@ class module():
     def loop(self):
         '''Called every 5 seconds'''
         pass
-    def destroy(self):
+    def __destroy__(self):
         '''Called when the module is unloaded'''
         pass
