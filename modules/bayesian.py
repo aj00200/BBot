@@ -21,6 +21,7 @@ class module(api.module):
         del self.db,self.c
     def go(self,nick,data,channel):
         d=str(data.lower())
+        print ' -- d is %s'%d
         for each in self.remove:
             d=d.replace(each,'')
         stat=self.get_stat(api.getMessage(d))
@@ -50,6 +51,8 @@ class module(api.module):
         elif stat<self.legitat:
             self.legit(api.getMessage(d))
     def spam(self,data):
+        print ' -- in spam: data is: %s'%data
+        print ' -- :self.safety(data): %s'%self.safety(data)
         for word in str(data).split():
             tmp=self.c.execute('''select * from stats where word=?''',(self.safety(word),)).fetchall()
             if len(tmp)>0:
@@ -79,4 +82,4 @@ class module(api.module):
                 total+=((float(tmp[0][1])/float(tmp[0][2]))*self.ratio)/self.damp
         return total
     def safety(self,s):
-        str(s)
+        return str(s)

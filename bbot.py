@@ -3,6 +3,7 @@
 #http://www.gnu.org/licenses/gpl.html
 version='5.2.2'
 import q,config,sys,re,time,thread,colorz,traceback,api,asyncore
+import cProfile
 sys.path.insert(1,'%s/libs'%sys.path[0])
 sys.path.insert(0,'%s/modules'%sys.path[0])
 
@@ -51,7 +52,7 @@ def loop():
 def start_bot():
 	thread.start_new_thread(loop,())
 	import q
-	asyncore.loop()
+	cProfile.run('asyncore.loop()')
 if __name__ == '__main__':
 	start_bot()
 

@@ -26,18 +26,17 @@ def getMessage(data):
 def hostInList(data,list):
     '''Tells you if the host of the person who sent the message that is pased as the first arg is in the list of hosts which is the second arg'''
     host=getHost(data)
-    for su in list:
-        if host.find(su)!=-1:
+    for each in list:
+        if each in host:
             return True
-    else:
-        return False
+    return False
 def checkIfSuperUser(data,superusers=config.superusers):
     '''Check if the user who send the message, data, is in the superusers list. The list my optionally be supplied'''
     return hostInList(data,superusers)
 def pong(data):
     '''If data contains a PING, reply to the server with a PONG'''
-    if data.find ('PING')!=-1:
-        q.queue.raw('PONG '+data.split()[ 1 ]+'\r\n') #Return the PING to the server
+    if 'PING' in data:
+        q.queue.raw('PONG'+data[data.find(' '):]+'\r\n') #Return the PING to the server
 def add_networkk(server):
     '''Connect to the network located at server'''
     bbot.add_network(server)
