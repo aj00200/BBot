@@ -2,7 +2,7 @@ import q,api,re,config
 import bbot as BBot
 import time,thread,sqlite3
 dict=sqlite3.connect('bbot.sqlite3')
-class bbot(api.module):
+class module(api.module):
 	commands=['help','goog','wiki','pb','upb','kb','hit','?<query>','add','del','writedict','load','reload','version','connect','py']
 	goog_str='https://encrypted.google.com/search?q=%s'
 	wiki='https://secure.wikimedia.org/wikipedia/en/wiki/%s'
@@ -42,6 +42,9 @@ class bbot(api.module):
 				'del':self.su_del
 		}
 		api.module.__init__(self,server)
+	def __destroy__(self):
+		self.notice(('#spam','<<BBot __destroyed__!>>'))
+		dict.close()
 	def go(self,nick,data,channel):
 		if 'SG #' not in data: #Detect if the message is a PM
 			channel=nick.lower()
@@ -179,16 +182,16 @@ class bbot(api.module):
 	def add_factoid(self,query,nick):
 		tmp=query
 		if '<ACTION>'in query[1]:
-			tmp[1]=tmp[1].replace('<ACTION>','\x01ACTION ')+'\x01'
-		self.c.execute('delete from factoids where key=?',(tmp[0],))
+			tmp[1]=str(tmp[1].replace('<ACTION>','\x01ACTION ')+'\x01')
+		self.c.execute('delete from factoids where key=?',(str(tmp[0]),))
 		self.c.execute('insert into factoids values (?,?,?,?)',(tmp[0],tmp[1],nick,time.time()))
 	def del_factoid(self,query):
-		self.c.execute('delete from factoids where key=?',(query,))
+		self.c.execute('delete from factoids where key=?',(str(query),))
 	def write_dict(self):
 		dict.commit()
 	def read_dict(self):
 		self.c=dict.cursor()
-		self.c.execute('''create table if not exists factoids (key, value, by, ts)''')
+		self.c.execute('''create table if not exists factoids (key, value, "by", ts)''')
 		dict.commit()
 	def query_dict(self,query):
 		'''Primarily for the unittester	'''
@@ -205,14 +208,11 @@ class bbot(api.module):
 			self.append((channel,str(results[0][1]).replace('%n',nick)))
 #		else:
 #			self.send_infobot_query(query,nick,channel)
-	def destroy(self):
-		self.notice(('#spam','Destroyed BBot'))
-		dict.close()
 	#////////Single Functions/////////
 	def hit(self,nick,data,channel):
 		'''Causes BBot to punch someone'''
 		who=data[data.find('hit ')+4:]
-		self.append((channel,'\x01ACTION punches %s'%who))
+		self.append((channel,'\x01ACTION punches %s\x01'%who))
 	def version(self,nick,data,channel):
 		'''Sends BBot's version number to the channel'''
 		self.append((channel,'I am version %s'%BBot.version))
@@ -261,4 +261,3 @@ class bbot(api.module):
 		tmp=data[data.find('del ')+4:]
 		self.del_factoid(tmp)
 		self.notice((channel,'<<Delete %s>>'%tmp))
-module=bbot

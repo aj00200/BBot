@@ -88,7 +88,8 @@ class polygon():
 class triangle(polygon):
     def __init__(self,ax,ay,bx,by,cx,cy):
         self.coords={'A':(ax,ay),'B':(bx,by),'C':(cx,cy)}
-        self.sides={'ab':float(distance(ax,ay,bx,by)),
+        self.sides={
+            'ab':float(distance(ax,ay,bx,by)),
             'bc':float(distance(bx,by,cx,cy)),
             'ca':float(distance(cx,cy,ax,ay))
         }

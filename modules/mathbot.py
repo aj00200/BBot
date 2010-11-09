@@ -1,6 +1,6 @@
 import q,re,api,math,config
 import mathwiz as geo
-class mathbot(api.module):
+class module(api.module):
     commands=['math','math help','hex','dec2hex','dec2oct']
     def __init__(self,server=config.network):
         self.chars='_ghijklmnopqrstuvwyz#@$\'\"!:=GHIJKLMNOPQRSTUVWYZ'
@@ -101,4 +101,3 @@ def dec2oct(dec):
     return '%o'%dec
 def oct2dec(oct):
     return int(oct(oct))
-module=mathbot

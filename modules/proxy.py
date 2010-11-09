@@ -1,6 +1,6 @@
 import q
 import api
-class proxy(api.module):
+class module(api.module):
     commands=[]
     chan='#bbot'
     net1='irc.fossnet.info'
@@ -19,4 +19,3 @@ class proxy(api.module):
                 q.append(self.to,(channel,'<%s> %s'%(nick,data[data.find(' :')+2:])))
             except Exception:
                 pass
-module=proxy

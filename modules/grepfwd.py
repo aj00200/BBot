@@ -1,8 +1,5 @@
-import q
-import re
-import api
-
-class grepfwd(api.module):
+import q,re,api
+class module(api.module):
     commands=['grepfwd']
     def __init__(self,server):
         self.fwds={}
@@ -18,4 +15,3 @@ class grepfwd(api.module):
     def add_fwd(self,data):
         query=data[data.find(':?grepfwd ')+10:].split(' > ')
         self.fwds[query[0]]=query[1]
-module=grepfwd

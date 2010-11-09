@@ -1,7 +1,7 @@
 #! /usr/bin/python
 #this bot is licensed under the GNU GPL v3.0
 #http://www.gnu.org/licenses/gpl.html
-version='5.1.2'
+version='5.2.4'
 import q,config,sys,re,time,thread,colorz,traceback,api,asyncore
 sys.path.insert(1,'%s/libs'%sys.path[0])
 sys.path.insert(0,'%s/modules'%sys.path[0])
@@ -29,13 +29,14 @@ def reload_module(name,server):
 	try:
 		for each in networks[server]:
 			if isinstance(each,eval(name+'.module')):
-				each.destroy()
+				each.__destroy__()
 				networks[server].pop(networks[server].index(each))
 				reload(eval(name))
 				networks[server].append(eval(name+'.module("%s")'%config.network))
 				break
 	except Exception,e:
 		q.append(config.network,(config.error_chan,'Traceback: %s'%traceback.format_exc().replace('\n',' -- ')))
+		return
 lastloop=time.time()-10
 def loop():
 	'''	Calls the loop() method of each module every 5 seconds + execution time	'''
