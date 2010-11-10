@@ -5,10 +5,8 @@ dict=sqlite3.connect('bbot.sqlite3')
 class module(api.module):
 	commands=['help','goog','wiki','pb','upb','kb','hit','?<query>','add','del','writedict','load','reload','version','connect','py']
 	goog_str='https://encrypted.google.com/search?q=%s'
-	wiki='https://secure.wikimedia.org/wikipedia/en/wiki/%s'
-	pb='http://www.pastebin.com/%s'
-	upb='http://paste.ubuntu.com/%s'
-	kb='http://www.kb.aj00200.heliohost.org/index.py?q=%s'
+	wiki_str='https://secure.wikimedia.org/wikipedia/en/wiki/%s'
+	kb_str='http://www.kb.aj00200.heliohost.org/index.py?q=%s'
 	def get_command_list(self):
 		try:
 			time.sleep(5)
@@ -19,6 +17,7 @@ class module(api.module):
 			print 'Error: %s; with args: %s;'%(type(e),e.args)
 	def __init__(self,server):
 		self.command_list=[]
+		self.command_start=':'+config.cmd_char
 		thread.start_new_thread(self.get_command_list,())
 		self.read_dict()
 		self.info_bots=api.getConfigStr('BBot','infobots').split()
@@ -27,7 +26,9 @@ class module(api.module):
 		self.funcs={
 				'hit':self.hit,
 				'version':self.version,
-				'goog':self.goog
+				'goog':self.goog,
+				'wiki':self.wiki,
+				'kb':self.kb
 		}
 		self.sufuncs={
 				'join':self.su_join,
@@ -74,30 +75,15 @@ class module(api.module):
 			return 0
 		elif ':\x01VERSION\x01' in data:
 			self.notice((nick,'\x01VERSION BBot Version %s\x01'%BBot.version))
-		elif ':?' in data:
+		elif self.command_start in data:
 			if ':?help' in data and ':?help ' not in data:
 				w=''
 				for cmd in self.command_list:
 					w+='%s, '%cmd
 				self.append((nick,'%s: %s'%(nick,w[0:-2])))
 				self.append((channel,'%s: Please see the PM I sent you'%nick))
-			elif ':?wiki ' in data:
-				w=data.split(':?wiki ')[-1].replace(' ','_')
-				self.append((channel,self.wiki%w))
-				return 0
-			elif ':?pb ' in data:
-				w=data.split(':?pb ')[-1]
-				self.append((channel,self.pb%w))
-				return 0
-			elif ':?upb ' in data:
-				w=data.split(':?upb ')[-1]
-				self.append((channel,self.upb%w))
-				return 0
-			elif ':?kb 'in data:
-				w=data[data.find(':?kb ')+5:]
-				self.append((channel,self.kb%w))
-				return 0
-			self.q=data[data.find(':?')+2:]
+##-------------------------------
+			self.q=data[data.find(self.command_start)+len(self.command_start):]
 			if ' ' in self.q:
 				self.q2=self.q[:self.q.find(' ')]
 			else:
@@ -220,6 +206,14 @@ class module(api.module):
 		if 'goog ' in data:
 			w=str(data[data.find('goog ')+5:].replace(' ','+'))
 			self.append((channel,self.goog_str%w))
+		return 0
+	def wiki(self,nick,data,channel):
+		w=data[data.find('wiki ')+5:].replace(' ','_')
+		self.append((channel,self.wiki_str%w))
+		return 0
+	def kb(self,nick,data,channel):
+		w=data[data.find('kb ')+3:]
+		self.append((channel,self.kb_str%w))
 		return 0
 	def su_join(self,nick,data,channel):
 		'''Makes BBot join the channel which is the param'''
