@@ -212,7 +212,7 @@ class module(api.module):
 	def hit(self,nick,data,channel):
 		'''Causes BBot to punch someone'''
 		who=data[data.find('hit ')+4:]
-		self.append((channel,'\x01ACTION punches %s'%who))
+		self.append((channel,'\x01ACTION punches %s\x01'%who))
 	def version(self,nick,data,channel):
 		'''Sends BBot's version number to the channel'''
 		self.append((channel,'I am version %s'%BBot.version))
