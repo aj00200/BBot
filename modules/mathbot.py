@@ -61,8 +61,8 @@ class module(api.module):
             self.append((channel,nick+' : +, -, *, /, %, sqrt, pow, ceil, floor, log, asin, acos, atan, atan2, sin, cos, tan'))
         elif ':?math ' in self.ldata:
             self.e=data[data.find('?math ')+6:].strip('\r\n')
-            self.e=self.e.replace('!pi','3.1415926535897931')
-            self.e=self.e.replace('!e',str(math.e))
+            self.e=self.e.replace('!pi','3.1415926535897932384626433832795028841971693993751')
+            self.e=self.e.replace('!e','2.7182818284590452353602874713526624977572')
             for each in self.allow:
                 self.e=self.e.replace(each,self.allow[each])
             for each in self.chars:
