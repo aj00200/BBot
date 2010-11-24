@@ -3,28 +3,27 @@ class queue_class():
     def __init__(self):
         self.queue=[]
     def append(self,data):
-        print colorz.encode('PRIVMSG '+data[0]+' :'+data[1],'green')
-        self.go('PRIVMSG '+data[0]+' :'+data[1])
+        print colorz.encode('PRIVMSG %s :%s'%(data[0],data[1]),'green')
+        self.push('PRIVMSG %s :%s\r\n'%(data[0],data[1]))
     def join(self, channel):
         self.go('JOIN '+channel)
     def part(self, channel, message=''):
-        self.go('PART %s :%s'%(channel,message))
+        self.push('PART %s :%s\r\n'%(channel,message))
     def kick(self,nick,channel,message=''):
-        print(colorz.encode('channel: %s nick: %s msg: :%s!'%(channel,nick,message),'green'))
-        self.go('KICK %s %s :%s!'%(channel,nick,message))
+        self.push('KICK %s %s :%s\r\n'%(channel,nick,message))
     def nick(self,nick):
-        self.go('NICK %s'%nick)
+        self.push('NICK %s\r\n'%nick)
         mynick=nick[:]
     def notice(self,data):
-        self.go('NOTICE '+data[0]+' :'+data[1])
+        self.push('NOTICE %s %s\r\n'%(data[0],data[1]))
     def mode(self,nick,channel,mode):
-        self.go('MODE '+channel+' '+mode+' '+nick)
+        self.push('MODE %s %s %s\r\n'%(channel,mode,nick))
     def kill(self,nick,reason=''):#Must be IRCOP
-        self.go('KILL %s :%s' % (nick,reason))
+        self.push('KILL %s :%s\r\n' % (nick,reason))
     def kline(self,host,time='3600',reason='K-Lined'):#Must be IRCOP
         self.go('KLINE %s %s :%s'%(host,str(time),reason))
     def raw(self,data):
-        self.go(data)
+        self.push(data+'\r\n')
     def go(self,data):
         self.push(data+'\r\n')
 

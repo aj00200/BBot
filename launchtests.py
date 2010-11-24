@@ -8,5 +8,8 @@ while 1:
         icon='gtk-dialog-info'
     else:
         icon='gtk-dialog-warning'
-    subprocess.call(['notify-send','Error Code: %s'%str(test),'--icon=%s'%icon])
+    try:
+        subprocess.call(['notify-send','Error Code: %s'%str(test),'--icon=%s'%icon])
+    except:
+        pass
     time.sleep(30)
