@@ -10,7 +10,6 @@ class queue_class():
     def part(self, channel, message=''):
         self.go('PART %s :%s'%(channel,message))
     def kick(self,nick,channel,message=''):
-        print(colorz.encode('channel: %s nick: %s msg: :%s!'%(channel,nick,message),'green'))
         self.go('KICK %s %s :%s!'%(channel,nick,message))
     def nick(self,nick):
         self.go('NICK %s'%nick)

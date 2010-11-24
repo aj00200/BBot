@@ -55,13 +55,13 @@ class module():
         q.kick(self.__server__,nick,channel,message)
     def nick(self,nick):
         q.raw(self.__server__,'NICK %s'%nick)
-        bbot.mynick=nick[:]
+        config.mynick=nick[:]
     def notice(self,data):
         q.raw(self.__server__,'NOTICE '+data[0]+' :'+data[1])
     def mode(self,nick,channel,mode):
         q.raw(self.__server__,'MODE '+channel+' '+mode+' '+nick)
     def kill(self,nick,reason=''):#Must be IRCOP
-        q.append(self.__server__,'KILL %s :%s' % (nick,reason))
+        q.raw(self.__server__,'KILL %s :%s' % (nick,reason))
     def kline(self,host,time='3600',reason='K-Lined'):#Must be IRCOP
         q.raw(self.__server__,'KLINE %s %s :%s'%(host,str(time),reason))
     def raw(self,data):
@@ -70,6 +70,7 @@ class module():
         '''Called every time a message is received'''
         pass
     def get_notice(self,nick,channel,data):
+        '''Called every time a notice is recieved'''
         pass
     def get_raw(self,type,data):
         pass
