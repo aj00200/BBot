@@ -51,15 +51,17 @@ class module():
         backend.connections[self.__address__].push('JOIN %s'%channel)
     def part(self,channel):
         backend.connections[self.__address__].push('PART %s'%channel)
-    def kick(self,channel,kickee,reason):
-        backend.connections[self.__address__].push('KICK %s %s :%s\r\n'%(channel,kickee,reason))
+    #def kick(self,channel,kickee,reason):
+      #  backend.connections[self.__address__].push('KICK %s %s :%s\r\n'%(channel,kickee,reason))
+    def kick(self,nick,channel,message=''): #nick,channel,message)
+        backend.connections[self.__address__].push("KICK "+channel+" "+nick+" :"+message+"\r\n")
     def get_notice(self,nick,data,channel):
         '''Called every time a notice is recieved'''
         pass
     def get_join(self,nick,user,host,channel):
         pass
-    def mode(self,channel,mode,nick=''):
-        backend.connections[self.__address__].push('MODE %s %s %s\r\n'%(channel,mode,nick))
+    def mode(self,nick,channel,mode):
+        backend.connections[self.__address__].push('MODE '+channel+' '+mode+' '+nick+'\r\n')
     def raw(self,data):
         print '%s'%(data)
         backend.connections[self.__address__].push('%s\r\n'%(data))
