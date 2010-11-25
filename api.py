@@ -12,6 +12,7 @@ class module():
         print 'PRIVMSG %s :%s'%(channel,data)
         backend.connections[self.__address__].push('PRIVMSG %s :%s\r\n'%(channel,data))
     def notice(self,channel,data):
+        print ('NOTICE %s :5s'%(channel,data)
         backend.connections[self.__address__].push('NOTICE %s :5s'%(channel,data))
     def join(self,channel):
         backend.connections[self.__address__].push('JOIN %s'%channel)
@@ -22,6 +23,8 @@ class module():
         pass
     def get_join(self,nick,user,host,channel):
         pass
+    def mode(self,modes,channel):
+        backend.connections[self.__address__].push('MODE '+channel+' '+modes+'\r\n')
     def raw(self,data):
         print '%s'%(data)
         backend.connections[self.__address__].push('%s\r\n'%(data))
