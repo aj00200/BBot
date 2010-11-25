@@ -6,5 +6,6 @@ class module(api.module):
 		message = data.split("PRIVMSG "+channel+" :")[1]
 		if message.lower() == "hello":
 			self.msg(channel, "Why, hello there "+nick) #say something to the channel
+			
 	  except: #if I can't split up the message, or something goes wrong, don't do anything
 		  pass 

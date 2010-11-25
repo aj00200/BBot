@@ -9,3 +9,6 @@ class module():
     def msg(self,channel,data=' '):
         print 'PRIVMSG %s :%s'%(channel,data)
         backend.connections[self.__address__].push('PRIVMSG %s :%s\r\n'%(channel,data))
+    def raw(self,data):
+        print '%s'%(data)
+        backend.connections[self.__address__].push('%s\r\n'%(data))
