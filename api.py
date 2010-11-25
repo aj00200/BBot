@@ -12,8 +12,8 @@ class module():
         print 'PRIVMSG %s :%s'%(channel,data)
         backend.connections[self.__address__].push('PRIVMSG %s :%s\r\n'%(channel,data))
     def notice(self,channel,data):
-        print ('NOTICE %s :5s'%(channel,data)
-        backend.connections[self.__address__].push('NOTICE %s :5s'%(channel,data))
+        print ('NOTICE %s :%s'%(channel,data))
+        backend.connections[self.__address__].push('NOTICE %s :%s'%(channel,data))
     def join(self,channel):
         backend.connections[self.__address__].push('JOIN %s'%channel)
     def part(self,channel):

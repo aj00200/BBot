@@ -1,4 +1,4 @@
-import q,re,api,time,config,thread,colorz,sqlite3
+import re,api,time,config,thread,colorz,sqlite3
 proxyscan=1
 class module(api.module):
     commands=['slower','faster','?;','setspeed','rehash','protect','sql']
@@ -65,32 +65,12 @@ class module(api.module):
                 self.mode(nick,channel,'+v')
         except:
             print colorz.encode('PYTHON NMAP CRASH','red')
-    def go(self,nick,data,channel):
+    def privmsg(self,nick,data,channel):
         self.ldata=data.lower()
         if self.ignore_users_on_su_list:
             self.superuser=api.checkIfSuperUser(data,config.superusers)
         if self.superuser:
-            if ':?;' in self.ldata:
-                w=data[data.find(':?; ')+4:].lower()
-                self.findlist.append(re.compile(w))
-                self.notice((channel,'<<%s has set a ban on %s>>'%(nick,w)))
-            elif ':?faster' in self.ldata:
-                print(colorz.encode('FASTER','cayn'))
-                self.wait=self.wait/2
-            elif ':?slower' in self.ldata:
-                print(colorz.encode('SLOWER','cayn'))
-                self.wait=self.wait*2
-            elif ':?setspeed ' in self.ldata:
-                self.wait=float(data.split('?setspeed ')[-1][0:-2])
-            elif ':?rehash' in self.ldata:
-                self.__init__(self.__server__)
-                self.notice((channel,'<<BlockBot() has been rehashed>>'))
-            elif ':?protect' in self.ldata:
-                self.mode('',channel,'+mz')
-        elif not self.superuser:
-            self.checkforspam(nick,data,channel)
-    def checkforspam(self,nick,data,channel):
-        thread.start_new_thread(self.check_hilight,(nick,data,channel))
+            if ':?;' in self.ldata:new_thread(self.check_hilight,(nick,data,channel))
         self.msglist.insert(0,(nick,time.time(),data))
         if len(self.msglist)>5:
             self.msglist.pop()
