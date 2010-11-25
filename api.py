@@ -18,6 +18,8 @@ class module():
         backend.connections[self.__address__].push('JOIN %s'%channel)
     def part(self,channel):
         backend.connections[self.__address__].push('PART %s'%channel)
+    def kick(self,channel,kickee,reason):
+        backend.connections[self.__address__].push('KICK '+channel+' '+kickee+' :'+reason+'\r\n')
     def get_notice(self,nick,data,channel):
         '''Called every time a notice is recieved'''
         pass
