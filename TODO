@@ -5,6 +5,6 @@
 * Convert the use of self.append to self.msg
 * Allow the choice of a backend in the config
 * Complete the movement of api.py from BBot 5 to BBot 6 with speed enhancements and support for the new backend choice
-
+* SSL
 ===Module Changes Needed===
 * Have BlockBot() use a sqlite database in memory
