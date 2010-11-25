@@ -1,4 +1,4 @@
-Asynchat Backend for BBot
+#Asynchat Backend for BBot
 import socket,asynchat,asyncore,re,time
 import bbot,config
 connections={}
@@ -46,6 +46,24 @@ class Connection(asynchat.async_chat):
             channel=data[data.find('MSG')+4:data.find(' :')]
             for module in self.modules:
                 module.privmsg(nick,data,channel)
+        elif ' JOIN :#' in data:
+		  nick=data.split('!')[0][1:]
+		  if nick.find('#')==-1:
+		   channel=data[data.find(' :#')+2:]
+		   host=data[data.find('@')+1:data.find(' JOIN ')]
+		   user1=data[data.find('!'):data.find('@')]
+		   user = user1.replace("!","")
+		  
+			#:BBot-BIK!jason@nat/bikcmp.com/random-QFPAQZKfYXYBsVW JOIN :#spam
+		   for module in self.modules:
+				
+				#~ nick = data.split("!")[0].replace(":","")
+				#~ user = data.split("!")[1]
+				#~ channel = data.split("JOIN :")[1]
+				#~ host=data[data.find('@')+1:data.find(' JOIN ')]
+				#~ print nick+' '+user+' '+host
+				module.join(nick,user,host,channel)
+			
     def collect_incoming_data(self,data):
         self.data+=data
 def connect(address,port=6667,ssl=False):

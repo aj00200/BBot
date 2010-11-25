@@ -10,5 +10,5 @@ class module(api.module):
 			
 	  except: #if I can't split up the message, or something goes wrong, don't do anything
 		  pass 
-
-	
+    def join(self,nick,user,host,channel): #Get joins from async.py
+		self.msg(channel, "NICK: "+nick+" USER: "+user+" HOST: "+host)
