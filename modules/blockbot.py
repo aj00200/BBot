@@ -101,7 +101,7 @@ class module(api.module):
         if self.olastnot[0]==self.lastnot[0]:
             if (self.lastnot[1]-self.olastnot[1])<self.wait:
                 self.kick(nick,channel,'Please don\'t use the notice command so much')
-                self.mode(nick,channel,'+q')
+                self.mode(channel,'+q',nick)
         for each in self.findlist:
             if re.search(each,ldata):
                 self.kick(nick,channel,'You have matched a spam string and have been banned. If this was a mistake, please contact a channel op to get unbanned')

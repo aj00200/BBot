@@ -1,8 +1,6 @@
+import config
 backend=getattr(__import__('backends.async'),'async')
-class module():
-    def __init__(self,address):
-        self.__address__=address
-    #Begin code from old api.py (requested by aj00200)
+#Begin code from old api.py (requested by aj00200)
 def getConfigStr(cat,name):
     return config.c.get(cat,name)
 def getConfigInt(cat,name):
@@ -34,6 +32,9 @@ def hostInList(data,list):
 def checkIfSuperUser(data,superusers=config.superusers):
     return hostInList(data,superusers)
     #End code from old api.py
+class module():
+    def __init__(self,address):
+        self.__address__=address
     def privmsg(self,nick,data,channel):
         '''Called every time a PRIVMSG is recieved'''
         print '* Go Message: (%s,%s,%s)'%(nick,data,channel)
@@ -51,14 +52,14 @@ def checkIfSuperUser(data,superusers=config.superusers):
     def part(self,channel):
         backend.connections[self.__address__].push('PART %s'%channel)
     def kick(self,channel,kickee,reason):
-        backend.connections[self.__address__].push('KICK '+channel+' '+kickee+' :'+reason+'\r\n')
+        backend.connections[self.__address__].push('KICK %s %s :%s\r\n'%(channel,kickee,reason))
     def get_notice(self,nick,data,channel):
         '''Called every time a notice is recieved'''
         pass
     def get_join(self,nick,user,host,channel):
         pass
-    def mode(channel,modes,nick=''):
-        backend.connections[self.__address__].push('MODE '+channel+' '+modes+'\r\n')
+    def mode(self,channel,mode,nick=''):
+        backend.connections[self.__address__].push('MODE %s %s %s\r\n'%(channel,mode,nick))
     def raw(self,data):
         print '%s'%(data)
         backend.connections[self.__address__].push('%s\r\n'%(data))
