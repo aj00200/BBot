@@ -5,31 +5,15 @@ class queue_class():
     def append(self,data):
         print colorz.encode('PRIVMSG %s :%s'%(data[0],data[1]),'green')
         self.push('PRIVMSG %s :%s\r\n'%(data[0],data[1]))
-    def join(self, channel):
-        self.go('JOIN '+channel)
-    def part(self, channel, message=''):
-        self.push('PART %s :%s\r\n'%(channel,message))
     def kick(self,nick,channel,message=''):
         self.push('KICK %s %s :%s\r\n'%(channel,nick,message))
-    def nick(self,nick):
-        self.push('NICK %s\r\n'%nick)
-        mynick=nick[:]
-    def notice(self,data):
-        self.push('NOTICE %s %s\r\n'%(data[0],data[1]))
-    def mode(self,nick,channel,mode):
-        self.push('MODE %s %s %s\r\n'%(channel,mode,nick))
-    def kill(self,nick,reason=''):#Must be IRCOP
-        self.push('KILL %s :%s\r\n' % (nick,reason))
-    def kline(self,host,time='3600',reason='K-Lined'):#Must be IRCOP
-        self.go('KLINE %s %s :%s'%(host,str(time),reason))
     def raw(self,data):
         self.push(data+'\r\n')
-    def go(self,data):
-        self.push(data+'\r\n')
-
     def load_module(self,name):
         bbot.networks[self.server].append(__import__(name).module(self.server))
 class connection(asynchat.async_chat,queue_class):
+    re001=re.compile('\.* 001')
+    reNOTICE=re.compile(':(.)+!(.)+ NOTICE (.)+ :')
     def __init__(self,server):
         asynchat.async_chat.__init__(self)
         self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -53,7 +37,7 @@ class connection(asynchat.async_chat,queue_class):
         print data
         if data[:4]==('PING'):
             self.push('PONG %s\r\n'%data[5:])
-        if re.search(':*\.* 001 ',data):
+        if re.search(self.re001,data):
             self.push('PRIVMSG nickserv :identify %s %s\r\n'%(config.username,config.password))
             time.sleep(2)
             for each in config.autojoin:
@@ -62,7 +46,7 @@ class connection(asynchat.async_chat,queue_class):
             if data.find(' 33')==-1 and data.find('NOTICE')==-1 and data.find('PRIVMSG')==-1 and data.find('KICK')==-1:
                 newchannel=data.split(config.mynick+' :')[-1]
                 self.push('JOIN '+newchannel+'\r\n')
-        elif re.search(':(.)+!(.)+NOTICE #(.)+ :',data):
+        elif re.search(self.reNOTICE,data):
             nick=data[1:data.find('!')]
             channel=data[data.find(' NOTICE ')+8:data.find(' :')]
             words=data[data.find('NOTICE')+6:]
@@ -82,7 +66,7 @@ class connection(asynchat.async_chat,queue_class):
                     append(config.network,(config.error_chan,'Error: %s; With args: %s; in %s'%(type(e),e.args,module)))
                     append(config.network,(config.error_chan,'Traceback: %s'%traceback.format_exc().replace('\n',' -- ')))
         elif ' JOIN :#' in data:
-            nick=data.split('!')[0][1:]
+            nick=data[1:data.find('!')]
             if nick.find('#')==-1:
                 channel=data[data.find(' :#')+2:]
                 ip=data[data.find('@')+1:data.find(' JOIN ')]
@@ -119,7 +103,7 @@ def append(server,data):
 def kick(server,nick,channel,msg=''):
     connections[server].kick(nick,channel,msg)
 def raw(server,data):
-    connections[server].raw(data)
+    connections[server].push(data+'\r\n')
 
 #===Errors===
 class die(Exception):
