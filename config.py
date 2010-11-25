@@ -1,7 +1,7 @@
 import ConfigParser
 c=ConfigParser.ConfigParser()
 c.readfp(open('config','r'))
-mynick=c.get('main','nick')
+nick=c.get('main','nick')
 username=c.get('main','username')
 password=c.get('main','password')
 network=c.get('main','network')
