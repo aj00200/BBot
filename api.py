@@ -25,7 +25,7 @@ class module():
         pass
     def get_join(self,nick,user,host,channel):
         pass
-    def mode(self,modes,channel):
+    def mode(channel,modes,nick=''):
         backend.connections[self.__address__].push('MODE '+channel+' '+modes+'\r\n')
     def raw(self,data):
         print '%s'%(data)
