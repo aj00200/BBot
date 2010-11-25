@@ -14,7 +14,7 @@ class Connection(asynchat.async_chat):
         #Set Buffer Size
 
         self.modules=[]
-        for module in ['copybot']:
+        for module in ['helloworld']:
             self.modules.append(getattr(__import__('modules.'+module),module).module(self.__address__))
     def handle_connect(self):
         print('* Connected')
