@@ -3,7 +3,7 @@ class module():
     def __init__(self,address):
         self.__address__=address
     #Begin code from old api.py (requested by aj00200)
-    def getConfigStr(cat,name):
+def getConfigStr(cat,name):
     return config.c.get(cat,name)
 def getConfigInt(cat,name):
     return config.c.getint(cat,name)
