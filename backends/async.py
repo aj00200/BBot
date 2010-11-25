@@ -1,9 +1,10 @@
-#Asynchat Backend for BBot
+Asynchat Backend for BBot
 import socket,asynchat,asyncore,re,time
 import bbot,config
 connections={}
 class Connection(asynchat.async_chat):
     re001=re.compile('\.* 001')
+    reNOTICE=re.compile('!(.)+ NOTICE (.)+ :')
     def __init__(self,address,port,ssl):
         asynchat.async_chat.__init__(self)
         self.create_socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -30,12 +31,17 @@ class Connection(asynchat.async_chat):
 
         if data[:4]=='PING':
             self.push('PONG %s\r\n'%data[5:])
-        if re.search(self.re001,data):
+        elif re.search(self.re001,data):
             self.push('PRIVMSG NICKSERV IDENTIFY %s %s\r\n'%('BBot',''))
             time.sleep(2.5)
             for channel in config.autojoin:
                 self.push('JOIN %s\r\n'%channel)
-        if 'PRIVMSG' in data:
+        elif re.search(self.reNOTICE,data):
+            nick=data[1:data.find('!')]
+            channel=data[data.find('ICE')+4:data.find(' :')]
+            for module in self.modules:
+                module.get_notice(nick,data,channel)
+        elif ' PRIVMSG ' in data:
             nick=data[1:data.find('!')]
             channel=data[data.find('MSG')+4:data.find(' :')]
             for module in self.modules:
