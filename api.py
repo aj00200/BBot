@@ -3,7 +3,7 @@ class module():
     def __init__(self,address):
         self.__address__=address
     #Begin code from old api.py (requested by aj00200)
-    def getConfigStr(cat,name):
+def getConfigStr(cat,name):
     return config.c.get(cat,name)
 def getConfigInt(cat,name):
     return config.c.getint(cat,name)
@@ -44,7 +44,7 @@ def checkIfSuperUser(data,superusers=config.superusers):
         print 'PRIVMSG %s :%s'%(channel,data)
         backend.connections[self.__address__].push('PRIVMSG %s :%s\r\n'%(channel,data))
     def notice(self,channel,data):
-        print ('NOTICE %s :5s'%(channel,data)
+        print ('NOTICE %s :5s'%(channel,data))
         backend.connections[self.__address__].push('NOTICE %s :5s'%(channel,data))
     def join(self,channel):
         backend.connections[self.__address__].push('JOIN %s'%channel)
