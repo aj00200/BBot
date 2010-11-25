@@ -1,6 +1,6 @@
 #Asynchat Backend for BBot
 import socket,asynchat,asyncore,re,time
-import bbot
+import bbot,config
 connections={}
 class Connection(asynchat.async_chat):
     re001=re.compile('\.* 001')
@@ -18,7 +18,7 @@ class Connection(asynchat.async_chat):
             self.modules.append(getattr(__import__('modules.'+module),module).module(self.__address__))
     def handle_connect(self):
         print('* Connected')
-        self.push('NICK %s\r\nUSER %s BBot BBot :%s\r\n'%('BBot|6','BBot','BBot Version 6.0.0b'))
+        self.push('NICK %s\r\nUSER %s BBot BBot :%s\r\n'%(config.nick,'BBot','BBot Version 6.0.0b'))
     def get_data(self):
         r=self.data
         self.data=''
@@ -33,7 +33,7 @@ class Connection(asynchat.async_chat):
         if re.search(self.re001,data):
             self.push('PRIVMSG NICKSERV IDENTIFY %s %s\r\n'%('BBot',''))
             time.sleep(2.5)
-            for channel in ['#spam']:
+            for channel in config.autojoin:
                 self.push('JOIN %s\r\n'%channel)
         if 'PRIVMSG' in data:
             nick=data[1:data.find('!')]
