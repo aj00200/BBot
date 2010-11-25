@@ -13,8 +13,12 @@ class module():
         backend.connections[self.__address__].push('PRIVMSG %s :%s\r\n'%(channel,data))
     def notice(self,channel,data):
         backend.connections[self.__address__].push('NOTICE %s :5s'%(channel,data))
+    def join(self,channel):
+        backend.connections[self.__address__].push('JOIN %s'%channel)
     def get_notice(self,nick,data,channel):
         '''Called every time a notice is recieved'''
+        pass
+    def get_join(self,nick,user,host,channel):
         pass
     def raw(self,data):
         print '%s'%(data)

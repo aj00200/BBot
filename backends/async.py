@@ -47,14 +47,14 @@ class Connection(asynchat.async_chat):
             for module in self.modules:
                 module.privmsg(nick,data,channel)
         elif ' JOIN :#' in data:
-		  nick=data.split('!')[0][1:]
-		  if nick.find('#')==-1:
-		   channel=data[data.find(' :#')+2:]
-		   host=data[data.find('@')+1:data.find(' JOIN ')]
-		   user1=data[data.find('!'):data.find('@')]
-		   user = user1.replace("!","")
-		   for module in self.modules:
-				module.join(nick,user,host,channel)
+            nick=data.split('!')[0][1:]
+            if nick.find('#')==-1:
+                channel=data[data.find(' :#')+2:]
+                host=data[data.find('@')+1:data.find(' JOIN ')]
+                user1=data[data.find('!'):data.find('@')]
+                user = user1.replace("!","")
+                for module in self.modules:
+                    module.get_join(nick,user,host,channel)
 			
     def collect_incoming_data(self,data):
         self.data+=data
