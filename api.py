@@ -16,3 +16,6 @@ class module():
     def get_notice(self,nick,data,channel):
         '''Called every time a notice is recieved'''
         pass
+    def raw(self,data):
+        print '%s'%(data)
+        backend.connections[self.__address__].push('%s\r\n'%(data))
