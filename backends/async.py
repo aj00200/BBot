@@ -53,15 +53,7 @@ class Connection(asynchat.async_chat):
 		   host=data[data.find('@')+1:data.find(' JOIN ')]
 		   user1=data[data.find('!'):data.find('@')]
 		   user = user1.replace("!","")
-		  
-			#:BBot-BIK!jason@nat/bikcmp.com/random-QFPAQZKfYXYBsVW JOIN :#spam
 		   for module in self.modules:
-				
-				#~ nick = data.split("!")[0].replace(":","")
-				#~ user = data.split("!")[1]
-				#~ channel = data.split("JOIN :")[1]
-				#~ host=data[data.find('@')+1:data.find(' JOIN ')]
-				#~ print nick+' '+user+' '+host
 				module.join(nick,user,host,channel)
 			
     def collect_incoming_data(self,data):
