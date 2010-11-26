@@ -66,7 +66,7 @@ class module(api.module):
             self.repeat2 = self.repeat1
             self.repeat1 = self.repeat0
             self.repeat0 = msg
-            if msg.split()>3:
+            if len(msg)>3:
 				if self.repeat0 == self.repeat1 and self.repeat0 == self.repeat2 or self.repeat0 == self.repeat3 or self.repeat0 == self.repeat4 or self.repeat0 == self.repeat5 or self.repeat0 == self.repeat6 or self.repeat0 == self.repeat7 or self.repeat0 == self.repeat8 or self.repeat0 == self.repeat9 or self.repeat0 == self.repeat10:
 					self.raw("PRIVMSG #bikcmp :repeating!")
         for each in self.findlist:
