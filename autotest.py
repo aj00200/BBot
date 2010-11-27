@@ -33,7 +33,7 @@ class test_api(unittest.TestCase):
         self.assertEqual(str(type(api.getConfigInt('main','read-wait'))),'<type \'int\'>')
     def test_scheckIfSperUsers(self):
         self.assertEqual(api.checkIfSuperUser('123!456@lsjdlkfjslkdf.com PRIVMSG #bots :test'),False)
-        
+
 class test_mathwiz(unittest.TestCase):
     def test_slope(self):
         self.assertEqual(str(mathwiz.slope(0,0,1,1)),'1/1')
@@ -45,6 +45,7 @@ class test_mathwiz(unittest.TestCase):
         self.assertEqual(t.sides['bc'],4.2426406871192848)
         self.assertEqual(t.sides['ca'],7.0710678118654755)
         self.assertEqual(t.type,'Scalene','Triangle identification broken')
+
 from BBot import bbot
 import api,mathbot,mathwiz
 

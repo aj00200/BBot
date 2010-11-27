@@ -1,15 +1,13 @@
-import q,bbot,config,colorz
+import config
+backend=getattr(__import__('backends.async'),'async')
+#Begin code from old api.py (requested by aj00200)
 def getConfigStr(cat,name):
-    '''Return a string value from the config file in the catagory cat and the key name'''
     return config.c.get(cat,name)
 def getConfigInt(cat,name):
-    '''Return a integer value from the config file in the catagory cat and the key name'''
     return config.c.getint(cat,name)
 def getConfigFloat(cat,name):
-    '''Return a floating point value from the config file in the catagory cat and the key name'''
     return config.c.getfloat(cat,name)
 def getConfigBool(cat,name):
-    '''Return a boolean value from the config file in the catagory cat and the key name'''
     return config.c.getboolean(cat,name)
 def getHost(data):
     '''Returns the hostname (IP address) of the person who sent the message passed to the variable data'''
@@ -26,21 +24,16 @@ def getMessage(data):
 def hostInList(data,list):
     '''Tells you if the host of the person who sent the message that is pased as the first arg is in the list of hosts which is the second arg'''
     host=getHost(data)
-    for each in list:
-        if each in host:
+    for su in list:
+        if host.find(su)!=-1:
             return True
-    return False
+    else:
+        return False
 def checkIfSuperUser(data,superusers=config.superusers):
-    '''Check if the user who send the message, data, is in the superusers list. The list my optionally be supplied'''
     return hostInList(data,superusers)
-def pong(data):
-    '''If data contains a PING, reply to the server with a PONG'''
-    if 'PING' in data:
-        q.queue.raw('PONG'+data[data.find(' '):]+'\r\n') #Return the PING to the server
-def add_networkk(server):
-    '''Connect to the network located at server'''
-    bbot.add_network(server)
+    #End code from old api.py
 class module():
+<<<<<<< HEAD
     '''Base class that all modules should use to maintain best compatibility with future versions of the API'''
     commands=[]
     def __init__(self,server):
@@ -73,13 +66,37 @@ class module():
         '''Called every time a notice is recieved'''
         pass
     def get_raw(self,type,data):
+=======
+    def __init__(self,address):
+        self.__address__=address
+    def privmsg(self,nick,data,channel):
+        '''Called every time a PRIVMSG is recieved'''
+        print '* Go Message: (%s,%s,%s)'%(nick,data,channel)
+    def append(self,channel,data=' '):
+        print 'Use the NEW way to send things, msg(channel,data)'
+    def msg(self,channel,data=' '):
+        '''Send a message, data, to channel'''
+        print 'PRIVMSG %s :%s'%(channel,data)
+        backend.connections[self.__address__].push('PRIVMSG %s :%s\r\n'%(channel,data))
+    def notice(self,channel,data):
+        print ('NOTICE %s :%s'%(channel,data))
+        backend.connections[self.__address__].push('NOTICE %s :%s'%(channel,data))
+    def join(self,channel):
+        backend.connections[self.__address__].push('JOIN %s'%channel)
+    def part(self,channel):
+        backend.connections[self.__address__].push('PART %s'%channel)
+    #def kick(self,channel,kickee,reason):
+      #  backend.connections[self.__address__].push('KICK %s %s :%s\r\n'%(channel,kickee,reason))
+    def kick(self,nick,channel,message=''): #nick,channel,message)
+        backend.connections[self.__address__].push("KICK "+channel+" "+nick+" :"+message+"\r\n")
+    def get_notice(self,nick,data,channel):
+        '''Called every time a notice is recieved'''
+>>>>>>> 26244e8e0a68ecd792d43055002534d9b9d90c16
         pass
-    def get_join(self,nick,channel,ip,user):
-        '''Called eveery time someone joins a channel'''
+    def get_join(self,nick,user,host,channel):
         pass
-    def loop(self):
-        '''Called every 5 seconds'''
-        pass
-    def __destroy__(self):
-        '''Called when the module is unloaded'''
-        pass
+    def mode(self,nick,channel,mode):
+        backend.connections[self.__address__].push('MODE '+channel+' '+mode+' '+nick+'\r\n')
+    def raw(self,data):
+        print '%s'%(data)
+        backend.connections[self.__address__].push('%s\r\n'%(data))
