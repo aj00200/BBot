@@ -95,7 +95,7 @@ class module(api.module):
 					self.nick=self.q.split(' > ')
 					self.q=self.nick[0].lower()
 					channel=self.nick[1]
-					nick='From %s'%nick
+					nick=' -- from %s'%nick
 				else:
 					self.notice((nick,'All abuse is logged: %s'%data))
 					return 1
