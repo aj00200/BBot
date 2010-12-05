@@ -33,40 +33,8 @@ def checkIfSuperUser(data,superusers=config.superusers):
     return hostInList(data,superusers)
     #End code from old api.py
 class module():
-<<<<<<< HEAD
     '''Base class that all modules should use to maintain best compatibility with future versions of the API'''
     commands=[]
-    def __init__(self,server):
-        self.__server__=server
-    def append(self,data):
-        q.append(self.__server__,data)
-    def join(self, channel):
-        q.raw(self.__server__,'JOIN '+channel)
-    def part(self, channel, message=''):
-        q.raw(self.__server__,'PART %s :%s'%(channel,message))
-    def kick(self,nick,channel,message=''):
-        q.kick(self.__server__,nick,channel,message)
-    def nick(self,nick):
-        q.raw(self.__server__,'NICK %s'%nick)
-        config.mynick=nick[:]
-    def notice(self,data):
-        q.raw(self.__server__,'NOTICE '+data[0]+' :'+data[1])
-    def mode(self,nick,channel,mode):
-        q.raw(self.__server__,'MODE '+channel+' '+mode+' '+nick)
-    def kill(self,nick,reason=''):#Must be IRCOP
-        q.raw(self.__server__,'KILL %s :%s' % (nick,reason))
-    def kline(self,host,time='3600',reason='K-Lined'):#Must be IRCOP
-        q.raw(self.__server__,'KLINE %s %s :%s'%(host,str(time),reason))
-    def raw(self,data):
-        q.raw(self.__server__,data)
-    def go(self,nick,data,channel):
-        '''Called every time a message is received'''
-        pass
-    def get_notice(self,nick,channel,data):
-        '''Called every time a notice is recieved'''
-        pass
-    def get_raw(self,type,data):
-=======
     def __init__(self,address):
         self.__address__=address
     def privmsg(self,nick,data,channel):
@@ -91,7 +59,6 @@ class module():
         backend.connections[self.__address__].push("KICK "+channel+" "+nick+" :"+message+"\r\n")
     def get_notice(self,nick,data,channel):
         '''Called every time a notice is recieved'''
->>>>>>> 26244e8e0a68ecd792d43055002534d9b9d90c16
         pass
     def get_join(self,nick,user,host,channel):
         pass
