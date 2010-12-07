@@ -39,7 +39,7 @@ class module(api.module):
     def get_join(self,nick,channel,ip,user):
         '''Add user to nicklist, and preform optional proxy scan'''
         #webchat=(str(blockbotlib.hex2dec('0x'+str(user[1:3])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[3:5])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[5:7])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[7:9]))))
-        if channel in self.nicklists:
+        if channel in self.nicklists and nick not in self.nicklists[channel]:
             self.nicklists[channel].append(nick)
         else:
             self.nicklists[channel]=[nick]
