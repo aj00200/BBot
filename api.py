@@ -33,6 +33,8 @@ def checkIfSuperUser(data,superusers=config.superusers):
     return hostInList(data,superusers)
     #End code from old api.py
 class module():
+    '''Base class that all modules should use to maintain best compatibility with future versions of the API'''
+    commands=[]
     def __init__(self,address):
         self.__address__=address
     def privmsg(self,nick,data,channel):

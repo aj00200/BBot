@@ -15,7 +15,7 @@ class Connection(asynchat.async_chat):
         #Set Buffer Size
 
         self.modules=[]
-        for module in ['helloworld','blockbot']:
+        for module in config.modules:
             self.modules.append(getattr(__import__('modules.'+module),module).module(self.__address__))
     def handle_connect(self):
         print('* Connected')
@@ -32,7 +32,7 @@ class Connection(asynchat.async_chat):
         if data[:4]=='PING':
             self.push('PONG %s\r\n'%data[5:])
         elif re.search(self.re001,data):
-            self.push('PRIVMSG NICKSERV IDENTIFY %s %s\r\n'%('BBot',''))
+            self.push('PRIVMSG NICKSERV IDENTIFY %s %s\r\n'%(config.username,config.password))
             time.sleep(2.5)
             for channel in config.autojoin:
                 self.push('JOIN %s\r\n'%channel)
