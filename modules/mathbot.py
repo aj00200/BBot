@@ -1,3 +1,4 @@
+from __future__ import division
 import q,re,api,math,config
 import mathwiz as geo
 class module(api.module):

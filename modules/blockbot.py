@@ -2,20 +2,10 @@ import re,api,time,config,thread,colorz,sqlite3
 proxyscan=1
 class module(api.module):
     commands=['slower','faster','?;','setspeed','rehash','protect','sql']
-    def sql(self):
-        self.db=sqlite3.connect('database.sqlite')
-        self.c=self.db.cursor()
-        self.c.execute('create table if not exists lines (username text, line0 text, ts0 integer, line1 text, ts1 integer, line3 text, ts3 integer, line4 text, ts4 integer, line5 text, ts5 integer, line6 text, ts6 integer, line7 text, ts7 integer, line8 text, ts8)')
-        try:
-            self.c.execute('''create table recent (string, count, ts)''')
-        except:
-            pass
-        self.c=self.db.cursor()
-        self.db.commit()
-        self.db.close()
     def __init__(self,server):
         self.sql()
         self.ignore_users_on_su_list=1#Don't kick if they are on the superusers list
+        self.superuser=False
         self.nicklists={}
         self.hilight_limit=api.getConfigInt('BlockBot','hilight-limit')
         self.config=open('blockbot-config','r')
@@ -36,35 +26,17 @@ class module(api.module):
         self.msglist=[]
         self.lastnot=('BBot',time.time(),'sdkljfls')
         api.module.__init__(self,server)
-    def get_join(self,nick,channel,ip,user):
-        '''Add user to nicklist, and preform optional proxy scan'''
-        #webchat=(str(blockbotlib.hex2dec('0x'+str(user[1:3])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[3:5])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[5:7])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[7:9]))))
-        if channel in self.nicklists and nick not in self.nicklists[channel]:
-            self.nicklists[channel].append(nick)
-        else:
-            self.nicklists[channel]=[nick]
-        if self.proxyscan:
-            thread.start_new_thread(self.scan, (ip,channel,nick))
-    def scan(self,ip,channel,nick):
-        '''Preform a Nmap scan on the user to detect open ports that are commonly used to host open proxys used by spammers'''
-        self.scansafe=1
+    def sql(self):
+        self.db=sqlite3.connect('database.sqlite')
+        self.c=self.db.cursor()
+        self.c.execute('create table if not exists lines (username text, line0 text, ts0 integer, line1 text, ts1 integer, line3 text, ts3 integer, line4 text, ts4 integer, line5 text, ts5 integer, line6 text, ts6 integer, line7 text, ts7 integer, line8 text, ts8)')
         try:
-            print('Scanning '+ip)
-            self.nm=nmap.PortScanner()
-            #80, 8080, 1080, 3246
-            self.nm.scan(ip,'808,23,1080,110,29505,8080,3246','-T5')
-            for each in nm.all_hosts():
-                print each+':::'
-                lport = nm[each]['tcp'].keys()
-                print lport
-                if 808 in lport or 23 in lport or 110 in lport or 1080 in lport or 29505 in lport or 80 in lport or 8080 in lports or 3246 in lports:
-                    self.scansafe=0
-                    print colorz.encode('DRONE','yellow')
-            del self.nm
-            if self.scansafe:
-                self.mode(nick,channel,'+v')
+            self.c.execute('''create table recent (string, count, ts)''')
         except:
-            print colorz.encode('PYTHON NMAP CRASH','red')
+            pass
+        self.c=self.db.cursor()
+        self.db.commit()
+        self.db.close()
     def privmsg(self,nick,data,channel):
         self.ldata=data.lower()
         if self.ignore_users_on_su_list:
@@ -93,23 +65,8 @@ class module(api.module):
                         self.mode('*!*@%s'%api.getHost(data),channel,'+b')
         except IndexError:
             pass
-
-    def get_notice(self,nick,channel,data):
-        ldata=data.lower()
-        self.olastnot=(self.lastnot[:])
-        self.lastnot=(nick,time.time())
-        if self.olastnot[0]==self.lastnot[0]:
-            if (self.lastnot[1]-self.olastnot[1])<self.wait:
-                self.kick(nick,channel,'Please don\'t use the notice command so much')
-                self.mode(channel,'+q',nick)
-        for each in self.findlist:
-            if re.search(each,ldata):
-                self.kick(nick,channel,'You have matched a spam string and have been banned. If this was a mistake, please contact a channel op to get unbanned')
-                self.mode(nick,channel,'+b')
     def check_hilight(self,nick,data,channel):
         '''Check if nick has pinged more than self.hilight_limit people, and if so, kick them'''
-        db=sqlite3.connect('database.sqlite')
-        self.c=db.cursor()
         ldata=data[data.find(' :')+2:].lower()
         if channel not in self.nicklists:
             self.nicklists[channel]=[nick]
@@ -122,6 +79,8 @@ class module(api.module):
         #//////////////////////////////////////////////////////////////
         #///////////////////////////SQLite Code////////////////////////
         #//////////////////////////////////////////////////////////////
+        db=sqlite3.connect('database.sqlite')
+        self.c=db.cursor()
         try:
             ldata=data.lower()
             msg=ldata[data.find(' :'):]
@@ -168,6 +127,47 @@ class module(api.module):
                 c+=1
                 self.c.execute('''delete from recent where string=?''',(msg,))
                 self.c.execute('''insert into recent values(? ? ))''',(msg,c,time.time()))
+    def get_join(self,nick,channel,ip,user):
+        '''Add user to nicklist, and preform optional proxy scan'''
+        #webchat=(str(blockbotlib.hex2dec('0x'+str(user[1:3])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[3:5])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[5:7])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[7:9]))))
+        if channel in self.nicklists and nick not in self.nicklists[channel]:
+            self.nicklists[channel].append(nick)
+        else:
+            self.nicklists[channel]=[nick]
+        if self.proxyscan:
+            thread.start_new_thread(self.scan, (ip,channel,nick))
+    def scan(self,ip,channel,nick):
+        '''Preform a Nmap scan on the user to detect open ports that are commonly used to host open proxys used by spammers'''
+        self.scansafe=1
+        try:
+            print('Scanning '+ip)
+            self.nm=nmap.PortScanner()
+            #80, 8080, 1080, 3246
+            self.nm.scan(ip,'808,23,1080,110,29505,8080,3246','-T5')
+            for each in nm.all_hosts():
+                print each+':::'
+                lport = nm[each]['tcp'].keys()
+                print lport
+                if 808 in lport or 23 in lport or 110 in lport or 1080 in lport or 29505 in lport or 80 in lport or 8080 in lports or 3246 in lports:
+                    self.scansafe=0
+                    print colorz.encode('DRONE','yellow')
+            del self.nm
+            if self.scansafe:
+                self.mode(nick,channel,'+v')
+        except:
+            print colorz.encode('PYTHON NMAP CRASH','red')
+    def get_notice(self,nick,channel,data):
+        ldata=data.lower()
+        self.olastnot=(self.lastnot[:])
+        self.lastnot=(nick,time.time())
+        if self.olastnot[0]==self.lastnot[0]:
+            if (self.lastnot[1]-self.olastnot[1])<self.wait:
+                self.kick(nick,channel,'Please don\'t use the notice command so much')
+                self.mode(channel,'+q',nick)
+        for each in self.findlist:
+            if re.search(each,ldata):
+                self.kick(nick,channel,'You have matched a spam string and have been banned. If this was a mistake, please contact a channel op to get unbanned')
+                self.mode(nick,channel,'+b')
     def get_raw(self,type,data):
         if type=='PART' or type=='KICK':
             try:
