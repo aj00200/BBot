@@ -28,14 +28,8 @@ class Connection(asynchat.async_chat):
 		data=self.get_data()
 		#Check Ignore RE
 		print(data)
-
 		if data[:4]=='PING':
 			self.push('PONG %s\r\n'%data[5:])
-		elif re.search(self.re001,data):
-			self.push('PRIVMSG NICKSERV IDENTIFY %s %s\r\n'%(config.username,config.password))
-			time.sleep(2.5)
-			for channel in config.autojoin:
-				self.push('JOIN %s\r\n'%channel)
 		elif re.search(self.reNOTICE,data):
 			nick=data[1:data.find('!')]
 			channel=data[data.find('ICE')+4:data.find(' :')]
@@ -55,7 +49,15 @@ class Connection(asynchat.async_chat):
 				user = user1.replace("!","")
 				for module in self.modules:
 					module.get_join(nick,user,host,channel)
-			
+		elif re.search(self.re001,data):
+			self.push('PRIVMSG NICKSERV IDENTIFY %s %s\r\n'%(config.username,config.password))
+			time.sleep(2.5)
+			for channel in config.autojoin:
+				self.push('JOIN %s\r\n'%channel)
+		elif re.search('[0-9]+ *'+config.nick,data):
+			code=data.split()[1]
+			for module in self.modules:
+				module.get_raw('CODE',(code,data))		
 	def collect_incoming_data(self,data):
 		self.data+=data
 def connect(address,port=6667,ssl=False):

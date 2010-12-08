@@ -12,7 +12,7 @@ class module(api.module):
             self.whitelist.append(each.strip('\r\n'))
         del self.blconfig,self.wlconfig
         api.module.__init__(self,server)
-    def go(self,nick,data,channel):
+    def privmsg(self,nick,data,channel):
         ldata=data.lower()
         self.superuser=api.checkIfSuperUser(data,config.superusers)
         if self.superuser:
@@ -51,9 +51,9 @@ class module(api.module):
                     self.blacklist.pop(self.blacklist.index(name))
                     self.write_blacklist()
                 else:
-                    self.append((nick,'That host is not blacklisted'))
+                    self.msg(nick,'That host is not blacklisted')
             elif ':?listbl' in ldata:
-                self.append((nick,str(self.blacklist)))
+                self.msg(nick,str(self.blacklist))
             elif ':?whitelist ' in ldata:
                 name=data[data.find('?whitelist ')+11:]
                 if not name in self.whitelist:
@@ -65,13 +65,13 @@ class module(api.module):
                     self.whitelist.pop(self.blacklist.index(name))
                     self.write_whitelist()
                 else:
-                    self.append((nick,'That host is not whitelisted'))
+                    self.msg(nick,'That host is not whitelisted')
             elif ':?listbl' in ldata:
-                self.append((nick,str(self.blacklist)))
+                self.msg(nick,str(self.blacklist))
             elif ':?mode ' in ldata:
                 self.mode('',channel,ldata[ldata.find('?mode ')+6:])
             elif ':?echo ' in ldata:
-                self.append((channel,data[ldata.find('?echo ')+6:]))
+                self.msg(channel,data[ldata.find('?echo ')+6:])
             elif ':?ban ' in ldata:
                 self.mode(data[data.find('?ban ')+5:],channel,'+b')
             elif ':?unban ' in ldata:

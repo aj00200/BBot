@@ -90,7 +90,6 @@ class module(api.module):
 			self.query(q,nick,channel)
 		elif self.command_start+'help' in data:
 			self.msg(channel,'%n: Sorry, but help is not available at this time')
-
 		elif '\x01VERSION\x01' in data:
 			self.notice(nick,'\x01VERSION BBot Version %s\x01'%BBot.version)
 	def add_factoid(self,query,nick):
@@ -99,7 +98,6 @@ class module(api.module):
 			tmp[1]=str(tmp[1].replace('<ACTION>','\x01ACTION ')+'\x01')
 		self.c.execute('delete from factoids where key=?',(str(tmp[0]),))
 		self.c.execute('insert into factoids values (?,?,?,?)',(tmp[0],tmp[1],nick,time.time()))
-		dict.commit()
 	def del_factoid(self,query):
 		self.c.execute('delete from factoids where key=?',(str(query),))
 	def write_dict(self):
@@ -149,8 +147,8 @@ class module(api.module):
 		self.raw('JOIN %s'%data[data.find('join ')+5:])
 	def su_writedb(self,nick,data,channel):
 		'''Writes the factoids database to the harddrive'''
-		thread.start_new_thread(self.write_dict,())
-		self.notice(channel,'<<Writing Database>>')
+		dict.commit()
+		self.notice(channel,'<<Wrote Database>>')
 	def su_raw(self,nick,data,channel):
 		self.raw(data[data.find('raw ')+4:])
 	def su_part(self,nick,data,channel):

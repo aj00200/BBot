@@ -19,7 +19,7 @@ class module(api.module):
     def __destroy__(self):
         self.db.commit()
         del self.db,self.c
-    def go(self,nick,data,channel):
+    def privmsg(self,nick,data,channel):
         d=str(data.lower())
         for each in self.remove:
             d=d.replace(each,'')
@@ -68,9 +68,9 @@ class module(api.module):
     def zzz(self,data):
         for word in data.split():
             tmp=self.c.execute('''select * from stats where word=?''',(self.safety(word),)).fetchall()
-            self.append(('#bayesian',str(tmp)))
+            self.msg('#bayesian',str(tmp))
     def check(self,data):
-        self.append(('#bayesian','Level: %s'%self.get_stat(data)))
+        self.msg('#bayesian','Level: %s'%self.get_stat(data))
     def get_stat(self,data):
         total=0
         for word in data.split():

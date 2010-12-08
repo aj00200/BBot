@@ -5,7 +5,6 @@ class module(api.module):
     def __init__(self,server):
         self.sql()
         self.ignore_users_on_su_list=1#Don't kick if they are on the superusers list
-        self.superuser=False
         self.nicklists={}
         self.hilight_limit=api.getConfigInt('BlockBot','hilight-limit')
         self.config=open('blockbot-config','r')
@@ -42,7 +41,10 @@ class module(api.module):
         if self.ignore_users_on_su_list:
             self.superuser=api.checkIfSuperUser(data,config.superusers)
         if self.superuser:
-            if ':?;' in self.ldata:new_thread(self.check_hilight,(nick,data,channel))
+            if ':?;' in self.ldata:
+                word=data[data.find(' :'+config.cmd_char+'; ')+4+len(config.cmd_char):]
+                self.findlist.append(word)
+        thread.start_new_thread(self.check_hilight,(nick,data,channel))
         self.msglist.insert(0,(nick,time.time(),data))
         if len(self.msglist)>5:
             self.msglist.pop()
@@ -67,14 +69,16 @@ class module(api.module):
             pass
     def check_hilight(self,nick,data,channel):
         '''Check if nick has pinged more than self.hilight_limit people, and if so, kick them'''
+        print '* Checking message for MH'
         ldata=data[data.find(' :')+2:].lower()
         if channel not in self.nicklists:
-            self.nicklists[channel]=[nick]
+            self.nicklists[channel]=[nick.lower()]
         found=0
         for each in self.nicklists[channel]:
-            if each.lower() in ldata:
+            if each in ldata:
                 found+=1
         if found>self.hilight_limit:
+            print '* kicking %s out of %s'%(nick,channel)
             self.kick(nick,channel,'Please do not ping that many people')
         #//////////////////////////////////////////////////////////////
         #///////////////////////////SQLite Code////////////////////////
@@ -187,7 +191,7 @@ class module(api.module):
             names=data[1][data[1].find(' :')+2:].split()
             safe_names=[]
             for each in names:
-                safe_names.append(each.strip('@+%'))#Add amp and tilda and parse 005
+                safe_names.append(each.strip('@+%~').lower())#Add amp and tilda and parse 005
             if channel not in self.nicklists:
                 self.nicklists[channel]=[]
             for each in safe_names:

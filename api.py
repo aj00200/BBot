@@ -1,6 +1,5 @@
 import config
 backend=getattr(__import__('backends.async'),'async')
-#Begin code from old api.py (requested by aj00200)
 def getConfigStr(cat,name):
     return config.c.get(cat,name)
 def getConfigInt(cat,name):
@@ -31,7 +30,6 @@ def hostInList(data,list):
         return False
 def checkIfSuperUser(data,superusers=config.superusers):
     return hostInList(data,superusers)
-    #End code from old api.py
 class module():
     '''Base class that all modules should use to maintain best compatibility with future versions of the API'''
     commands=[]
@@ -61,6 +59,10 @@ class module():
         '''Called every time a notice is recieved'''
         pass
     def get_join(self,nick,user,host,channel):
+        pass
+    def get_raw(self,type,params):
+        '''Called every time a message that doesn't fall into the other categories is recieved:
+            type is set to 'CODE' when messages that corespond to a numberic code are recieved'''
         pass
     def mode(self,nick,channel,mode):
         backend.connections[self.__address__].push('MODE '+channel+' '+mode+' '+nick+'\r\n')
