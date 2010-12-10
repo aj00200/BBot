@@ -69,7 +69,6 @@ class module(api.module):
             pass
     def check_hilight(self,nick,data,channel):
         '''Check if nick has pinged more than self.hilight_limit people, and if so, kick them'''
-        print '* Checking message for MH'
         ldata=data[data.find(' :')+2:].lower()
         if channel not in self.nicklists:
             self.nicklists[channel]=[nick.lower()]
