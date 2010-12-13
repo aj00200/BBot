@@ -37,7 +37,7 @@ class module():
         self.__address__=address
     def privmsg(self,nick,data,channel):
         '''Called every time a PRIVMSG is recieved'''
-        print '* Go Message: (%s,%s,%s)'%(nick,data,channel)
+        pass
     def append(self,channel,data=' '):
         print 'Use the NEW way to send things, msg(channel,data)'
     def msg(self,channel,data=' '):
@@ -46,11 +46,11 @@ class module():
         backend.connections[self.__address__].push('PRIVMSG %s :%s\r\n'%(channel,data))
     def notice(self,channel,data):
         print ('NOTICE %s :%s'%(channel,data))
-        backend.connections[self.__address__].push('NOTICE %s :%s'%(channel,data))
+        backend.connections[self.__address__].push('NOTICE %s :%s\r\n'%(channel,data))
     def join(self,channel):
-        backend.connections[self.__address__].push('JOIN %s'%channel)
+        backend.connections[self.__address__].push('JOIN %s\r\n'%channel)
     def part(self,channel):
-        backend.connections[self.__address__].push('PART %s'%channel)
+        backend.connections[self.__address__].push('PART %s\r\n'%channel)
     #def kick(self,channel,kickee,reason):
       #  backend.connections[self.__address__].push('KICK %s %s :%s\r\n'%(channel,kickee,reason))
     def kick(self,nick,channel,message=''): #nick,channel,message)
@@ -61,7 +61,7 @@ class module():
     def get_join(self,nick,user,host,channel):
         pass
     def get_raw(self,type,params):
-        '''Called every time a message that doesn't fall into the other categories is recieved:
+        '''Called every time a message that does not fall into the other categories is recieved:
             type is set to 'CODE' when messages that corespond to a numberic code are recieved'''
         pass
     def mode(self,nick,channel,mode):
