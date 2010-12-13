@@ -27,27 +27,14 @@ class module(api.module):
 		self.superuser=api.checkIfSuperUser(data,config.superusers)
 		# Superuser Commands
 		if self.superuser:
-			if ' :%s' in data:
+			if ' :%s'%config.cmd_char in data:
 				command=data[data.find(' :%s'%config.cmd_char)+2+len(config.cmd_char):]
+				param=None
 				if ' ' in command:
 					param=command[command.find(' ')+1:]
 					command=command[:command.find(' ')]
 				if command in self.su_funcs:
-					self.sufuncs(nick,channel,param)
-	
-			elif ':?voice' in ldata:
-				if '?voice ' in ldata:
-					nick=ldata[ldata.find('?voice ')+7:]
-				self.mode(nick,channel,'+v')
-			elif ':?devoice ' in ldata:
-				nick=ldata[ldata.find('?devoice ')+9:]
-				self.mode(nick,channel,'-v')
-			elif ':?quiet ' in ldata:
-				nick=ldata[ldata.find('?quiet ')+7:]
-				self.mode(nick,channel,'+q')
-			elif ':?kick ' in ldata:
-				name=ldata[ldata.find('?kick ')+6:]
-				self.kick(name,channel,'Requested by %s'%nick)
+					self.su_funcs[command](nick,channel,param)
 			elif ldata.find('?rehash')!=-1:
 				self.__init__()
 			#Blacklist
@@ -142,10 +129,23 @@ class module(api.module):
 		else:
 			self.mode(param,channel,'-o')
 	def voice(self,nick,channel,param=None):
-		pass
+		if not param:
+			self.mode(nick,channel,'+v')
+		else:
+			self.mode(param,channel,'+v')
 	def devoice(self,nick,channel,param=None):
-		pass
+		if not param:
+			self.mode(nick,channel,'-v')
+		else:
+			self.mode(param,channel,'-v')
 	def quiet(self,nick,channel,param=None):
-		pass
+		if not param:
+			self.msg(channel,'%s: be careful or I will quiet you :P'%nick)
+		else:
+			self.mode(param,channel,'+q')
 	def nick(self,nick,channel,param=None):
-		pass
+		if not param:
+			self.msg(channel,'%s: You need to have a nick following the command'%nick)
+		else:
+			config.nick=param
+			self.raw('NICK %s'%param)
