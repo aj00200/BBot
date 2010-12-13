@@ -141,4 +141,11 @@ class module(api.module):
 			self.mode(nick,channel,'-o')
 		else:
 			self.mode(param,channel,'-o')
-
+	def voice(self,nick,channel,param=None):
+		pass
+	def devoice(self,nick,channel,param=None):
+		pass
+	def quiet(self,nick,channel,param=None):
+		pass
+	def nick(self,nick,channel,param=None):
+		pass
