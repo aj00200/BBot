@@ -4,21 +4,14 @@ class module(api.module):
     commands=['slower','faster','?;','setspeed','rehash','protect','sql']
     def __init__(self,server):
         self.sql()
-        self.ignore_users_on_su_list=1#Don't kick if they are on the superusers list
+        self.ignore_users_on_su_list=True#Don't kick if they are on the superusers list
         self.nicklists={}
         self.hilight_limit=api.getConfigInt('BlockBot','hilight-limit')
-        self.config=open('blockbot-config','r')
-        findlist=self.config.readline().lower()
-        findlist=findlist[findlist.find(' ')+1:findlist.find('#')].split('^^^@@@^^^')
+        findlist=api.getConfigStr('BlockBot','spam-strings').split('^^^@@@^^^')
         self.findlist=[]
         for each in findlist:
             self.findlist.append(re.compile(each))
-        self.proxyscan=api.getConfigBool('BlockBot','proxy-scan')
-        if self.proxyscan:
-            import nmap #Can be found at: http://xael.org/norman/python/python-nmap/
-        self.line=self.config.readline()
-        self.wait=float(self.line[self.line.find(' ')+1:self.line.find('#')])
-        self.config.close()
+        self.flood_speed=api.getConfigFloat('BlockBot','flood-speed')
         self.repeatlimit=3
         self.repeat_time=3
         self.repeat_1word=4
@@ -58,7 +51,7 @@ class module(api.module):
                 return 0
         try:
             if self.msglist[0][0]==self.msglist[1][0]==self.msglist[2][0]:
-                if (self.msglist[0][1]-self.msglist[2][1])<self.wait:
+                if (self.msglist[0][1]-self.msglist[2][1])<self.flood_speed:
                     self.kick(nick,channel,'It is against the rules to flood')
                     return 0
                 elif msg.split()>1:
@@ -96,7 +89,7 @@ class module(api.module):
                 for each in range(0,len(row)-1):
                     if row[each]==msg:
                         count+=1
-                if count>=self.repeatlimit: ##SQL Repeat Limit
+                if count >= self.repeatlimit: ##SQL Repeat Limit
                     self.kick(nick,channel,'Don\'t repeat yourself. We all heard the first time')
                     #thread.start_new_thread(self.sql_add_str,(msg))
                 if str(row[0])==nick:
@@ -137,34 +130,12 @@ class module(api.module):
             self.nicklists[channel].append(nick)
         else:
             self.nicklists[channel]=[nick]
-        if self.proxyscan:
-            thread.start_new_thread(self.scan, (ip,channel,nick))
-    def scan(self,ip,channel,nick):
-        '''Preform a Nmap scan on the user to detect open ports that are commonly used to host open proxys used by spammers'''
-        self.scansafe=1
-        try:
-            print('Scanning '+ip)
-            self.nm=nmap.PortScanner()
-            #80, 8080, 1080, 3246
-            self.nm.scan(ip,'808,23,1080,110,29505,8080,3246','-T5')
-            for each in nm.all_hosts():
-                print each+':::'
-                lport = nm[each]['tcp'].keys()
-                print lport
-                if 808 in lport or 23 in lport or 110 in lport or 1080 in lport or 29505 in lport or 80 in lport or 8080 in lports or 3246 in lports:
-                    self.scansafe=0
-                    print colorz.encode('DRONE','yellow')
-            del self.nm
-            if self.scansafe:
-                self.mode(nick,channel,'+v')
-        except:
-            print colorz.encode('PYTHON NMAP CRASH','red')
     def get_notice(self,nick,channel,data):
         ldata=data.lower()
         self.olastnot=(self.lastnot[:])
         self.lastnot=(nick,time.time())
         if self.olastnot[0]==self.lastnot[0]:
-            if (self.lastnot[1]-self.olastnot[1])<self.wait:
+            if (self.lastnot[1]-self.olastnot[1])<self.flood_speed:
                 self.kick(nick,channel,'Please don\'t use the notice command so much')
                 self.mode(channel,'+q',nick)
         for each in self.findlist:

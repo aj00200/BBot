@@ -20,5 +20,6 @@ infobot: false			;Send Infobot queries
 infobots: JCSMarlen BBot aj00200 ;The bots to send Infobot queries
 [BlockBot]
 hilight-limit: 5		;Mass-hilight limit
-proxy-scan: False		;Have BBotport scan users for proxies?
+spam-strings: for all your irc needs^^^@@@^^^gnaa^^^@@@^^^bicycle computers here^^^@@@^^^i can never be klined^^^@@@^^^autistic status^^^@@@^^^dubkat here #seperate strings with ^^^@@@^^^ and don't leave a space between the string and the ^s
+flood-speed: 1.5 ;time in seconds. If 3 messages are said in this time, they will be kicked
 botnet-only: False		;Only be strict on new joins 
