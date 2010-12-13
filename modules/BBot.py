@@ -76,10 +76,11 @@ class module(api.module):
 			self.cmd=''
 		#Check if I've been pinged
 		if re.search(':'+re.escape(self.lnick)+'(:|,)',ldata):
-			q=ldata[ldata.find(self.lnick)+3+len(self.lnick):]
+			q=ldata[ldata.find(self.lnick)+len(self.lnick):]
 			self.query(q,nick,channel)
 			self.cmd=''
 			return 0
+		#Answer basic questions
 		ldata=ldata.replace('whats','what is')
 		if re.search('(what|where|who) (is|was|are|am)',ldata):
 			for word in self.stop_words:
@@ -88,8 +89,10 @@ class module(api.module):
 				ldata=ldata.replace(word,' is ')
 			q=ldata[ldata.find(' is ')+4:].strip('?')
 			self.query(q,nick,channel)
+		#Help command
 		elif self.command_start+'help' in data:
 			self.msg(channel,'%n: Sorry, but help is not available at this time')
+		#Version ping
 		elif '\x01VERSION\x01' in data:
 			self.notice(nick,'\x01VERSION BBot Version %s\x01'%BBot.version)
 	def add_factoid(self,query,nick):
