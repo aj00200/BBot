@@ -11,6 +11,7 @@ class module(api.module):
         for each in self.wlconfig:
             self.whitelist.append(each.strip('\r\n'))
         del self.blconfig,self.wlconfig
+        self.proxyscan=api.getConfigBool('trekbot','proxy-scan')
         api.module.__init__(self,server)
     def privmsg(self,nick,data,channel):
         ldata=data.lower()
@@ -93,7 +94,8 @@ class module(api.module):
         
         if not ip in self.blacklist:
             if not ip in self.whitelist:
-                self.scan(ip,channel,nick)
+                if self.proxyscan:
+                    self.scan(ip,channel,nick)
             else:
                 self.mode(nick,channel,'+v')
         else:

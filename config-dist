@@ -22,3 +22,5 @@ infobots: JCSMarlen BBot aj00200 ;The bots to send Infobot queries
 hilight-limit: 5		;Mass-hilight limit
 proxy-scan: False		;Have BBotport scan users for proxies?
 botnet-only: False		;Only be strict on new joins 
+[trekbot]
+proxy-scan: false		;Have trekbot module port scan users for proxies on join?
