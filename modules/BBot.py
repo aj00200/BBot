@@ -26,7 +26,6 @@ class module(api.module):
 		self.command_start=':'+config.cmd_char
 		#thread.start_new_thread(self.get_command_list,())
 		self.read_dict()
-		self.cmd=''
 		self.funcs={
 			'hit':self.hit,
 			'version':self.version,
@@ -57,28 +56,26 @@ class module(api.module):
 
 		#Check if message is a command
 		if self.command_start in data:
-			self.cmd=data[data.find(self.command_start)+len(self.command_start):]
-			if ' ' in self.cmd:
-				self.cmd=self.cmd[:self.cmd.find(' ')]
+			cmd=data[data.find(self.command_start)+len(self.command_start):]
+			if ' ' in cmd:
+				cmd=cmd[:cmd.find(' ')]
 
-		#Superuser Commands
-		if api.checkIfSuperUser(data):
-			if self.cmd in self.sufuncs:
-				self.sufuncs[self.cmd](nick,data,channel)
-
-		#Normal Commands
-		if self.cmd in self.funcs:
-			if ' | ' in data:
-				nick=data[data.find(' | ')+3:]
-			self.funcs[self.cmd](nick,data,channel)
-		else:
-			self. query(self.cmd,nick,channel)
-			self.cmd=''
+			#Superuser Commands
+			if api.checkIfSuperUser(data):
+				if cmd in self.sufuncs:
+					self.sufuncs[cmd](nick,data,channel)
+	
+			#Normal Commands
+			if cmd in self.funcs:
+				if ' | ' in data:
+					nick=data[data.find(' | ')+3:]
+				self.funcs[cmd](nick,data,channel)
+			else:
+				self.query(cmd,nick,channel)
 		#Check if I've been pinged
 		if re.search(':'+re.escape(self.lnick)+'(:|,)',ldata):
 			q=ldata[ldata.find(self.lnick)+len(self.lnick):]
 			self.query(q,nick,channel)
-			self.cmd=''
 			return 0
 		#Answer basic questions
 		ldata=ldata.replace('whats','what is')
@@ -130,7 +127,7 @@ class module(api.module):
 		who=data[data.find('hit ')+4:]
 		self.msg(channel,'\x01ACTION punches %s\x01'%who)
 	def version(self,nick,data,channel):
-		'''Sends BBot's version number to the channel'''
+		'''Sends the version number to the channel'''
 		self.msg(channel,'I am version %s'%BBot.version)
 	def goog(self,nick,data,channel):
 		if 'goog ' in data:
