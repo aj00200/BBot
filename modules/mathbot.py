@@ -62,6 +62,7 @@ class module(api.module):
 			self.e=data[data.find('math ')+5:]
 			self.e=self.e.replace('!pi','3.1415926535897932384626433832795028841971693993751')
 			self.e=self.e.replace('!e','2.7182818284590452353602874713526624977572')
+			self.e=self.e.replace('!c','299792458')
 			for each in self.allow:
 				self.e=self.e.replace(each,self.allow[each])
 			for each in self.chars:
