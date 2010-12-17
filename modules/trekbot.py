@@ -27,6 +27,12 @@ class module(api.module):
 			'topic':self.set_topic,
 			'ban':self.set_ban,
 			'unban':self.del_ban,
+			'listbl':self.blacklist_list,
+			'blacklist':self.blacklist_add,
+			'unblacklist':self.blacklist_del,
+			'listwl':self.whitelist_list,
+			'whitelist':self.whitelist_add,
+			'unwhitelist':self.whitelist_del,
 		}
 	def privmsg(self,nick,data,channel):
 		ldata=data.lower()
@@ -43,35 +49,6 @@ class module(api.module):
 					self.su_funcs[command](nick,channel,param)
 			elif ldata.find('?rehash')!=-1:
 				self.__init__()
-			#Blacklist
-			elif ':?blacklist ' in data:
-				name=data[data.find('?blacklist ')+11:]
-				if not name in self.blacklist:
-					self.blacklist.append(name)
-					self.write_blacklist()
-			elif ':?unblacklist ' in ldata:
-				name=data[data.find('?unblacklist ')+13:]
-				if name in self.blacklist:
-					self.blacklist.pop(self.blacklist.index(name))
-					self.write_blacklist()
-				else:
-					self.msg(nick,'That host is not blacklisted')
-			elif ':?listbl' in ldata:
-				self.msg(nick,str(self.blacklist))
-			elif ':?whitelist ' in ldata:
-				name=data[data.find('?whitelist ')+11:]
-				if not name in self.whitelist:
-					self.whitelist.append(name)
-					self.write_blacklist()
-			elif ':?unwhitelistlist ' in ldata:
-				name=data[data.find('?unwhitelist ')+13:]
-				if name in self.blacklist:
-					self.whitelist.pop(self.blacklist.index(name))
-					self.write_whitelist()
-				else:
-					self.msg(nick,'That host is not whitelisted')
-			elif ':?listbl' in ldata:
-				self.msg(nick,str(self.blacklist))
 	def write_blacklist(self):
 		self.blconfig=open('trekbot/blacklist','w')
 		for each in self.blacklist:
@@ -168,3 +145,43 @@ class module(api.module):
 			self.msg(channel,'%s: You need to specify what to unban'%nick)
 		else:
 			self.mode(param,channel,'-b')
+	
+	#Blacklist/Whitelist Commands
+	def blacklist_list(self,nick,channel,param=None):
+		self.msg(nick,str(self.blacklist))
+	def blacklist_add(self,nick,channel,param=None):
+		if not param in self.blacklist:
+			self.blacklist.append(param)
+			self.write_blacklist()
+		else:
+			self.msg(nick,'That host is already blacklisted.')
+	def blacklist_del(self,nick,channel,param=None):
+		if param in self.blacklist:
+			self.blacklist.pop(self.blacklist.index(param))
+			self.write_blacklist()
+		else:
+			self.msg(nick,'That host is not blacklisted')
+	def whitelist_list(self,nick,channel,param=None):
+		self.msg(nick,str(self.whitelist))
+	def whitelist_add(self,nick,channel,param=None):
+		if not param:
+			self.msg(channel,'%s: You need to specify something to add to the whitelist'%nick)
+		else:
+			if not param in self.whitelist:
+				self.whitelist.append(param)
+				print 'WHITELIST.append'
+				self.write_whitelist()
+				print 'WRITE WHITELIST'
+			else:
+				self.msg(nick,'That host is already whitelisted')
+	def whitelist_del(self,nick,channel,param=None):
+		if not param:
+			self.msg(channel,'%s: You need to specify something to remove from the whitelist'%nick)
+		else:
+			if param in self.whitelist:
+				self.whitelist.pop(self.whitelist.index(param))
+				print 'WHITELIST.pop'
+				self.write_whitelist()
+				print 'WRITE WHITELIST'
+			else:
+				self.msg(nick,'That host is not whitelisted')
