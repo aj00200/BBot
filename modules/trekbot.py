@@ -25,6 +25,8 @@ class module(api.module):
 			'echo':self.echo,
 			'say':self.echo,
 			'topic':self.set_topic,
+			'ban':self.set_ban,
+			'unban':self.del_ban,
 		}
 	def privmsg(self,nick,data,channel):
 		ldata=data.lower()
@@ -70,10 +72,6 @@ class module(api.module):
 					self.msg(nick,'That host is not whitelisted')
 			elif ':?listbl' in ldata:
 				self.msg(nick,str(self.blacklist))
-			elif ':?ban ' in ldata:
-				self.mode(data[data.find('?ban ')+5:],channel,'+b')
-			elif ':?unban ' in ldata:
-				self.mode(data[data.find('?unban ')+7:],channel,'-b')
 	def write_blacklist(self):
 		self.blconfig=open('trekbot/blacklist','w')
 		for each in self.blacklist:
@@ -160,3 +158,13 @@ class module(api.module):
 			self.msg(channel,'%s: You need to specify a topic'%nick)
 		else:
 			self.raw('TOPIC %s :%s'%(channel,param))
+	def set_ban(self,nick,channel,param=None):
+		if not param:
+			self.msg(channel,'%s: You need to specify what to ban'%nick)
+		else:
+			self.mode(param,channel,'+b')
+	def del_ban(self,nick,channel,param=None):
+		if not param:
+			self.msg(channel,'%s: You need to specify what to unban'%nick)
+		else:
+			self.mode(param,channel,'-b')
