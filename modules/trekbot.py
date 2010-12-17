@@ -74,10 +74,6 @@ class module(api.module):
 				self.mode(data[data.find('?ban ')+5:],channel,'+b')
 			elif ':?unban ' in ldata:
 				self.mode(data[data.find('?unban ')+7:],channel,'-b')
-			elif ':?topic ' in ldata:
-				self.raw('TOPIC %s :%s'%(channel,data[data.find('?topic ')+7:]))
-			elif ':?nick ' in ldata:
-				self.nick(data[data.find('?nick ')+6:])
 	def write_blacklist(self):
 		self.blconfig=open('trekbot/blacklist','w')
 		for each in self.blacklist:
