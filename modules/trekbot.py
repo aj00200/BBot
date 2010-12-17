@@ -33,6 +33,7 @@ class module(api.module):
 			'listwl':self.whitelist_list,
 			'whitelist':self.whitelist_add,
 			'unwhitelist':self.whitelist_del,
+			'kick':self.kick_user,
 		}
 	def privmsg(self,nick,data,channel):
 		ldata=data.lower()
@@ -145,8 +146,18 @@ class module(api.module):
 			self.msg(channel,'%s: You need to specify what to unban'%nick)
 		else:
 			self.mode(param,channel,'-b')
-	
-	#Blacklist/Whitelist Commands
+	def kick_user(self,nick,channel,param=None):
+		if not param:
+			self.msg(channel,'%s: You need to tell me who to kick'%nick)
+		else:
+			message=''
+			if ' ' in param:
+				message=param[param.find(' ')+1:]
+				param=param[:param.find(' ')]
+			else:
+				message='You have been kicked from the channel.  (requested by %s)'%nick
+			self.kick(param,channel,message)
+	#SuperUser - Blacklist/Whitelist Commands
 	def blacklist_list(self,nick,channel,param=None):
 		self.msg(nick,str(self.blacklist))
 	def blacklist_add(self,nick,channel,param=None):
