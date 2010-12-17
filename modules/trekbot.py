@@ -22,6 +22,9 @@ class module(api.module):
 			'quiet':self.quiet,
 			'nick':self.nick,
 			'mode':self.set_mode,
+			'echo':self.echo,
+			'say':self.echo,
+			'topic':self.set_topic,
 		}
 	def privmsg(self,nick,data,channel):
 		ldata=data.lower()
@@ -67,8 +70,6 @@ class module(api.module):
 					self.msg(nick,'That host is not whitelisted')
 			elif ':?listbl' in ldata:
 				self.msg(nick,str(self.blacklist))
-			elif ':?echo ' in ldata:
-				self.msg(channel,data[ldata.find('?echo ')+6:])
 			elif ':?ban ' in ldata:
 				self.mode(data[data.find('?ban ')+5:],channel,'+b')
 			elif ':?unban ' in ldata:
@@ -152,4 +153,14 @@ class module(api.module):
 		if not param:
 			self.msg(channel,'%s: You need to tell me what modes to set'%nick)
 		else:
-			self.mode('',channel,param)			
+			self.mode('',channel,param)
+	def echo(self,nick,channel,param=None):
+		if not param:
+			self.msg(channel,'%s: I can\'t echo nothing'%nick)
+		else:
+			self.msg(channel,param)
+	def set_topic(self,nick,channel,param=None):
+		if not param:
+			self.msg(channel,'%s: You need to specify a topic'%nick)
+		else:
+			self.raw('TOPIC %s :%s'%(channel,param))
