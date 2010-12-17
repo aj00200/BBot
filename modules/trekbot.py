@@ -21,6 +21,7 @@ class module(api.module):
 			'devoice':self.devoice,
 			'quiet':self.quiet,
 			'nick':self.nick,
+			'mode':self.set_mode,
 		}
 	def privmsg(self,nick,data,channel):
 		ldata=data.lower()
@@ -66,8 +67,6 @@ class module(api.module):
 					self.msg(nick,'That host is not whitelisted')
 			elif ':?listbl' in ldata:
 				self.msg(nick,str(self.blacklist))
-			elif ':?mode ' in ldata:
-				self.mode('',channel,ldata[ldata.find('?mode ')+6:])
 			elif ':?echo ' in ldata:
 				self.msg(channel,data[ldata.find('?echo ')+6:])
 			elif ':?ban ' in ldata:
@@ -149,3 +148,8 @@ class module(api.module):
 		else:
 			config.nick=param
 			self.raw('NICK %s'%param)
+	def set_mode(self,nick,channel,param=None):
+		if not param:
+			self.msg(channel,'%s: You need to tell me what modes to set'%nick)
+		else:
+			self.mode('',channel,param)			

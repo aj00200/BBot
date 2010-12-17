@@ -1,5 +1,4 @@
 import re,api,time,config,thread,colorz,sqlite3
-proxyscan=1
 class module(api.module):
     commands=['slower','faster','?;','setspeed','rehash','protect','sql']
     def __init__(self,server):
