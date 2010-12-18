@@ -180,9 +180,7 @@ class module(api.module):
 		else:
 			if not param in self.whitelist:
 				self.whitelist.append(param)
-				print 'WHITELIST.append'
 				self.write_whitelist()
-				print 'WRITE WHITELIST'
 			else:
 				self.msg(nick,'That host is already whitelisted')
 	def whitelist_del(self,nick,channel,param=None):
@@ -191,8 +189,6 @@ class module(api.module):
 		else:
 			if param in self.whitelist:
 				self.whitelist.pop(self.whitelist.index(param))
-				print 'WHITELIST.pop'
 				self.write_whitelist()
-				print 'WRITE WHITELIST'
 			else:
 				self.msg(nick,'That host is not whitelisted')
