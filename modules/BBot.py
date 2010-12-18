@@ -159,9 +159,12 @@ class module(api.module):
 		self.add_factoid(query,nick)
 		self.notice(channel,'<<Added %s>>'%query)
 	def su_load(self,nick,data,channel):
-		self.q=data[data.find('load ')+5:]
-		if BBot.load_module(self.q,self.__server__):
-			self.notice('#spam','<<Loaded %s>>'%self.q)
+		query=data[data.find(' :')+2:]
+		query=query[query.find('load ')+5:]
+		if api.load_module(self.__address__,query):
+			self.notice(channel,'<<Loaded %s>>'%query)
+		else:
+			self.notice(channel,'Error loading %s'%query)
 	def su_py(self,nick,data,channel):
 		self.q=data[data.find('py ')+3:]
 		try:

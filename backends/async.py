@@ -16,7 +16,10 @@ class Connection(asynchat.async_chat):
 
 		self.modules=[]
 		for module in config.modules:
-			self.modules.append(getattr(__import__('modules.'+module),module).module(self.__address__))
+#			self.modules.append(getattr(__import__('modules.'+module),module).module(self.__address__))
+			self.load_module(module)
+	def load_module(self,module):
+		self.modules.append(getattr(__import__('modules.'+module),module).module(self.__address__))
 	def handle_connect(self):
 		print('* Connected')
 		self.push('NICK %s\r\nUSER %s BBot BBot :%s\r\n'%(config.nick,'BBot','BBot Version 6.0.0b'))

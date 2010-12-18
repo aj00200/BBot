@@ -86,14 +86,14 @@ class polygon():
             p+=self.sides[each]
         return p
 class triangle(polygon):
-    def __init__(self,ax,ay,bx,by,cx,cy):
-        self.coords={'A':(ax,ay),'B':(bx,by),'C':(cx,cy)}
+    def __init__(self,axy,bxy,cxy):
+        self.coords={'A':axy,'B':bxy,'C':cxy}
         self.sides={
-            'ab':float(distance(ax,ay,bx,by)),
-            'bc':float(distance(bx,by,cx,cy)),
-            'ca':float(distance(cx,cy,ax,ay))
+            'ab':float(distance(axy[0],axy[1],bxy[0],bxy[1])),
+            'bc':float(distance(bxy[0],bxy[1],cxy[0],cxy[1])),
+            'ca':float(distance(cxy[0],cdy[1],axy[0],axy[1]))
         }
-        self.centroid='%s,%s'%(round((ax+bx+cx)/3.0,4),round((ay+by+cy)/3.0,4))
+        self.centroid='%s,%s'%(round((axy[0]+bxy[0]+cxy[0])/3.0,4),round((axy[1]+bxy[1]+cxy[1])/3.0,4))
         if self.sides['ab']==self.sides['bc']==self.sides['ca']:
             self.type='Equilateral'
         elif (self.sides['ab']==self.sides['bc']) or (self.sides['ab']==self.sides['ca']) or (self.sides['bc']==self.sides['ca']):

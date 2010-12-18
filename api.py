@@ -30,6 +30,8 @@ def hostInList(data,list):
 		return False
 def checkIfSuperUser(data,superusers=config.superusers):
 	return hostInList(data,superusers)
+def load_module(server,module):
+	return backend.connections[server].load_module(module)
 class module():
 	'''Base class that all modules should use to maintain best compatibility with future versions of the API'''
 	commands=[]
