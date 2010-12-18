@@ -172,8 +172,7 @@ class module(api.module):
 	def su_connect(self,nick,data,channel):
 		tmp=data[data.find('connect ')+8:]
 		self.notice(channel,'<<Connecting to %s>>'%tmp)
-		BBot.add_network(tmp)
-		q.connections[tmp]=q.connection(tmp)
+		api.backend.connect(tmp,6667,False)
 	def su_reload(self,nick,data,channel):
 		tmp=data[data.find('reload ')+7:]
 		BBot.reload_module(tmp,self.__server__)

@@ -4,7 +4,7 @@ class module(api.module):
     def __init__(self,server):
         self.fwds={}
         api.module.__init__(self,server)
-    def go(self,nick,data,channel):
+    def privmsg(self,nick,data,channel):
         if ':?grepfwd' in data and ' > ' in data and api.checkIfSuperUser(data):
             self.add_fwd(data)
         if ':?grepfwd help' in data:
