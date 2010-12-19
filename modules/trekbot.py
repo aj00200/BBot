@@ -20,6 +20,7 @@ class module(api.module):
 			'voice':self.voice,
 			'devoice':self.devoice,
 			'quiet':self.quiet,
+			'unquiet':self.unquiet,
 			'nick':self.nick,
 			'mode':self.set_mode,
 			'echo':self.echo,
@@ -34,6 +35,7 @@ class module(api.module):
 			'whitelist':self.whitelist_add,
 			'unwhitelist':self.whitelist_del,
 			'kick':self.kick_user,
+			'invite':self.invite_user,
 		}
 	def privmsg(self,nick,data,channel):
 		ldata=data.lower()
@@ -115,6 +117,11 @@ class module(api.module):
 			self.msg(channel,'%s: be careful or I will quiet you :P'%nick)
 		else:
 			self.mode(param,channel,'+q')
+	def unquiet(self,nick,channel,param=None):
+		if not param:
+			self.msg(channel,'%s: You need to tell me what to unquiet.  I can\'t unquiet [NULL]!'%nick)
+		else:
+			self.mode(param,channel,'-q')
 	def nick(self,nick,channel,param=None):
 		if not param:
 			self.msg(channel,'%s: You need to have a nick following the command'%nick)
@@ -157,6 +164,19 @@ class module(api.module):
 			else:
 				message='You have been kicked from the channel.  (requested by %s)'%nick
 			self.kick(param,channel,message)
+	def invite_user(self,nick,channel,param=None):
+		if not param:
+			self.msg(channel,'%s: You need to give me parameters for me to invite a user!'%nick)
+		else:
+			targetchan=''
+			targetuser=''
+			if ' ' in param:
+				targetchan=param[param.find(' ')+1:]
+				targetuser=param[:param.find(' ')]
+			else:
+				targetchan=channel
+				targetuser=param
+			self.raw('INVITE %s :%s'%(targetuser,targetchan))
 	#SuperUser - Blacklist/Whitelist Commands
 	def blacklist_list(self,nick,channel,param=None):
 		self.msg(nick,str(self.blacklist))
