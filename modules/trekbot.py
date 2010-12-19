@@ -158,7 +158,7 @@ class module(api.module):
 			self.msg(channel,'%s: You need to tell me who to kick'%nick)
 		else:
 			message=''
-			if ' ' in param:
+			if ' ' in param.strip(' '):
 				message=param[param.find(' ')+1:]
 				param=param[:param.find(' ')]
 			else:
