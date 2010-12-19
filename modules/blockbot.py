@@ -3,7 +3,6 @@ class module(api.module):
     commands=['slower','faster','?;','setspeed','rehash','protect','sql']
     def __init__(self,server):
         self.sql()
-        self.ignore_users_on_su_list=True#Don't kick if they are on the superusers list
         self.nicklists={}
         self.hilight_limit=api.getConfigInt('BlockBot','hilight-limit')
         findlist=api.getConfigStr('BlockBot','spam-strings').split('^^^@@@^^^')
@@ -30,35 +29,34 @@ class module(api.module):
         self.db.close()
     def privmsg(self,nick,data,channel):
         self.ldata=data.lower()
-        if self.ignore_users_on_su_list:
-            self.superuser=api.checkIfSuperUser(data,config.superusers)
-        if self.superuser:
+        if api.checkIfSuperUser(data,config.superusers):
             if ':?;' in self.ldata:
                 word=data[data.find(' :'+config.cmd_char+'; ')+4+len(config.cmd_char):]
                 self.findlist.append(word)
-        thread.start_new_thread(self.check_hilight,(nick,data,channel))
-        self.msglist.insert(0,(nick,time.time(),data))
-        if len(self.msglist)>5:
-            self.msglist.pop()
-        ident=data[data.find('@'):data.find(' PRIVMSG ')]
-        ldata=data.lower()
-        msg=ldata[ldata.find(' :')+2:]
-        for each in self.findlist:
-            if re.search(each,ldata):
-                self.mode('*!*@%s'%api.getHost(data),channel,'+b')
-                self.kick(nick,channel,'You have matched a spam string and have been banned from the channel, if you think this is a mistake, contact a channel op about being unbanned')
-                return 0
-        try:
-            if self.msglist[0][0]==self.msglist[1][0]==self.msglist[2][0]:
-                if (self.msglist[0][1]-self.msglist[2][1])<self.flood_speed:
-                    self.kick(nick,channel,'It is against the rules to flood')
-                    return 0
-                elif msg.split()>1:
-                    if (self.msglist[0][2]==self.msglist[1][2]==self.msglist[2][2]) and (self.msglist[0][1]-self.msglist[1][1]<self.repeat_time):
-                        self.kick(nick,channel,'Please do not repeat')
-                        self.mode('*!*@%s'%api.getHost(data),channel,'+b')
-        except IndexError:
-            pass
+        else:
+	        thread.start_new_thread(self.check_hilight,(nick,data,channel))
+	        self.msglist.insert(0,(nick,time.time(),data))
+	        if len(self.msglist)>5:
+	            self.msglist.pop()
+	        ident=data[data.find('@'):data.find(' PRIVMSG ')]
+	        ldata=data.lower()
+	        msg=ldata[ldata.find(' :')+2:]
+	        for each in self.findlist:
+	            if re.search(each,ldata):
+	                self.mode('*!*@%s'%api.getHost(data),channel,'+b')
+	                self.kick(nick,channel,'You have matched a spam string and have been banned from the channel, if you think this is a mistake, contact a channel op about being unbanned')
+	                return 0
+	        try:
+	            if self.msglist[0][0]==self.msglist[1][0]==self.msglist[2][0]:
+	                if (self.msglist[0][1]-self.msglist[2][1])<self.flood_speed:
+	                    self.kick(nick,channel,'It is against the rules to flood')
+	                    return 0
+	                elif msg.split()>1:
+	                    if (self.msglist[0][2]==self.msglist[1][2]==self.msglist[2][2]) and (self.msglist[0][1]-self.msglist[1][1]<self.repeat_time):
+	                        self.kick(nick,channel,'Please do not repeat')
+	                        self.mode('*!*@%s'%api.getHost(data),channel,'+b')
+	        except IndexError:
+	            pass
     def check_hilight(self,nick,data,channel):
         '''Check if nick has pinged more than self.hilight_limit people, and if so, kick them'''
         ldata=data[data.find(' :')+2:].lower()
