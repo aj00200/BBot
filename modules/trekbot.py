@@ -20,6 +20,7 @@ class module(api.module):
 			'voice':self.voice,
 			'devoice':self.devoice,
 			'quiet':self.quiet,
+			'unquiet':self.unquiet,
 			'nick':self.nick,
 			'mode':self.set_mode,
 			'echo':self.echo,
@@ -115,6 +116,11 @@ class module(api.module):
 			self.msg(channel,'%s: be careful or I will quiet you :P'%nick)
 		else:
 			self.mode(param,channel,'+q')
+	def unquiet(self,nick,channel,param=None):
+		if not param:
+			self.msg(channel,'%s: You need to tell me what to unquiet.  I can\'t unquiet [NULL]!'%nick)
+		else:
+			self.mode(param,channel,'-q')
 	def nick(self,nick,channel,param=None):
 		if not param:
 			self.msg(channel,'%s: You need to have a nick following the command'%nick)
