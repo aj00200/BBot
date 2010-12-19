@@ -59,12 +59,12 @@ class module(api.module):
 		for each in self.whitelist:
 			self.wlconfig.write(each+'\n')
 	def get_join(self,nick,channel,ip,user):
-		print "GOT JOIN"
-		
 		if not ip in self.blacklist:
 			if not ip in self.whitelist:
 				if self.proxyscan:
 					self.scan(ip,channel,nick)
+				else:
+					self.kick(nick,channel,'Sorry')
 			else:
 				self.mode(nick,channel,'+v')
 		else:
