@@ -177,7 +177,7 @@ class module(api.module):
 				targetchan=channel
 				targetuser=param
 			self.raw('INVITE %s :%s'%(targetuser,targetchan))
-	#SuperUser - Blacklist/Whitelist Commands
+	#Blacklist/Whitelist Commands - SuperUser Only
 	def blacklist_list(self,nick,channel,param=None):
 		self.msg(nick,str(self.blacklist))
 	def blacklist_add(self,nick,channel,param=None):
@@ -191,24 +191,24 @@ class module(api.module):
 			self.blacklist.pop(self.blacklist.index(param))
 			self.write_blacklist()
 		else:
-			self.msg(nick,'That host is not blacklisted')
+			self.msg(nick,'That host is not blacklisted.')
 	def whitelist_list(self,nick,channel,param=None):
 		self.msg(nick,str(self.whitelist))
 	def whitelist_add(self,nick,channel,param=None):
 		if not param:
-			self.msg(channel,'%s: You need to specify something to add to the whitelist'%nick)
+			self.msg(channel,'%s: You need to specify something to add to the whitelist.'%nick)
 		else:
 			if not param in self.whitelist:
 				self.whitelist.append(param)
 				self.write_whitelist()
 			else:
-				self.msg(nick,'That host is already whitelisted')
+				self.msg(nick,'That host is already whitelisted.')
 	def whitelist_del(self,nick,channel,param=None):
 		if not param:
-			self.msg(channel,'%s: You need to specify something to remove from the whitelist'%nick)
+			self.msg(channel,'%s: You need to specify something to remove from the whitelist.'%nick)
 		else:
 			if param in self.whitelist:
 				self.whitelist.pop(self.whitelist.index(param))
 				self.write_whitelist()
 			else:
-				self.msg(nick,'That host is not whitelisted')
+				self.msg(nick,'That host is not whitelisted.')
