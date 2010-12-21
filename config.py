@@ -1,4 +1,4 @@
-import ConfigParser
+import ConfigParser,re
 c=ConfigParser.ConfigParser()
 f=open('config','r')
 c.readfp(f)
@@ -15,4 +15,4 @@ wait_recv=c.getint('main','read-wait')
 cmd_char=c.get('main','command-char')
 error_chan=c.get('main','report-error')
 allow_invite=c.get('main','allow-invite')
-ignore=c.get('main','ignore-re')
+ignore=re.compile(c.get('main','ignore-re'))

@@ -3,8 +3,8 @@
 
 version='6.0.0'
 import socket,asyncore
-import cProfile
+import config
 if __name__=='__main__':
     backend = getattr(__import__('backends.async'),'async')
-    backend.connect('irc.fossnet.info',6667,False)
+    backend.connect(config.network,config.port,False)
     asyncore.loop()

@@ -29,7 +29,8 @@ class Connection(asynchat.async_chat):
 		return r
 	def found_terminator(self):
 		data=self.get_data()
-		#Check Ignore RE
+		if re.search(config.ignore,data.lower()):
+			return
 		print(data)
 		if data[:4]=='PING':
 			self.push('PONG %s\r\n'%data[5:])
