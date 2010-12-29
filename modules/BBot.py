@@ -101,6 +101,10 @@ class module(api.module):
 			if d[0] == '433':
 				# Nick is already in use
 				self.raw('NICK %s_'%config.nick)
+				if api.getConfigBool('main','use-services'):
+					self.msg('NickServ','GHOST %s %s'%(config.nick,config.password))
+					time.sleep(api.getConfigFloat('main','wait-after-identify'))
+					self.raw('NICK %s'%config.nick)
 	def add_factoid(self,query,nick):
 		tmp=query
 		try:
