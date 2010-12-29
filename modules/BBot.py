@@ -1,7 +1,11 @@
 import q,api,re,config
 import bbot as BBot
-import time,thread,sqlite3
-dict=sqlite3.connect('bbot.sqlite3')
+import time,thread,json
+f=open('database.json')
+dict=json.load(f)
+f.close()
+del f
+
 class module(api.module):
 	commands=['goog','wiki','pb','upb','kb','hit','?<query>','add','del','writedict','load','reload','version','connect','py']
 	goog_str='https://encrypted.google.com/search?q=%s'
@@ -48,7 +52,7 @@ class module(api.module):
 		self.lnick=config.nick.lower()
 		api.module.__init__(self,server)
 	def __destroy__(self):
-		dict.close()
+		pass
 	def privmsg(self,nick,data,channel):
 		if '#' not in channel: #if message is a pm
 			channel=nick
@@ -95,33 +99,34 @@ class module(api.module):
 
 	def add_factoid(self,query,nick):
 		tmp=query
-		if '<ACTION>'in query[1]:
-			tmp[1]=str(tmp[1].replace('<ACTION>','\x01ACTION ')+'\x01')
-		self.c.execute('delete from factoids where key=?',(str(tmp[0]),))
-		self.c.execute('insert into factoids values (?,?,?,?)',(tmp[0],tmp[1],nick,time.time()))
+		try:
+			if '<ACTION>'in query[1]:
+				tmp[1]=str(tmp[1].replace('<ACTION>','\x01ACTION ')+'\x01')
+			dict[query[0]]=query[1]
+			return True
+		except IndexError:
+			return False
 	def del_factoid(self,query):
-		self.c.execute('delete from factoids where key=?',(str(query),))
+		if query in dict:
+			del dict[query]
 	def write_dict(self):
-		dict.commit()
+		f=open('database.json','w')
+		f.write(json.dumps(dict))
+		f.close()
 	def read_dict(self):
-		self.c=dict.cursor()
-		self.c.execute('''create table if not exists factoids (key, value, "by", ts)''')
-		dict.commit()
+		f=open('database.json')
+		dict=json.load(f)
+		f.close()
 	def query_dict(self,query):
 		'''Primarily for the unittester	'''
-		self.c=dict.cursor()
-		self.c.execute('''select * from factoids where key=?''',(query,))
-		results=self.c.fetchall()
-		if len(results)>0:
-			return results[0][1]
+		if query.lower() in dict:
+			return str(dict[query.lower()])
 	def query(self,query,nick,channel):
 		'''Querys the database for the factoid 'query', and returns its value to the channel if it is found'''
-		self.c.execute('''select * from factoids where key=?''',(query.lower(),))
-		results=self.c.fetchall()[:]
-		if len(results)>0:
-			self.msg(channel,str(results[0][1]).replace('%n',nick))
-#		else:
-#			self.send_infobot_query(query,nick,channel)
+		q=unicode(query.lower())
+		if q in dict:
+			self.msg(channel,str(dict[q].replace('%n',nick)))
+
 	#////////Single Functions/////////
 	def hit(self,nick,data,channel):
 		'''Causes BBot to punch someone'''
@@ -148,7 +153,7 @@ class module(api.module):
 		self.raw('JOIN %s'%data[data.find('join ')+5:])
 	def su_writedb(self,nick,data,channel):
 		'''Writes the factoids database to the harddrive'''
-		dict.commit()
+		self.write_dict()
 		self.notice(channel,'<<Wrote Database>>')
 	def su_raw(self,nick,data,channel):
 		self.raw(data[data.find('raw ')+4:])
@@ -157,8 +162,10 @@ class module(api.module):
 	def su_add(self,nick,data,channel):
 		query=data[data.find(' :')+2:]
 		query=query[query.find('add ')+4:].split(':::')
-		self.add_factoid(query,nick)
-		self.notice(channel,'<<Added %s>>'%query)
+		if self.add_factoid(query,nick):
+			self.notice(channel,'<<Added %s>>'%query)
+		else:
+			self.msg(channel,'%s: Adding of the factoid failed. Make sure you are using the proper syntax.'%nick)
 	def su_load(self,nick,data,channel):
 		query=data[data.find(' :')+2:]
 		query=query[query.find('load ')+5:]
