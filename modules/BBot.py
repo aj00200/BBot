@@ -31,7 +31,6 @@ class module(api.module):
 		self.command_list=[]
 		self.command_start=':'+config.cmd_char
 		#thread.start_new_thread(self.get_command_list,())
-		self.read_dict()
 		self.funcs={
 			'hit':self.hit,
 			'version':self.version,
