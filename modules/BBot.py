@@ -1,11 +1,13 @@
 import q,api,re,config
 import bbot as BBot
 import time,thread,json
-f=open('database.json')
-dict=json.load(f)
-f.close()
-del f
-
+try:
+	f=open('database.json')
+	dict=json.load(f)
+	f.close()
+	del f
+except:
+	dict={}
 class module(api.module):
 	commands=['goog','wiki','pb','upb','kb','hit','?<query>','add','del','writedict','load','reload','version','connect','py']
 	goog_str='https://encrypted.google.com/search?q=%s'
