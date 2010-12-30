@@ -97,6 +97,10 @@ class module(api.module):
 		#Version ping
 		elif '\x01VERSION\x01' in data:
 			self.notice(nick,'\x01VERSION BBot Version %s\x01'%BBot.version)
+
+		#Prefix ping - responds with the current command char
+		elif '\x01PREFIX\x01' in data:
+			self.notice(nick,'\x01PREFIX My current command character is: %s\x01'%config.cmd_char)
 	def get_raw(self,t,d):
 		if t == 'CODE':
 			if d[0] == '433':
