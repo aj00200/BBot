@@ -26,7 +26,15 @@ class module(api.module):
 	'undefined':'..19..',
 	'geo.square(':'..20..',
 	'num(':'..21..',
-	'geo.line(':'..22..'
+	'geo.line(':'..22..',
+	'cm(':'..23..',
+	'in(':'..24..',
+	
+	'!g':'6.67428',
+	'!pi':'3.1415926535897932384626433832795028841971693993751',
+	'!c':'2.99792458',
+	'!e':'2.7182818284590452353602874713526624977572',
+	'!F':'96485'
 	}
 	invert={
 	'..0..':')',
@@ -51,18 +59,18 @@ class module(api.module):
 	'..19..':'geo.undefined()',
 	'..20..':'geo.square(',
 	'..21..':'num(',
-	'..22..':'geo.line('
+	'..22..':'geo.line(',
+	'..23..':'geo.cm(',
+	'..24..':'geo.inch('
+	
 	}
-	chars='_ghijklmnopqrstuvwyz#@$\'\"!:=GHIJKLMNOPQRSTUVWYZ'
+	chars='_ghijklmnopqrstuvwyz#@$\'"!:=GHIJKLMNOPQRSTUVWYZ'
 	def privmsg(self,nick,data,channel):
 		ldata=data.lower()
 		if ':'+config.cmd_char+'math help' in ldata:
 			self.msg(channel,nick+' : +, -, *, /, %, sqrt, pow, ceil, floor, log, asin, acos, atan, atan2, sin, cos, tan')
 		elif ':%smath '%config.cmd_char in ldata:
 			self.e=data[data.find('math ')+5:]
-			self.e=self.e.replace('!pi','3.1415926535897932384626433832795028841971693993751')
-			self.e=self.e.replace('!e','2.7182818284590452353602874713526624977572')
-			self.e=self.e.replace('!c','299792458')
 			for each in self.allow:
 				self.e=self.e.replace(each,self.allow[each])
 			for each in self.chars:

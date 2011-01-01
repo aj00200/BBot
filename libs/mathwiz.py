@@ -1,3 +1,4 @@
+from __future__ import division
 import math
 def sort_dict(dict):
     items = dict.items()
@@ -118,3 +119,36 @@ class square(polygon,quad):
         return self.sides['ab']*self.sides['bc']
     def __repr__(self):
         return '<square ab=%s; bc=%s; cd=%s; da=%s;>'%(self.sides['ab'],self.sides['bc'],self.sides['cd'],self.sides['da'])
+
+class unit(float):
+	pass
+class inch(unit):
+	'''Inches'''
+	cm=2.54
+	ft=1/12
+	def __init__(self,num):
+		self.num=num
+	def __add__(self,y):
+		if type(y) is inch:
+			return inch(self.num+y)
+		elif type(y) is cm:
+			return inch(self.num+self.cm*y)
+	def __mul__(self,y):
+		if type(y) is inch:
+			return inch(self.num*y)
+		if type(y) is cm:
+			return self.num*self.cm*y
+	def __repr__(self):
+		return '%sin'%self.num
+class cm(unit):
+	'''Centimeters'''
+	inch=0.393700787402
+	def __init__(self,num):
+		self.num=num
+	def __mul__(self,y):
+		if type(y) is cm:
+			return cm(self.num*cm)
+		elif type(y) is inch:
+			return self.num*self.inch*y
+	def __repr__(self):
+		return '%scm'%self.num

@@ -16,10 +16,23 @@ class Connection(asynchat.async_chat):
 
 		self.modules=[]
 		for module in config.modules:
-#			self.modules.append(getattr(__import__('modules.'+module),module).module(self.__address__))
 			self.load_module(module)
 	def load_module(self,module):
-		self.modules.append(getattr(__import__('modules.'+module),module).module(self.__address__))
+		try:
+			self.modules.append(getattr(__import__('modules.'+module),module).module(self.__address__))
+			return True
+		except:
+			return False
+	def unload_module(self,module):
+		for mod in self.modules:
+			if str(type(mod)) == "<class 'modules.%s.module'>"%module:
+				print ' * Removing module %s for network %s'%(module,self.__address__)
+				self.modules.pop(self.modules.index(mod))
+	def reload_module(self,module):
+		self.unload_module(module)
+		reload(getattr(__import__('modules.'+module),module))
+		time.sleep(2)
+		self.load_module(module)
 	def handle_connect(self):
 		print('* Connected')
 		self.push('NICK %s\r\nUSER %s BBot BBot :%s\r\n'%(config.nick,'BBot','BBot Version 6.0.0b'))

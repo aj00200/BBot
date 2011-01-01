@@ -67,6 +67,9 @@ class module(api.module):
 
 			#Superuser Commands
 			if api.checkIfSuperUser(data):
+				if ' > ' in data:
+					channel=data[data.find(' > ')+3:]
+					data=data[:data.find(' > ')]
 				if cmd in self.sufuncs:
 					self.sufuncs[cmd](nick,data,channel)
 	
@@ -76,6 +79,10 @@ class module(api.module):
 					nick=data[data.find(' | ')+3:]
 				self.funcs[cmd](nick,data,channel)
 			else:
+				cmd=data[data.find(self.command_start)+len(self.command_start):]
+				if ' | ' in cmd:
+					nick=cmd[cmd.find(' | ')+3:]
+					cmd=cmd[:cmd.find(' | ')]
 				self.query(cmd,nick,channel)
 
 		#Check if I've been pinged
@@ -195,7 +202,7 @@ class module(api.module):
 		api.backend.connect(tmp,6667,False)
 	def su_reload(self,nick,data,channel):
 		tmp=data[data.find('reload ')+7:]
-		BBot.reload_module(tmp,self.__server__)
+		thread.start_new_thread(api.backend.connections[self.__address__].reload_module,(tmp,))
 		self.notice(channel,'<<Reloaded %s>>'%tmp)
 	def su_del(self,nick,data,channel):
 		tmp=data[data.find('del ')+4:]
