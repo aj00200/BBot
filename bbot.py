@@ -1,5 +1,5 @@
 #! /usr/bin/python
-#This Bot is licensed under the GNU GPL v3
+#This Code is licensed under the GNU GPL v3
 
 version='6.0.0'
 import socket,asyncore
