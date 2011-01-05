@@ -1,3 +1,6 @@
+"""This module is an IRC implementation of the Werewolf (a.k.a. Mafia) RPG party game
+<http://en.wikipedia.org/wiki/Mafia_(party_game)>."""
+
 import time
 import api
 

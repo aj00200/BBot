@@ -1,6 +1,9 @@
 *~
 *.bak
 *.pyc
+*.diff
+*.patch
 *#
 blockbot-config
 config
+.DS_Store

@@ -1,3 +1,5 @@
+"""This module implements flood control and anti-spam measures."""
+
 import re,api,time,config,thread,colorz,sqlite3
 class module(api.module):
     commands=['slower','faster','?;','setspeed','rehash','protect','sql']

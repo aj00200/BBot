@@ -1,3 +1,9 @@
+"""This module allows for easy factoid tracking a la Infobot, in addition to
+generating URLs for common websites, such as Google SSL, Wikipedia SSL and
+aj00200's Knowledge Base. It also allows the admin to execute functions like
+loading modules, connecting to other networks and more. Additionally, it can
+output important BBot information like its version."""
+
 import q,api,re,config
 import bbot as BBot
 import time,thread,json
