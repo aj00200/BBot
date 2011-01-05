@@ -119,7 +119,7 @@ class module(api.module):
 					time.sleep(api.getConfigFloat('main','wait-after-identify'))
 					self.raw('NICK %s'%config.nick)
 		if t == 'MODE':
-			self.msg(d[0],'Mode Change: %s'%d[1])
+			self.msg(d[0],'Mode Change: %s'%str(d))
 	def add_factoid(self,query,nick):
 		tmp=query
 		try:

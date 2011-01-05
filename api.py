@@ -97,6 +97,7 @@ class module(object):
 			type is set to 'MODE' when a mode is changed'''
 		pass
 	def mode(self,nick,channel,mode):
+		'''Set the mode, mode, on nick in channel. If you want to set a normal channel mode, set nick to ''.'''
 		backend.connections[self.__address__].push('MODE '+channel+' '+mode+' '+nick+'\r\n')
 	def raw(self,data):
 		'''Send raw data to the server
