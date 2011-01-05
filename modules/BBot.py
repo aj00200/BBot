@@ -9,7 +9,6 @@ try:
 except:
 	dict={}
 class module(api.module):
-	commands=['goog','wiki','pb','upb','kb','hit','?<query>','add','del','writedict','load','reload','version','connect','py']
 	goog_str='https://encrypted.google.com/search?q=%s'
 	wiki_str='https://secure.wikimedia.org/wikipedia/en/wiki/%s'
 	kb_str='http://www.kb.aj00200.heliohost.org/index.py?q=%s'
@@ -28,6 +27,8 @@ class module(api.module):
 		except Exception,e:
 			print 'Error: %s; with args: %s;'%(type(e),e.args)
 	def __init__(self,server):
+		api.module.__init__(self,server)
+		api.register_commands(self.__address__,['goog','wiki','kb','hit','add','del','writedb','load','reload','version','connect','py'])
 		self.command_list=[]
 		self.command_start=':'+config.cmd_char
 		#thread.start_new_thread(self.get_command_list,())
@@ -36,7 +37,8 @@ class module(api.module):
 			'version':self.version,
 			'goog':self.goog,
 			'wiki':self.wiki,
-			'kb':self.kb
+			'kb':self.kb,
+			'help':self.help
 		}
 		self.sufuncs={
 			'join':self.su_join,
@@ -51,7 +53,6 @@ class module(api.module):
 			'del':self.su_del
 		}
 		self.lnick=config.nick.lower()
-		api.module.__init__(self,server)
 	def __destroy__(self):
 		pass
 	def privmsg(self,nick,data,channel):
@@ -117,6 +118,8 @@ class module(api.module):
 					self.msg('NickServ','GHOST %s %s'%(config.nick,config.password))
 					time.sleep(api.getConfigFloat('main','wait-after-identify'))
 					self.raw('NICK %s'%config.nick)
+		if t == 'MODE':
+			self.msg(d[0],'Mode Change: %s'%d[1])
 	def add_factoid(self,query,nick):
 		tmp=query
 		try:
@@ -159,15 +162,14 @@ class module(api.module):
 		if 'goog ' in data:
 			w=str(data[data.find('goog ')+5:].replace(' ','+'))
 			self.msg(channel,self.goog_str%w)
-		return 0
 	def wiki(self,nick,data,channel):
 		w=data[data.find('wiki ')+5:].replace(' ','_')
 		self.msg(channel,self.wiki_str%w)
-		return 0
 	def kb(self,nick,data,channel):
 		w=data[data.find('kb ')+3:]
 		self.msg(channel,self.kb_str%w)
-		return 0
+	def help(self,nick,data,channel):
+		self.msg(channel,'%s: %s'%(nick,', '.join(api.get_command_list(self.__address__))))
 	def su_join(self,nick,data,channel):
 		'''Makes BBot join the channel which is the param'''
 		self.raw('JOIN %s'%data[data.find('join ')+5:])

@@ -32,6 +32,23 @@ def checkIfSuperUser(data,superusers=config.superusers):
 	return hostInList(data,superusers)
 def load_module(server,module):
 	return backend.connections[server].load_module(module)
+
+# Command List
+commands={}
+def register_commands(address,cmds):
+	if address not in commands:
+		commands[address]=[]
+	try:
+		commands[address]+=cmds
+	except:
+		pass
+def get_command_list(address):
+	try:
+		return commands[address]
+	except:
+		return 'There was an error processing your request'
+
+# Base Module
 class module(object):
 	'''Base class that all modules should use to maintain best compatibility with future versions of the API'''
 	commands=[]
@@ -59,10 +76,10 @@ class module(object):
 		'''Have BBot join a channel:
 			Example: self.join('#bbot')'''
 		backend.connections[self.__address__].push('JOIN %s\r\n'%channel)
-	def part(self,channel):
+	def part(self,channel,message='BBot the IRC Bot'):
 		'''Have BBot part a channel
 			Example: self.part('#bbot')'''
-		backend.connections[self.__address__].push('PART %s\r\n'%channel)
+		backend.connections[self.__address__].push('PART %s :%s\r\n'%(channel,message))
 	#def kick(self,channel,kickee,reason):
 	  #  backend.connections[self.__address__].push('KICK %s %s :%s\r\n'%(channel,kickee,reason))
 	def kick(self,nick,channel,message=''): #nick,channel,message)
@@ -76,7 +93,8 @@ class module(object):
 		pass
 	def get_raw(self,type,params):
 		'''Called every time a message that does not fall into the other categories is recieved:
-			type is set to 'CODE' when messages that corespond to a numberic code are recieved'''
+			type is set to 'CODE' when messages that corespond to a numberic code are recieved
+			type is set to 'MODE' when a mode is changed'''
 		pass
 	def mode(self,nick,channel,mode):
 		backend.connections[self.__address__].push('MODE '+channel+' '+mode+' '+nick+'\r\n')
