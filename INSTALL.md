@@ -1,9 +1,14 @@
-===Installing BBot===
-There are various ways to install BBot, but the fastest way is to download a compressed file from the BBot project on Sourceforge.
-Extract these files anywhere on your harddrive, and open a terminal.
-When you are in the terminal, cd to the directory in which BBot is saved, and then into the BBot folder.
-Then modify the config files to fit your needs.
-Lastly, run the following command (without quotes):
-"python bbot.py"
+# Downloading BBot
+There are various ways to download BBot, but the easiest way is to download a compressed archive from GitHub: <https://github.com/aj00200/BBot/archives/master>
 
-BBot should now be running on your system, but if it isn't, you can always ask for help in #bbot on irc.fossnet.info.
+# Installing and configuring BBot
+Extract those files anywhere on your hard drive and open a terminal.
+When you are in the terminal, change the directory (cd) to the one in which the BBot files are stored.
+Afterwards, rename or copy the config-dist file to simply "config" and modify it to fit your needs.
+
+# Running BBot
+Lastly, run the following command (without quotes): `python bbot.py`
+
+If you want it to keep running after you close the terminal, use a multiplexer such as GNU Screen.
+
+BBot should now be running on your system, but if it isn't, you can always ask for help in #BBot on irc.fossnet.info.
