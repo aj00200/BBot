@@ -1,3 +1,5 @@
+"""This provides a two-way bridge between two channels on different networks."""
+
 import q
 import api
 class module(api.module):
