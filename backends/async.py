@@ -22,7 +22,7 @@ class Connection(asynchat.async_chat):
 			self.modules.append(getattr(__import__('modules.'+module),module).module(self.__address__))
 			return True
 		except ImportError:
-			return False
+			print(' * ImportError loading %s'%module)
 	def unload_module(self,module):
 		for mod in self.modules:
 			if str(type(mod)) == "<class 'modules.%s.module'>"%module:
@@ -76,13 +76,7 @@ class Connection(asynchat.async_chat):
 			code=data.split()[1]
 			for module in self.modules:
 				module.get_raw('CODE',(code,data))
-		elif ' MODE ' in data:
-			nick=data[1:data.find('!')]
-			channel=data[data.find(' MODE ')+6:]
-			mode=channel[data.find(' ')+1:]
-			channel=channel[:channel.find(' ')]
-			for module in self.modules:
-				module.get_raw('MODE',(channel,mode))
+
 	def collect_incoming_data(self,data):
 		self.data+=data
 def connect(address,port=6667,ssl=False):

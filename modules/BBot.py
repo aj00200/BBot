@@ -4,7 +4,7 @@ aj00200's Knowledge Base. It also allows the admin to execute functions like
 loading modules, connecting to other networks and more. Additionally, it can
 output important BBot information like its version."""
 
-import q,api,re,config
+import api,re,config
 import bbot as BBot
 import time,thread,json
 try:
@@ -116,6 +116,7 @@ class module(api.module):
 		elif '\x01PREFIX\x01' in data:
 			self.notice(nick,'\x01PREFIX My current command character is: %s\x01'%config.cmd_char)
 	def get_raw(self,t,d):
+		print 'Got raw!'
 		if t == 'CODE':
 			if d[0] == '433':
 				# Nick is already in use
@@ -124,8 +125,6 @@ class module(api.module):
 					self.msg('NickServ','GHOST %s %s'%(config.nick,config.password))
 					time.sleep(api.getConfigFloat('main','wait-after-identify'))
 					self.raw('NICK %s'%config.nick)
-		if t == 'MODE':
-			self.msg(d[0],'Mode Change: %s'%str(d))
 	def add_factoid(self,query,nick):
 		tmp=query
 		try:

@@ -1,4 +1,4 @@
-import q,api,config
+import api,config
 class module(api.module):
     commands=['global']
     def __init__(self,server):

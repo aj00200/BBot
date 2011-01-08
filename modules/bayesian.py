@@ -1,4 +1,4 @@
-import q,api,config,sqlite3
+import api,config,sqlite3
 class module(api.module):
     def __init__(self,server):
         self.db=sqlite3.connect('wordstats.sqlite')
