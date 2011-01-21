@@ -65,17 +65,18 @@ class module(object):
 	def msg(self,channel,data=' '):
 		'''Send a message, data, to channel
 			Example: self.msg('#bbot','Hello world!')'''
-		print 'PRIVMSG %s :%s'%(channel,data)
 		backend.connections[self.__address__].push('PRIVMSG %s :%s\r\n'%(channel,data))
+		print 'PRIVMSG %s :%s'%(channel,data)
 	def notice(self,channel,data):
 		'''Send a notice to a channel
 			Example: self.notice('#bbot','A new BBot version has been released')'''
-		print ('NOTICE %s :%s'%(channel,data))
 		backend.connections[self.__address__].push('NOTICE %s :%s\r\n'%(channel,data))
+		print ('NOTICE %s :%s'%(channel,data))
 	def join(self,channel):
 		'''Have BBot join a channel:
 			Example: self.join('#bbot')'''
 		backend.connections[self.__address__].push('JOIN %s\r\n'%channel)
+		print('JOIN %s'%channel)
 	def part(self,channel,message='BBot the IRC Bot'):
 		'''Have BBot part a channel
 			Example: self.part('#bbot')'''

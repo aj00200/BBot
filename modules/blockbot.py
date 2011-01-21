@@ -45,7 +45,6 @@ class module(api.module):
 	        msg=ldata[ldata.find(' :')+2:]
 	        for each in self.findlist:
 	            if re.search(each,ldata):
-	                self.mode('*!*@%s'%api.getHost(data),channel,'+b')
 	                self.kick(nick,channel,'You have matched a spam string and have been banned from the channel, if you think this is a mistake, contact a channel op about being unbanned')
 	                return 0
 	        try:
@@ -71,46 +70,7 @@ class module(api.module):
         if found>self.hilight_limit:
             print '* kicking %s out of %s'%(nick,channel)
             self.kick(nick,channel,'Please do not ping that many people')
-        #//////////////////////////////////////////////////////////////
-        #///////////////////////////SQLite Code////////////////////////
-        #//////////////////////////////////////////////////////////////
-        db=sqlite3.connect('database.sqlite')
-        self.c=db.cursor()
-        try:
-            ldata=data.lower()
-            msg=ldata[data.find(' :'):]
-            current=['0',0,'0',0,'0',0,'0',0,'0',0,'0',0,'0',0]
-            self.c.execute('''select * from lines where username=?''',(nick,))
-            self.co=self.c.fetchall()
-            for row in self.co:
-                count=0
-                #print colorz.encode(str(row),'green')
-                for each in range(0,len(row)-1):
-                    if row[each]==msg:
-                        count+=1
-                if count >= self.repeatlimit: ##SQL Repeat Limit
-                    self.kick(nick,channel,'Don\'t repeat yourself. We all heard the first time')
-                    #thread.start_new_thread(self.sql_add_str,(msg))
-                if str(row[0])==nick:
-                    current[0]=row[1]
-                    current[1]=row[2]
-                    current[2]=row[3]
-                    current[3]=row[4]
-                    current[4]=row[5]
-                    current[5]=row[6]
-                    current[6]=row[7]
-                    current[7]=row[8]
-                    current[8]=row[9]
-                    current[9]=row[10]
-                    current[10]=row[11]
-                    current[11]=row[12]
-                    current[12]=row[13]
-            self.c.execute('''delete from lines where username=?''',(nick,))
-            self.c.execute('''insert into lines values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',(nick,msg,time.time(),current[0],current[1],current[2],current[3],current[4],current[5],current[6],current[7],current[8],current[9],current[10],current[11],current[11],current[12]))
-            db.commit()
-        except Exception,e:
-            print colorz.encode('Error: %s; %s'%(type(e),e.args),'red')
-    #/////////////////////////END SQLite Code/////////////////////////
+
     def sql_add_str(self,msg):
         self.c.execute('''select * from recent where string=?''',(msg,))
         if len(self.c)>0:

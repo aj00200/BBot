@@ -116,7 +116,6 @@ class module(api.module):
 		elif '\x01PREFIX\x01' in data:
 			self.notice(nick,'\x01PREFIX My current command character is: %s\x01'%config.cmd_char)
 	def get_raw(self,t,d):
-		print 'Got raw!'
 		if t == 'CODE':
 			if d[0] == '433':
 				# Nick is already in use
