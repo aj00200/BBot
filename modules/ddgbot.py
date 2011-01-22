@@ -23,11 +23,12 @@ class module(api.module):
         xml=parse(t[0])
         try:
             t=str(xml.getElementsByTagName('AbstractText')[0].childNodes[0].wholeText)
+            t=t.replace('<img src="/i/secure.wikimedia.org/wikipedia/en.ico" class="cia">  ','')
             self.msg(channel,'%s: %s'%(nick,t))
         except:
             try:
-                t=str(xml.getElementsByTagName('Answer')[0].childNodes[0].wholeText).replace('<img src="/i/secure.wikimedia.org/wikipedia/en.ico" class="cia">  ','')
+                t=str(xml.getElementsByTagName('Answer')[0].childNodes[0].wholeText)
                 self.msg(channel,'%s: %s'%(nick,t))
             except:
                 if reply_on_notfound:
-                    self.msg(channel,'%s: Sorry, but I couldn\'t find what %s is'%(nick,query))
+                    self.msg(channel,'%s: Sorry, but I couldn\'t find what %s is.'%(nick,query))
