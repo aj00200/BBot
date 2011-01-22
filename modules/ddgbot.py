@@ -26,7 +26,7 @@ class module(api.module):
             self.msg(channel,'%s: %s'%(nick,t))
         except:
             try:
-                t=str(xml.getElementsByTagName('Answer')[0].childNodes[0].wholeText)
+                t=str(xml.getElementsByTagName('Answer')[0].childNodes[0].wholeText).replace('<img src="/i/secure.wikimedia.org/wikipedia/en.ico" class="cia">  ','')
                 self.msg(channel,'%s: %s'%(nick,t))
             except:
                 if reply_on_notfound:
