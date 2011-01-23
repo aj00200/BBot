@@ -45,7 +45,7 @@ class Connection(asynchat.async_chat):
 		self.load_module(module)
 	def handle_connect(self):
 		print('* Connected')
-		self.push('NICK %s\r\nUSER %s BBot BBot :%s\r\n'%(config.nick,'BBot','BBot Version 6.0.0b'))
+		self.push('NICK %s\r\nUSER %s %s %s :%s\r\n'%(config.nick,config.nick,config.nick,config.nick,config.nick))
 	def get_data(self):
 		r=self.data
 		self.data=''
