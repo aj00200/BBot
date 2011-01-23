@@ -18,17 +18,7 @@ class module(api.module):
         self.msglist=[]
         self.lastnot=('BBot',time.time(),'sdkljfls')
         api.module.__init__(self,server)
-    def sql(self):
-        self.db=sqlite3.connect('database.sqlite')
-        self.c=self.db.cursor()
-        self.c.execute('create table if not exists lines (username text, line0 text, ts0 integer, line1 text, ts1 integer, line3 text, ts3 integer, line4 text, ts4 integer, line5 text, ts5 integer, line6 text, ts6 integer, line7 text, ts7 integer, line8 text, ts8)')
-        try:
-            self.c.execute('''create table recent (string, count, ts)''')
-        except:
-            pass
-        self.c=self.db.cursor()
-        self.db.commit()
-        self.db.close()
+
     def privmsg(self,nick,data,channel):
         self.ldata=data.lower()
         if api.checkIfSuperUser(data,config.superusers):
@@ -71,57 +61,7 @@ class module(api.module):
         if found>self.hilight_limit:
             print '* kicking %s out of %s'%(nick,channel)
             self.kick(nick,channel,'Please do not ping that many people')
-        #//////////////////////////////////////////////////////////////
-        #///////////////////////////SQLite Code////////////////////////
-        #//////////////////////////////////////////////////////////////
-        db=sqlite3.connect('database.sqlite')
-        self.c=db.cursor()
-        try:
-            ldata=data.lower()
-            msg=ldata[data.find(' :'):]
-            current=['0',0,'0',0,'0',0,'0',0,'0',0,'0',0,'0',0]
-            self.c.execute('''select * from lines where username=?''',(nick,))
-            self.co=self.c.fetchall()
-            for row in self.co:
-                count=0
-                #print colorz.encode(str(row),'green')
-                for each in range(0,len(row)-1):
-                    if row[each]==msg:
-                        count+=1
-                if count >= self.repeatlimit: ##SQL Repeat Limit
-                    self.kick(nick,channel,'Don\'t repeat yourself. We all heard the first time')
-                    #thread.start_new_thread(self.sql_add_str,(msg))
-                if str(row[0])==nick:
-                    current[0]=row[1]
-                    current[1]=row[2]
-                    current[2]=row[3]
-                    current[3]=row[4]
-                    current[4]=row[5]
-                    current[5]=row[6]
-                    current[6]=row[7]
-                    current[7]=row[8]
-                    current[8]=row[9]
-                    current[9]=row[10]
-                    current[10]=row[11]
-                    current[11]=row[12]
-                    current[12]=row[13]
-            self.c.execute('''delete from lines where username=?''',(nick,))
-            self.c.execute('''insert into lines values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',(nick,msg,time.time(),current[0],current[1],current[2],current[3],current[4],current[5],current[6],current[7],current[8],current[9],current[10],current[11],current[11],current[12]))
-            db.commit()
-        except Exception,e:
-            print colorz.encode('Error: %s; %s'%(type(e),e.args),'red')
-    #/////////////////////////END SQLite Code/////////////////////////
-    def sql_add_str(self,msg):
-        self.c.execute('''select * from recent where string=?''',(msg,))
-        if len(self.c)>0:
-            c=self.c[0][1]
-            if c>2:
-                self.findlist.append(msg[1:])
-                self.c.execute('''delete from recent where string=?''',(msg,))
-            else:
-                c+=1
-                self.c.execute('''delete from recent where string=?''',(msg,))
-                self.c.execute('''insert into recent values(? ? ))''',(msg,c,time.time()))
+
     def get_join(self,nick,channel,ip,user):
         '''Add user to nicklist, and preform optional proxy scan'''
         #webchat=(str(blockbotlib.hex2dec('0x'+str(user[1:3])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[3:5])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[5:7])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[7:9]))))

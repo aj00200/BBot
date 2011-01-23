@@ -15,9 +15,16 @@ class Connection(asynchat.async_chat):
 		# Setup Socket
 		self.sock=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 		if use_ssl:
-			self.ssl_sock=ssl.wrap_socket(self.sock)
-			self.ssl_sock.connect((address,port))
-			self.set_socket(self.ssl_sock)
+			try:
+				self.ssl_sock=ssl.wrap_socket(self.sock)
+				self.ssl_sock.connect((address,port))
+				self.set_socket(self.ssl_sock)
+			except ssl.SSLError,e:
+				print('\x1B[31m');print('There has been an SSL error while connecting to the server')
+				print('Please make sure you are using the proper port')
+				print('If you need help, join #bbot on irc.fossnet.info (port 6667; ssl: 6670)')
+				print('\x1B[m\x1B[m')
+				raise ssl.SSLError(e)
 		else:
 			self.sock.connect((address,port))
 			self.set_socket(self.sock)
