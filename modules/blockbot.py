@@ -4,7 +4,6 @@ import re,api,time,config,thread,colorz,sqlite3
 class module(api.module):
     commands=['slower','faster','?;','setspeed','rehash','protect','sql']
     def __init__(self,server):
-        self.sql()
         self.nicklists={}
         self.hilight_limit=api.getConfigInt('BlockBot','hilight-limit')
         findlist=api.getConfigStr('BlockBot','spam-strings').split('^^^@@@^^^')

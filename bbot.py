@@ -1,7 +1,7 @@
 #! /usr/bin/python
 #This Code is licensed under the GNU GPL v3
 
-version='6.1.0'
+version='6.1.1'
 import socket,asyncore
 import config,api
 if __name__=='__main__':
