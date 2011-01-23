@@ -1,22 +1,32 @@
 #Asynchat Backend for BBot
-import socket,asynchat,asyncore,re,time
+import socket,asynchat,asyncore,re,time,ssl
 import bbot,config
+
+import errno
 connections={}
 class Connection(asynchat.async_chat):
 	re001=re.compile('\.* 001')
 	reNOTICE=re.compile('!(.)+ NOTICE (.)+ :')
-	def __init__(self,address,port,ssl):
+	def __init__(self,address,port,use_ssl):
 		asynchat.async_chat.__init__(self)
-		self.create_socket(socket.AF_INET,socket.SOCK_STREAM)
-		self.set_terminator('\r\n')
-		self.__address__=address
-		self.data=''
-		self.connect((self.__address__,port))
-		#Set Buffer Size
+		self.ssl=use_ssl; self.data=''; self.__address__=address
+		self.modules=[]; self.set_terminator('\r\n')
 
-		self.modules=[]
+		# Setup Socket
+		self.sock=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+		if use_ssl:
+			self.ssl_sock=ssl.wrap_socket(self.sock)
+			self.ssl_sock.connect((address,port))
+			self.set_socket(self.ssl_sock)
+		else:
+			self.sock.connect((address,port))
+			self.set_socket(self.sock)
+
+		# Load Modules
 		for module in config.modules:
 			self.load_module(module)
+	def handle_error(self):
+		raise
 	def load_module(self,module):
 		try:
 			self.modules.append(getattr(__import__('modules.'+module),module).module(self.__address__))

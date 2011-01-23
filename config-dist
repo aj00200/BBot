@@ -1,28 +1,27 @@
 [main]
 nick: Nickname			;The bots nickname
-use-services: True	;Use services like NickServ and ChanServ
-username: username	;The bots nickserv username
-password: password	;The bots nickserv password
-network: irc.network.com 	;The network to connect to
-port: 6667				;The port to connect on
-channels: #bots		;The channels to join on connect
+use-services: True		;Use services like NickServ and ChanServ
+username: username		;The bots nickserv username
+password: password		;The bots nickserv password
+network: irc.network.com	;The network to connect to
+port: 6667			;The port to connect on
+ssl: no				;Connect with SSL (encryption).
+channels: #bots			;The channels to join on connect
 super-users: staff/ host.host.isp.com ;Trusted hosts
 modules: BBot blockbot mathbot trekbot statusbot globalbot debatebot
 wait-after-identify: 5		;Time to wait after identifying to nickserv
-read-wait: 1024	    ;Number of bytes to read each time
-command-char: ?		;Command character
-report-error: #bots	;Channel or nicks to report errors to
-allow-invite:False 	;Allow the bot to be invited to new channels
-ignore-re:				;Regex of messages to ignore
+read-wait: 1024	     		;Number of bytes to read each time
+command-char: ?			;Command character
+report-error: #bots		;Channel or nicks to report errors to
+allow-invite:False 		;Allow the bot to be invited to new channels
+ignore-re:			;Regex of messages to ignore
 backend: asynchat		;Backend to use (asynchat is default)
 [BBot]
-ttl: 10					;The InfoBot2 TTL value
-infobot: false			;Send Infobot queries
-infobots: JCSMarlen BBot aj00200 ;The bots to send Infobot queries
+
 [BlockBot]
 hilight-limit: 5		;Mass-hilight limit
 spam-strings: for all your irc needs^^^@@@^^^gnaa^^^@@@^^^bicycle computers here^^^@@@^^^i can never be klined^^^@@@^^^autistic status^^^@@@^^^dubkat here #seperate strings with ^^^@@@^^^ and don't leave a space between the string and the ^s
 flood-speed: 1.5 ;time in seconds. If 3 messages are said in this time, they will be kicked
-botnet-only: False	;Only be strict on new joins 
+botnet-only: False	  	;Only be strict on new joins 
 [trekbot]
 proxy-scan: false		;Have trekbot module port scan users for proxies on join?
