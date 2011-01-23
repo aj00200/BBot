@@ -5,6 +5,7 @@ import time
 import api
 
 class module(api.module):
+	
 	def __init__(self,address):
 		api.module.__init__(self,address)
 		
@@ -26,20 +27,25 @@ class module(api.module):
 				params=command[command.find(' ')+1:]
 				command=command[:command.find(' ')]
 				
-				
 	# Public Commands
-	def join_game(self,nick,channel,params=None)			
+	def join_game(self,nick,channel,params=None):
+		pass
+	
 	# Internal Methods
 	def randomize_roles(self):
 		pass
+	
+	def invite(self, player, channel):
+		self.raw('INVITE %s %s'%(player,channel))
+		
 	def send_invites(self):
 		count=0
 		for player in self.game['players']:
-			if self.game['players'][player] == 'villiger':
-				self.msg(player,'You are a villiger. Each day phase you can vote on who to kill')
+			if self.game['players'][player] == 'villager':
+				self.msg(player,'You are a villager. Every day phase, you can vote on who to lynch.')
 			elif self.game['players'][player] == 'wolf':
-				self.msg(player,'You are a Werewolf. Each night phase you and the other wolves decide on a victim to kill. Plese see the invite to %s'%self.game['wolf_channel'])
-				self.raw('INVITE %s %s'%(player,self.game['wolf_channel']))
+				self.invite(player, self.game['wolf_channel'])
+				self.msg(player,'You are a Werewolf. Every night phase, you and the other wolves decide on a victim to kill. Plese see the invite to %s'%self.game['wolf_channel'])
 			elif self.game['players'][player] == 'seer':
-				self.msg(player,'You are a seer. Each night phase, you and the other seers decide on a person to "see." You will be told if that person is a villager, a seer, or a wolf. Please see the invite to %s'%self.game['seer_channel'])
-				self.raw('INVITE %s %s'%(player,self.game['seer_channel']))
+				self.invite(player, self.game['seer_channel'])
+				self.msg(player,'You are a seer. Every night phase, you and the other seers decide on a person to "see." You will then be told that person\'s role. Please see the invite to %s'%self.game['seer_channel'])
