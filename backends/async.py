@@ -1,22 +1,39 @@
 #Asynchat Backend for BBot
-import socket,asynchat,asyncore,re,time
+import socket,asynchat,asyncore,re,time,ssl
 import bbot,config
+
+import errno
 connections={}
 class Connection(asynchat.async_chat):
 	re001=re.compile('\.* 001')
 	reNOTICE=re.compile('!(.)+ NOTICE (.)+ :')
-	def __init__(self,address,port,ssl):
+	def __init__(self,address,port,use_ssl):
 		asynchat.async_chat.__init__(self)
-		self.create_socket(socket.AF_INET,socket.SOCK_STREAM)
-		self.set_terminator('\r\n')
-		self.__address__=address
-		self.data=''
-		self.connect((self.__address__,port))
-		#Set Buffer Size
+		self.ssl=use_ssl; self.data=''; self.__address__=address
+		self.modules=[]; self.set_terminator('\r\n')
 
-		self.modules=[]
+		# Setup Socket
+		self.sock=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+		if use_ssl:
+			try:
+				self.ssl_sock=ssl.wrap_socket(self.sock)
+				self.ssl_sock.connect((address,port))
+				self.set_socket(self.ssl_sock)
+			except ssl.SSLError,e:
+				print('\x1B[31m');print('There has been an SSL error while connecting to the server')
+				print('Please make sure you are using the proper port')
+				print('If you need help, join #bbot on irc.fossnet.info (port 6667; ssl: 6670)')
+				print('\x1B[m\x1B[m')
+				raise ssl.SSLError(e)
+		else:
+			self.sock.connect((address,port))
+			self.set_socket(self.sock)
+
+		# Load Modules
 		for module in config.modules:
 			self.load_module(module)
+	def handle_error(self):
+		raise
 	def load_module(self,module):
 		try:
 			self.modules.append(getattr(__import__('modules.'+module),module).module(self.__address__))
@@ -35,7 +52,7 @@ class Connection(asynchat.async_chat):
 		self.load_module(module)
 	def handle_connect(self):
 		print('* Connected')
-		self.push('NICK %s\r\nUSER %s BBot BBot :%s\r\n'%(config.nick,'BBot','BBot Version 6.0.0b'))
+		self.push('NICK %s\r\nUSER %s %s %s :%s\r\n'%(config.nick,config.nick,config.nick,config.nick,config.nick))
 	def get_data(self):
 		r=self.data
 		self.data=''

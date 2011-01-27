@@ -4,7 +4,6 @@ import re,api,time,config,thread,colorz,sqlite3
 class module(api.module):
     commands=['slower','faster','?;','setspeed','rehash','protect','sql']
     def __init__(self,server):
-        self.sql()
         self.nicklists={}
         self.hilight_limit=api.getConfigInt('BlockBot','hilight-limit')
         findlist=api.getConfigStr('BlockBot','spam-strings').split('^^^@@@^^^')
@@ -18,17 +17,7 @@ class module(api.module):
         self.msglist=[]
         self.lastnot=('BBot',time.time(),'sdkljfls')
         api.module.__init__(self,server)
-    def sql(self):
-        self.db=sqlite3.connect('database.sqlite')
-        self.c=self.db.cursor()
-        self.c.execute('create table if not exists lines (username text, line0 text, ts0 integer, line1 text, ts1 integer, line3 text, ts3 integer, line4 text, ts4 integer, line5 text, ts5 integer, line6 text, ts6 integer, line7 text, ts7 integer, line8 text, ts8)')
-        try:
-            self.c.execute('''create table recent (string, count, ts)''')
-        except:
-            pass
-        self.c=self.db.cursor()
-        self.db.commit()
-        self.db.close()
+
     def privmsg(self,nick,data,channel):
         self.ldata=data.lower()
         if api.checkIfSuperUser(data,config.superusers):
@@ -71,17 +60,6 @@ class module(api.module):
             print '* kicking %s out of %s'%(nick,channel)
             self.kick(nick,channel,'Please do not ping that many people')
 
-    def sql_add_str(self,msg):
-        self.c.execute('''select * from recent where string=?''',(msg,))
-        if len(self.c)>0:
-            c=self.c[0][1]
-            if c>2:
-                self.findlist.append(msg[1:])
-                self.c.execute('''delete from recent where string=?''',(msg,))
-            else:
-                c+=1
-                self.c.execute('''delete from recent where string=?''',(msg,))
-                self.c.execute('''insert into recent values(? ? ))''',(msg,c,time.time()))
     def get_join(self,nick,channel,ip,user):
         '''Add user to nicklist, and preform optional proxy scan'''
         #webchat=(str(blockbotlib.hex2dec('0x'+str(user[1:3])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[3:5])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[5:7])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[7:9]))))

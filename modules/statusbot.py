@@ -11,7 +11,7 @@ class module(api.module):
             words=data[data.find('status ')+7:]
             self.statuses[nick.lower()]=words
         elif 'whereis' in data:
-            who=data[data.find('whereis ')+8:]
+            who=data[data.find('whereis ')+8:].strip(' ')
             if who.lower() in self.statuses:
                 self.msg(channel,'%s: %s\'s status is: %s'%(nick,who,self.statuses[who.lower()]))
         if api.checkIfSuperUser(data):

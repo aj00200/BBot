@@ -3,6 +3,7 @@ import urllib,thread,re
 import json
 from xml.dom.minidom import parse, parseString
 class module(api.module):
+
 	commands=['ddg']
 	url='https://duckduckgo.com/?q=%s&o=x'
 	freebase='https://api.freebase.com/api/experimental/topic/standard?id=/en/%s'
