@@ -2,7 +2,9 @@ from __future__ import division
 import q,re,api,math,config
 import libs.mathwiz as geo
 class module(api.module):
-	commands=['math','math help','hex','dec2hex','dec2oct']
+	def __init__(self,address):
+		api.module.__init__(self,address)
+		self.register_commands(self.__address__,['math','math help']
 	allow={
 	')':'..0..',
 	'sqrt(':'..1..',

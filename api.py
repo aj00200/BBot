@@ -39,7 +39,9 @@ def register_commands(address,cmds):
 	if address not in commands:
 		commands[address]=[]
 	try:
-		commands[address]+=cmds
+		for cmd in cmds:
+			if cmd not in commands[address]:
+				commands[address]+=[cmd]
 	except:
 		pass
 def get_command_list(address):

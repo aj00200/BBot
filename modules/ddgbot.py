@@ -3,10 +3,11 @@ import urllib,thread,re
 import json
 from xml.dom.minidom import parse, parseString
 class module(api.module):
-
-	commands=['ddg']
 	url='https://duckduckgo.com/?q=%s&o=x'
 	freebase='https://api.freebase.com/api/experimental/topic/standard?id=/en/%s'
+	def __init__(self,address):
+		api.module.__init__(self,address)
+		api.register_commands(self.__address__,['ddg'])
 	def privmsg(self,nick,data,channel):
 		 if ':'+config.cmd_char+'ddg ' in data:
 				query=data[data.find('ddg ')+4:]

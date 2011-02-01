@@ -24,20 +24,11 @@ class module(api.module):
 	is_words=[
 		' was ',' are ',' am '
 	]
-	def get_command_list(self):
-		try:
-			time.sleep(5)
-			for module in BBot.networks[config.network]:
-				for command in module.commands:
-					self.command_list.append(command)
-		except Exception,e:
-			print 'Error: %s; with args: %s;'%(type(e),e.args)
 	def __init__(self,server):
 		api.module.__init__(self,server)
 		api.register_commands(self.__address__,['goog','wiki','kb','hit','add','del','writedb','load','reload','version','connect','py'])
 		self.command_list=[]
 		self.command_start=':'+config.cmd_char
-		#thread.start_new_thread(self.get_command_list,())
 		self.funcs={
 			'hit':self.hit,
 			'version':self.version,
@@ -163,15 +154,17 @@ class module(api.module):
 		'''Sends the version number to the channel'''
 		self.msg(channel,'I am version %s'%BBot.version)
 	def goog(self,nick,data,channel):
-		if 'goog ' in data:
+		if 'goog ' in api.getMessage(data):
 			w=str(data[data.find('goog ')+5:].replace(' ','+'))
 			self.msg(channel,self.goog_str%w)
 	def wiki(self,nick,data,channel):
-		w=data[data.find('wiki ')+5:].replace(' ','_')
-		self.msg(channel,self.wiki_str%w)
+		if 'wiki ' in api.getMessage(data):
+			w=data[data.find('wiki ')+5:].replace(' ','_')
+			self.msg(channel,self.wiki_str%w)
 	def kb(self,nick,data,channel):
-		w=data[data.find('kb ')+3:]
-		self.msg(channel,self.kb_str%w)
+		if 'kb ' in api.getMessage(data):
+			w=data[data.find('kb ')+3:]
+			self.msg(channel,self.kb_str%w)
 	def help(self,nick,data,channel):
 		self.msg(channel,'%s: %s'%(nick,', '.join(api.get_command_list(self.__address__))))
 	def su_join(self,nick,data,channel):
