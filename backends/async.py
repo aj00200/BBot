@@ -38,7 +38,7 @@ class Connection(asynchat.async_chat):
 		try:
 			self.modules.append(getattr(__import__('modules.'+module),module).module(self.__address__))
 			return True
-		except ImportError:
+		except ImportError,e:
 			print(' * ImportError loading %s'%module)
 	def unload_module(self,module):
 		for mod in self.modules:
@@ -51,7 +51,7 @@ class Connection(asynchat.async_chat):
 		time.sleep(2)
 		self.load_module(module)
 	def handle_connect(self):
-		print('* Connected')
+		print(' * Connected')
 		self.push('NICK %s\r\nUSER %s %s %s :%s\r\n'%(config.nick,config.nick,config.nick,config.nick,config.nick))
 	def get_data(self):
 		r=self.data

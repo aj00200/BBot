@@ -1,7 +1,7 @@
 """This module allows channel operators to execute several commands through BBot, such as kicking, banning,
 promoting and more. It can be used to manage channels on networks without services, such as EFnet."""
 
-import q,api,config
+import api,config
 class module(api.module):
 	commands=['op','deop','kick','ban','unban','nick','echo','mode','voice','devoice','blacklist','unblacklist','listbl','whitelist','unwhitelist','topic']
 	def __init__(self,server=config.network):
