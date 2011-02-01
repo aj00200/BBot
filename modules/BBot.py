@@ -17,7 +17,6 @@ except:
 class module(api.module):
 	goog_str='https://encrypted.google.com/search?q=%s'
 	wiki_str='https://secure.wikimedia.org/wikipedia/en/wiki/%s'
-	kb_str='http://www.kb.aj00200.heliohost.org/index.py?q=%s'
 	stop_words=[
 		' a ',' the ',' was ',' an '
 	]
@@ -26,7 +25,7 @@ class module(api.module):
 	]
 	def __init__(self,server):
 		api.module.__init__(self,server)
-		api.register_commands(self.__address__,['goog','wiki','kb','hit','add','del','writedb','load','reload','version','connect','py'])
+		api.register_commands(self.__address__,['goog','wiki','hit','add','del','writedb','load','reload','version','connect','py'])
 		self.command_list=[]
 		self.command_start=':'+config.cmd_char
 		self.funcs={
@@ -34,7 +33,6 @@ class module(api.module):
 			'version':self.version,
 			'goog':self.goog,
 			'wiki':self.wiki,
-			'kb':self.kb,
 			'help':self.help
 		}
 		self.sufuncs={
@@ -161,10 +159,6 @@ class module(api.module):
 		if 'wiki ' in api.getMessage(data):
 			w=data[data.find('wiki ')+5:].replace(' ','_')
 			self.msg(channel,self.wiki_str%w)
-	def kb(self,nick,data,channel):
-		if 'kb ' in api.getMessage(data):
-			w=data[data.find('kb ')+3:]
-			self.msg(channel,self.kb_str%w)
 	def help(self,nick,data,channel):
 		self.msg(channel,'%s: %s'%(nick,', '.join(api.get_command_list(self.__address__))))
 	def su_join(self,nick,data,channel):
