@@ -4,7 +4,7 @@ import libs.mathwiz as geo
 class module(api.module):
 	def __init__(self,address):
 		api.module.__init__(self,address)
-		self.register_commands(self.__address__,['math','math help']
+		self.register_commands(self.__address__,['math','math help'])
 	allow={
 	')':'..0..',
 	'sqrt(':'..1..',
