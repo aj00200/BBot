@@ -82,8 +82,8 @@ class module(api.module):
 				self.query(cmd,nick,channel)
 
 		#Check if I've been pinged
-		if re.search(':'+re.escape(self.lnick)+'[:,]',ldata):
-			q=ldata[ldata.find(self.lnick)+len(self.lnick):]
+		if (' :%s: '%self.lnick in ldata) or (' :%s, '%self.lnick in ldata):
+			q=ldata[ldata.find(self.lnick)+len(self.lnick)+2:]
 			self.query(q,nick,channel)
 			return 0
 
