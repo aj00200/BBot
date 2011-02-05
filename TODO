@@ -2,6 +2,5 @@
 * Create a twisted backend
 * Create a paranoid backend for asynchat
  * Should run all modules in a try block and report errors
-* SSL
 ===Module Changes Needed===
 * Replace BlockBot() with Spam0

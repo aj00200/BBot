@@ -1,5 +1,5 @@
 import config
-backend=getattr(__import__('backends.async'),'async')
+backend=getattr(__import__('backends.%s'%config.backend),config.backend)
 def getConfigStr(cat,name):
 	return config.c.get(cat,name)
 def getConfigInt(cat,name):

@@ -2,7 +2,6 @@
 import socket,asynchat,asyncore,re,time,ssl
 import bbot,config
 
-import errno
 connections={}
 class Connection(asynchat.async_chat):
 	re001=re.compile('\.* 001')

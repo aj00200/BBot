@@ -17,3 +17,5 @@ cmd_char=c.get('main','command-char')
 error_chan=c.get('main','report-error')
 allow_invite=c.get('main','allow-invite')
 ignore=re.compile(c.get('main','ignore-re'))
+
+backend=c.get('main','backend')
