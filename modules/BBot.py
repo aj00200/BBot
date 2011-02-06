@@ -146,8 +146,9 @@ class module(api.module):
 	#////////Single Functions/////////
 	def hit(self,nick,data,channel):
 		'''Causes BBot to punch someone'''
-		who=data[data.find('hit ')+4:]
-		self.msg(channel,'\x01ACTION punches %s\x01'%who)
+		if 'hit ' in data:
+			who=data[data.find('hit ')+4:]
+			self.msg(channel,'\x01ACTION punches %s\x01'%who)
 	def version(self,nick,data,channel):
 		'''Sends the version number to the channel'''
 		self.msg(channel,'I am version %s'%BBot.version)
