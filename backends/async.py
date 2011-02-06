@@ -24,7 +24,10 @@ class Connection(asynchat.async_chat):
 				print('\x1B[m\x1B[m')
 				raise ssl.SSLError(e)
 		else:
-			self.sock.connect((address,port))
+			try:
+				self.sock.connect((address,port))
+			except:
+				print('There was an error connecting to %s'%address')
 			self.set_socket(self.sock)
 
 		# Load Modules
