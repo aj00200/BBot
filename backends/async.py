@@ -23,11 +23,13 @@ class Connection(asynchat.async_chat):
 				print('If you need help, join #bbot on irc.fossnet.info (port 6667; ssl: 6670)')
 				print('\x1B[m\x1B[m')
 				raise ssl.SSLError(e)
+			except socket.error,e:
+				print('There was an error connecting to %s'%address)
 		else:
 			try:
 				self.sock.connect((address,port))
-			except:
-				print('There was an error connecting to %s'%address')
+			except socket.error,e:
+				print('There was an error connecting to %s'%address)
 			self.set_socket(self.sock)
 
 		# Load Modules
