@@ -15,7 +15,7 @@ command-char: ?			;Command character
 report-error: #bots		;Channel or nicks to report errors to
 allow-invite:False 		;Allow the bot to be invited to new channels
 ignore-re:			;Regex of messages to ignore
-backend: asynchat		;Backend to use (asynchat is default)
+backend: async		;Backend to use (asynchat is default)
 [BBot]
 
 [BlockBot]
