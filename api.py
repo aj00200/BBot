@@ -53,42 +53,15 @@ def get_command_list(address):
 # Base Module
 class module(object):
 	'''Base class that all modules should use to maintain best compatibility with future versions of the API'''
-	commands=[]
 	def __init__(self,address):
 		self.__address__=address
+	# Receive
 	def privmsg(self,nick,data,channel):
 		'''Called every time a PRIVMSG is recieved.
 			nick: the nickname of the person sending the message
 			data: the raw data recieced (without the line ending)
 			channel: the channel the message was recieved in'''
 		pass
-	def append(self,channel,data=' '):
-		print 'Use the NEW way to send things, msg(channel,data)'
-	def msg(self,channel,data=' '):
-		'''Send a message, data, to channel
-			Example: self.msg('#bbot','Hello world!')'''
-		backend.connections[self.__address__].push('PRIVMSG %s :%s\r\n'%(channel,data))
-		print 'PRIVMSG %s :%s'%(channel,data)
-	def notice(self,channel,data):
-		'''Send a notice to a channel
-			Example: self.notice('#bbot','A new BBot version has been released')'''
-		backend.connections[self.__address__].push('NOTICE %s :%s\r\n'%(channel,data))
-		print ('NOTICE %s :%s'%(channel,data))
-	def join(self,channel):
-		'''Have BBot join a channel:
-			Example: self.join('#bbot')'''
-		backend.connections[self.__address__].push('JOIN %s\r\n'%channel)
-		print('JOIN %s'%channel)
-	def part(self,channel,message='BBot the IRC Bot'):
-		'''Have BBot part a channel
-			Example: self.part('#bbot')'''
-		backend.connections[self.__address__].push('PART %s :%s\r\n'%(channel,message))
-	#def kick(self,channel,kickee,reason):
-	  #  backend.connections[self.__address__].push('KICK %s %s :%s\r\n'%(channel,kickee,reason))
-	def kick(self,nick,channel,message=''): #nick,channel,message)
-		'''Kick a person out of a channel
-			Example: self.kick('spammer','#bbot','Spam is not allowed in #bbot')'''
-		backend.connections[self.__address__].push("KICK "+channel+" "+nick+" :"+message+"\r\n")
 	def get_notice(self,nick,data,channel):
 		'''Called every time a notice is recieved'''
 		pass
@@ -99,12 +72,33 @@ class module(object):
 			type is set to 'CODE' when messages that corespond to a numberic code are recieved
 			type is set to 'MODE' when a mode is changed'''
 		pass
+	# Send
+	def msg(self,channel,data=' '):
+		'''Send a message, data, to channel
+			Example: self.msg('#bbot','Hello world!')'''
+		self.raw('PRIVMSG %s :%s\r\n'%(channel,data))
+	def notice(self,channel,data):
+		'''Send a notice to a channel
+			Example: self.notice('#bbot','A new BBot version has been released')'''
+		self.raw('NOTICE %s :%s\r\n'%(channel,data))
+	def join(self,channel):
+		'''Have BBot join a channel:
+			Example: self.join('#bbot')'''
+		self.raw('JOIN %s\r\n'%channel)
+	def part(self,channel,message='BBot the IRC Bot'):
+		'''Have BBot part a channel
+			Example: self.part('#bbot')'''
+		self.raw('PART %s :%s\r\n'%(channel,message))
+	def kick(self,nick,channel,message=''):
+		'''Kick a person out of a channel
+			Example: self.kick('spammer','#bbot','Spam is not allowed in #bbot')'''
+		self.raw('KICK '+channel+' '+nick+' :'+message+'\r\n')
 	def mode(self,nick,channel,mode):
 		'''Set the mode, mode, on nick in channel. If you want to set a normal channel mode, set nick to ''.'''
-		backend.connections[self.__address__].push('MODE '+channel+' '+mode+' '+nick+'\r\n')
+		self.raw('MODE '+channel+' '+mode+' '+nick+'\r\n')
 	def raw(self,data):
 		'''Send raw data to the server
 			Example: self.raw('PRIVMSG #bbot :This is a raw message')
 			Note: the line ending is not required'''
-		print '%s'%(data)
 		backend.connections[self.__address__].push('%s\r\n'%(data))
+		print 'Send: %s'%data

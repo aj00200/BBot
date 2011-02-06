@@ -60,7 +60,7 @@ class Connection(asynchat.async_chat):
 		data=self.get_data()
 		if re.search(config.ignore,data.lower()):
 			return
-		print(data)
+		print('Recv: %s'%data)
 		if data[:4]=='PING':
 			self.push('PONG %s\r\n'%data[5:])
 		elif re.search(self.reNOTICE,data):
