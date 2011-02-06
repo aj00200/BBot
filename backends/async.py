@@ -5,7 +5,6 @@ import bbot,config
 connections={}
 class Connection(asynchat.async_chat):
 	re001=re.compile('\.* 001')
-	reNOTICE=re.compile('!(.)+ NOTICE (.)+ :')
 	def __init__(self,address,port,use_ssl):
 		asynchat.async_chat.__init__(self)
 		self.ssl=use_ssl; self.data=''; self.__address__=address
@@ -60,20 +59,21 @@ class Connection(asynchat.async_chat):
 		data=self.get_data()
 		if re.search(config.ignore,data.lower()):
 			return
+		command=data.split(' ',2)[1]
 		print('Recv: %s'%data)
 		if data[:4]=='PING':
 			self.push('PONG %s\r\n'%data[5:])
-		elif re.search(self.reNOTICE,data):
-			nick=data[1:data.find('!')]
-			channel=data[data.find('ICE')+4:data.find(' :')]
-			for module in self.modules:
-				module.get_notice(nick,data,channel)
-		elif ' PRIVMSG ' in data:
+		elif command == 'PRIVMSG':
 			nick=data[1:data.find('!')]
 			channel=data[data.find('MSG')+4:data.find(' :')]
 			for module in self.modules:
 				module.privmsg(nick,data,channel)
-		elif ' JOIN :#' in data:
+		elif command == 'NOTICE':
+			nick=data[1:data.find('!')]
+			channel=data[data.find('ICE')+4:data.find(' :')]
+			for module in self.modules:
+				module.get_notice(nick,data,channel)
+		elif command == 'JOIN':
 			nick=data.split('!')[0][1:]
 			if nick.find('#')==-1:
 				channel=data[data.find(' :#')+2:]
