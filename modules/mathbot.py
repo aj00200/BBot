@@ -74,11 +74,11 @@ class module(api.module):
 		elif ':%smath '%config.cmd_char in ldata:
 			self.e=data[data.find('math ')+5:]
 			for each in self.allow:
-				self.e=self.e.replace(each,self.allow[each])
+				self.e=self.e.replace(each,' %s '%self.allow[each])
 			for each in self.chars:
 				self.e=self.e.replace(each,'')
 			for each in self.invert:
-				self.e=self.e.replace(each,self.invert[each])
+				self.e=self.e.replace(' %s '%each,self.invert[each])
 			self.e=self.e.replace('//','.0/')
 			try:
 				if self.e.find('**')!=-1:
