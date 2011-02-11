@@ -188,6 +188,9 @@ class module(api.module):
 		else:
 			self.notice(channel,'Error loading %s'%query)
 	def su_py(self,nick,data,channel):
+		if 'py ' not in data:
+			self.msg(channel,'%s: ...'%nick)
+			return
 		self.q=data[data.find('py ')+3:]
 		try:
 			ret=str(eval(self.q))

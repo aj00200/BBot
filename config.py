@@ -1,6 +1,6 @@
 import ConfigParser,re
 c=ConfigParser.ConfigParser()
-f=open('config','r')
+f=open('config.conf','r')
 c.readfp(f)
 nick=c.get('main','nick')
 username=c.get('main','username')
