@@ -1,35 +1,35 @@
 import config
 backend=getattr(__import__('backends.%s'%config.backend),config.backend)
-def getConfigStr(cat,name):
+def get_config_str(cat,name):
 	return config.c.get(cat,name)
-def getConfigInt(cat,name):
+def get_config_int(cat,name):
 	return config.c.getint(cat,name)
-def getConfigFloat(cat,name):
+def get_config_float(cat,name):
 	return config.c.getfloat(cat,name)
-def getConfigBool(cat,name):
+def get_config_bool(cat,name):
 	return config.c.getboolean(cat,name)
-def getHost(data):
+def get_host(data):
 	'''Returns the hostname (IP address) of the person who sent the message passed to the variable data'''
 	return data[data.find('@')+1:data.find(' ')]
-def getNick(data):
+def get_nick(data):
 	'''Returns the nickname of the person who sent the message passed to this function'''
 	return data[1:data.find('!')]
-def getIdent(data):
+def get_ident(data):
 	'''Returns the ident of the person who sent the message passed to this function'''
 	return data[data.find('!')+1:data.find('@')]
-def getMessage(data):
+def get_message(data):
 	'''Returns the actual message that was sent without the nickname, hostname, and so on'''
 	return data[data.find(' :')+2:]
-def hostInList(data,list):
+def host_in_list(data,list):
 	'''Tells you if the host of the person who sent the message that is pased as the first arg is in the list of hosts which is the second arg'''
-	host=getHost(data)
+	host=get_host(data)
 	for su in list:
 		if host.find(su)!=-1:
 			return True
 	else:
 		return False
-def checkIfSuperUser(data,superusers=config.superusers):
-	return hostInList(data,superusers)
+def check_if_super_user(data,superusers=config.superusers):
+	return host_in_list(data,superusers)
 def load_module(server,module):
 	return backend.connections[server].load_module(module)
 

@@ -14,7 +14,7 @@ class module(api.module):
             who=data[data.find('whereis ')+8:].strip(' ')
             if who.lower() in self.statuses:
                 self.msg(channel,'%s: %s\'s status is: %s'%(nick,who,self.statuses[who.lower()]))
-        if api.checkIfSuperUser(data):
+        if api.check_if_super_user(data):
             if '%stimer'%config.cmd_char in data:
                 words=data[data.find('timer ')+6:]
                 words=words.split('m ',1)

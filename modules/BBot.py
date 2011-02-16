@@ -62,7 +62,7 @@ class module(api.module):
 				cmd=cmd[:cmd.find(' ')]
 
 			#Superuser Commands
-			if api.checkIfSuperUser(data):
+			if api.check_if_super_user(data):
 				if ' > ' in data:
 					channel=data[data.find(' > ')+3:]
 					data=data[:data.find(' > ')]
@@ -109,9 +109,9 @@ class module(api.module):
 			if d[0] == '433':
 				# Nick is already in use
 				self.raw('NICK %s_'%config.nick)
-				if api.getConfigBool('main','use-services'):
+				if api.get_config_bool('main','use-services'):
 					self.msg('NickServ','GHOST %s %s'%(config.nick,config.password))
-					time.sleep(api.getConfigFloat('main','wait-after-identify'))
+					time.sleep(api.get_config_float('main','wait-after-identify'))
 					self.raw('NICK %s'%config.nick)
 	def add_factoid(self,query,nick):
 		tmp=query
@@ -153,11 +153,11 @@ class module(api.module):
 		'''Sends the version number to the channel'''
 		self.msg(channel,'I am version %s'%BBot.version)
 	def goog(self,nick,data,channel):
-		if 'goog ' in api.getMessage(data):
+		if 'goog ' in api.get_message(data):
 			w=str(data[data.find('goog ')+5:].replace(' ','+'))
 			self.msg(channel,self.goog_str%w)
 	def wiki(self,nick,data,channel):
-		if 'wiki ' in api.getMessage(data):
+		if 'wiki ' in api.get_message(data):
 			w=data[data.find('wiki ')+5:].replace(' ','_')
 			self.msg(channel,self.wiki_str%w)
 	def help(self,nick,data,channel):

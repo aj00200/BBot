@@ -5,7 +5,7 @@ class modules(api.module):
     def __init__(self,server):
         api.module.__init__(self,server)
     def go(self,nick,data,channel):
-        if api.checkIfSuperUser(data):
+        if api.check_if_super_user(data):
             if data.find('?kline ')!=-1:
                 nick=data[data.find('?kline ')+7:]
                 print nick

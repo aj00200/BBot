@@ -90,7 +90,7 @@ class Connection(asynchat.async_chat):
 				for module in self.modules:
 					module.get_join(nick,user,host,channel)
 		elif re.search(self.re001,data):
-			if bbot.api.getConfigBool('main','use-services'):
+			if bbot.api.get_config_bool('main','use-services'):
 				self.push('PRIVMSG NickServ :IDENTIFY %s %s\r\n'%(config.username,config.password))
 				time.sleep(config.sleep_after_id)
 			for channel in config.autojoin:

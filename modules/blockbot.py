@@ -6,12 +6,12 @@ class module(api.module):
         api.module.__init__(self,server)
         api.register_commands(self.__address__,['?;','rehash'])
         self.nicklists={}
-        self.hilight_limit=api.getConfigInt('BlockBot','hilight-limit')
-        findlist=api.getConfigStr('BlockBot','spam-strings').split('^^^@@@^^^')
+        self.hilight_limit=api.get_config_int('BlockBot','hilight-limit')
+        findlist=api.get_config_str('BlockBot','spam-strings').split('^^^@@@^^^')
         self.findlist=[]
         for each in findlist:
             self.findlist.append(re.compile(each))
-        self.flood_speed=api.getConfigFloat('BlockBot','flood-speed')
+        self.flood_speed=api.get_config_float('BlockBot','flood-speed')
         self.repeatlimit=3
         self.repeat_time=3
         self.repeat_1word=4
@@ -20,7 +20,7 @@ class module(api.module):
 
     def privmsg(self,nick,data,channel):
         self.ldata=data.lower()
-        if api.checkIfSuperUser(data,config.superusers):
+        if api.check_if_super_user(data,config.superusers):
             if ' :?; ' in self.ldata:
                 word=data[data.find(' :'+config.cmd_char+'; ')+4+len(config.cmd_char):]
                 self.findlist.append(word)
@@ -44,7 +44,7 @@ class module(api.module):
 	                elif msg.split()>1:
 	                    if (self.msglist[0][2]==self.msglist[1][2]==self.msglist[2][2]) and (self.msglist[0][1]-self.msglist[1][1]<self.repeat_time):
 	                        self.kick(nick,channel,'Please do not repeat')
-	                        self.mode('*!*@%s'%api.getHost(data),channel,'+b')
+	                        self.mode('*!*@%s'%api.get_host(data),channel,'+b')
 	        except IndexError:
 	            pass
     def check_hilight(self,nick,data,channel):

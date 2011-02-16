@@ -13,9 +13,9 @@ class module(api.module):
 		api.module.__init__(self,address)		
 		self.game={
 			'phase':'waiting',
-			'main_channel':api.getConfigStr('werewolf','main-channel'),
-			'wolf_channel':api.getConfigStr('werewolf','wolf-channel'),
-			'seer_channel':api.getConfigStr('werewolf','seer-channel'),
+			'main_channel':api.get_config_str('werewolf','main-channel'),
+			'wolf_channel':api.get_config_str('werewolf','wolf-channel'),
+			'seer_channel':api.get_config_str('werewolf','seer-channel'),
 			'players':{},
 			'roles':{},
 
@@ -41,7 +41,7 @@ class module(api.module):
 				command=command[:command.find(' ')]
 			if command in self.commands:
 				self.commands[command](nick,channel,params)
-			elif api.checkIfSuperUser(data) and command in self.su_commands:
+			elif api.check_if_super_user(data) and command in self.su_commands:
 				self.su_commands[command](nick,channel,params)
 	# Public Commands
 	def join_game(self,nick,channel,params=None):
