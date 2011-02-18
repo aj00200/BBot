@@ -50,6 +50,19 @@ def get_command_list(address):
 	except:
 		return 'There was an error processing your request'
 
+# Hooks
+hooks={}
+def hook_command(name,callback,server):
+	'''Hook a command for use by the backend, using this when possible will increase the speed of the bot and your module'''
+	if (server not in hooks):
+		return False
+	elif (name in hooks[server]):
+		return False
+	try:
+		hooks[name]=callback
+		return True
+	except:
+		return False
 # Base Module
 class module(object):
 	'''Base class that all modules should use to maintain best compatibility with future versions of the API'''

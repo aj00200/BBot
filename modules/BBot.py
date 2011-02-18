@@ -47,6 +47,10 @@ class module(api.module):
 			'connect':self.su_connect,
 			'del':self.su_del
 		}
+
+		# Hook Commands
+		api.hook_command('hit',self.hit,server)
+		api.hook_command('version',self.version,server)
 		self.lnick=config.nick.lower()
 	def __destroy__(self):
 		pass
@@ -83,7 +87,8 @@ class module(api.module):
 
 		#Check if I've been pinged
 		if (' :%s: '%self.lnick in ldata) or (' :%s, '%self.lnick in ldata):
-			q=ldata[ldata.find(self.lnick)+len(self.lnick)+2:]
+			msg=api.get_message(data).lower()
+			q=msg[msg.find(self.lnick)+len(self.lnick)+2:]
 			self.query(q,nick,channel)
 			return 0
 
@@ -144,12 +149,12 @@ class module(api.module):
 			self.msg(channel,str(dict[q].replace('%n',nick)))
 
 	#////////Single Functions/////////
-	def hit(self,nick,data,channel):
+	def hit(self,nick,channel,message):
 		'''Causes BBot to punch someone'''
-		if 'hit ' in data:
-			who=data[data.find('hit ')+4:]
+		if 'hit ' in message:
+			who=message[message.find('hit ')+4:]
 			self.msg(channel,'\x01ACTION punches %s\x01'%who)
-	def version(self,nick,data,channel):
+	def version(self,nick,channel,message):
 		'''Sends the version number to the channel'''
 		self.msg(channel,'I am version %s'%BBot.version)
 	def goog(self,nick,data,channel):

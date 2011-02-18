@@ -1,14 +1,19 @@
 #Asynchat Backend for BBot
 import socket,asynchat,asyncore,re,time,ssl
 import bbot,config
+import api
 
 connections={}
 class Connection(asynchat.async_chat):
 	re001=re.compile('\.* 001')
 	def __init__(self,address,port,use_ssl):
+		# Setup Asynchat
 		asynchat.async_chat.__init__(self)
 		self.ssl=use_ssl; self.data=''; self.__address__=address
 		self.modules=[]; self.set_terminator('\r\n')
+
+		# Setup Command Hooks
+		api.hooks[address]={}
 
 		# Setup Socket
 		self.sock=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -75,6 +80,8 @@ class Connection(asynchat.async_chat):
 			channel=data[data.find('MSG')+4:data.find(' :')]
 			for module in self.modules:
 				module.privmsg(nick,data,channel)
+			for cmd in api.hooks[self.__address__]:
+				cmd(nick,channel,api.get_message(data))
 		elif command == 'NOTICE':
 			nick=data[1:data.find('!')]
 			channel=data[data.find('ICE')+4:data.find(' :')]
