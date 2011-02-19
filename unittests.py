@@ -7,13 +7,13 @@ if ('--help') in sys.argv:
     print('Usage:')
     print('  --test <list of options>')
     print('    Test only the code listed after test (seperate by commas')
-    print('    ex: ./unittests.py --test api,BBot')
+    print('    ex: ./unittests.py --test api, BBot')
 
 # Tests to Run
 if ('--test' in sys.argv):
-    tests=sys.argv[sys.argv.find('--test')+1].split(',')
+    tests = sys.argv[sys.argv.find('--test')+1].split(', ')
 else:
-    tests=['api']
+    tests = ['api']
 
 # Import test classes
 if ('api' in tests):
@@ -21,5 +21,5 @@ if ('api' in tests):
 
 
 # Run the loaded tests
-if (__name__ == '__main__'):
+if (__name__ ==  '__main__'):
     unittest.main()
