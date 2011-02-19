@@ -1,9 +1,11 @@
+'''Reads config.conf and parses common values
+for easy access by other modules'''
 import ConfigParser
 import re
 
 c = ConfigParser.ConfigParser()
-f = open('config.conf', 'r')
-c.readfp(f)
+file = open('config.conf', 'r')
+c.readfp(file)
 nick = c.get('main', 'nick')
 username = c.get('main', 'username')
 password = c.get('main', 'password')

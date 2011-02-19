@@ -1,4 +1,4 @@
-open = '\x1B['
+c_open = '\x1B['
 close = open+'m'
 colors = {
     'red':'31;40m', 
@@ -10,10 +10,11 @@ colors = {
     'yellow':'33;40m'
 }
 def encode(text, color, ):
+    '''Convert text to a color for terminal printing'''
     if color in colors:
-        return open+colors[color]+text+open+'m'+close
+        return c_open+colors[color]+text + c_open+'m' + close
     else:
-        raise ColorError('Color %s does not exist'%color)
+        raise ColorError('Color %s does not exist' % color)
 class ColorError(Exception):
     def __init__(self, msg):
         self.args.append(msg)
