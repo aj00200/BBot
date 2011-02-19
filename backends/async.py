@@ -46,7 +46,7 @@ class Connection(asynchat.async_chat):
         raise
     def load_module(self, module):
         try:
-            self.modules.append(getattr(__import__('modules.'+module), module).module(self.__address__))
+            self.modules.append(getattr(__import__('modules.'+module), module).Module(self.__address__))
             return True
         except ImportError, e:
             print(' * ImportError loading %s'%module)

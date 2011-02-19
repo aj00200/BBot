@@ -1,5 +1,7 @@
 import q, re, api
-class module(api.module):
+class Module(api.module):
+    '''A module for matching regular expressions and
+    forwarding the data to a nick or channel'''
     commands = ['grepfwd']
     def __init__(self, server):
         self.fwds = {}

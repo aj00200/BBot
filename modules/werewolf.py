@@ -8,7 +8,7 @@ import api
 import config
 import libs.wolflib
 
-class module(api.module):
+class Module(api.module):
     def __init__(self, address):
         api.module.__init__(self, address)        
         self.game = {

@@ -1,6 +1,6 @@
-import q
 import api
-class module(api.module):
+
+class Module(api.module):
     def privmsg(self, nick, data, channel): #catch privmsgs
       try: #if it can't split the message, ignore the error
         message = data[data.find(' :')+2:]

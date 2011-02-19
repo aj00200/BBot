@@ -4,17 +4,24 @@ aj00200's Knowledge Base. It also allows the admin to execute functions like
 loading modules, connecting to other networks and more. Additionally, it can
 output important BBot information like its version."""
 
-import api, re, config
+import re
+import time
+import thread
+
+import api
+import config
 import bbot as BBot
-import time, thread, json
+
 try:
-    f = open('database.json')
-    dict = json.load(f)
-    f.close()
-    del f
+    import json
+    file = open('database.json')
+    dict = json.load(file)
+    file.close()
+    del file
 except:
+    print(' * Could not load the factoid file')
     dict = {}
-class module(api.module):
+class Module(api.module):
     goog_str = 'https://encrypted.google.com/search?q = %s'
     wiki_str = 'https://secure.wikimedia.org/wikipedia/en/wiki/%s'
     stop_words = [
@@ -28,8 +35,7 @@ class module(api.module):
         api.register_commands(self.__address__, ['goog', 'wiki', 'hit', 'add', 'del', 'writedb', 'load', 'reload', 'version', 'connect', 'py'])
         self.command_list = []
         self.command_start = ':'+config.cmd_char
-        self.funcs = {
-        }
+        self.cmd_len = len(self.command_start)
         self.sufuncs = {
             'join':self.su_join, 
             'writedb':self.su_writedb, 
@@ -69,7 +75,7 @@ class module(api.module):
                     self.sufuncs[cmd](nick, data, channel)
     
             # Normal Commands
-            cmd = data[data.find(self.command_start)+len(self.command_start):]
+            cmd = data[data.find(self.command_start)+self.cmd_len:]
             if ' | ' in cmd:
                 nick = cmd[cmd.find(' | ')+3:]
                 cmd = cmd[:cmd.find(' | ')]
@@ -84,7 +90,7 @@ class module(api.module):
         # Answer basic questions
         ldata = ldata.replace('whats', 'what is')
         if re.search('(what|where|who) (is|was|are|am)', ldata):
-            for word in self.stop_words:
+            for word in self.stop_words3:
                 ldata = ldata.replace(word, ' ')
             for word in self.is_words:
                 ldata = ldata.replace(word, ' is ')
@@ -116,21 +122,6 @@ class module(api.module):
             return True
         except IndexError:
             return False
-    def del_factoid(self, query):
-        if query in dict:
-            del dict[query]
-    def write_dict(self):
-        f = open('database.json', 'w')
-        f.write(json.dumps(dict))
-        f.close()
-    def read_dict(self):
-        f = open('database.json')
-        dict = json.load(f)
-        f.close()
-    def query_dict(self, query):
-        '''Primarily for the unittester    '''
-        if query.lower() in dict:
-            return str(dict[query.lower()])
     def query(self, query, nick, channel):
         '''Querys the database for the factoid 'query', and returns its value to the channel if it is found'''
         q = unicode(query.lower())
@@ -139,67 +130,88 @@ class module(api.module):
 
     # Single Functions
     def hit(self, nick, channel, msg):
-        '''Causes BBot to punch someone'''
+        '''Causes BBot to punch someone; Parameters: nick to hit'''
         if 'hit ' in msg:
             who = msg[msg.find('hit ')+4:]
-            self.msg(channel, '\x01ACTION punches %s\x01'%who)
+            self.msg(channel, '\x01ACTION punches %s\x01' % who)
     def version(self, nick, channel, msg):
-        '''Sends the version number to the channel'''
-        self.msg(channel, 'I am version %s'%BBot.VERSION)
+        '''Sends the version number to the channel; Parameters: None'''
+        self.msg(channel, 'I am version %s' % BBot.VERSION)
     def goog(self, nick, channel, msg):
+        '''Give a Google URL for a search; Parameters: search query'''
         if 'goog ' in msg:
             w = str(msg[msg.find('goog ')+5:].replace(' ', '+'))
-            self.msg(channel, self.goog_str%w)
+            self.msg(channel, self.goog_str % w)
     def wiki(self, nick, channel, msg):
+        '''Give a Wikipedia URL for a page; Parameters: page name'''
         if 'wiki ' in msg:
             w = msg[msg.find('wiki ')+5:].replace(' ', '_')
-            self.msg(channel, self.wiki_str%w)
+            self.msg(channel, self.wiki_str % w)
     def help(self, nick, channel, msg):
-        self.msg(channel, '%s: %s'%(nick, ', '.join(api.get_command_list(self.__address__))))
+        self.msg(channel, '%s: %s' % (nick, ', '.join(api.get_command_list(self.__address__))))
     def su_join(self, nick, data, channel):
         '''Makes BBot join the channel which is the param'''
-        self.raw('JOIN %s'%data[data.find('join ')+5:])
+        self.raw('JOIN %s' % data[data.find('join ')+5:])
     def su_writedb(self, nick, data, channel):
-        '''Writes the factoids database to the harddrive'''
-        self.write_dict()
+        '''Writes the factoids database to the harddrive; Parameters: None'''
+        write_dict()
         self.notice(channel, '<<Wrote Database>>')
     def su_raw(self, nick, data, channel):
+        '''Send a raw message to the server (warning, unexpected results may occur); Parameters: a raw command'''
         self.raw(data[data.find('raw ')+4:])
     def su_part(self, nick, data, channel):
-        self.raw('PART %s'%data[data.find('part ')+5:])
+        '''Part a channel; Parameters: a channel name'''
+        self.raw('PART %s' % data[data.find('part ')+5:])
     def su_add(self, nick, data, channel):
+        '''Add a factoid; Parameters: a factoid name and a factoid body seperated by ":::" - For example, ?add test:::%n: it works!'''
         query = data[data.find(' :')+2:]
         query = query[query.find('add ')+4:].split(':::')
         if self.add_factoid(query, nick):
-            self.notice(channel, '<<Added %s>>'%query)
+            self.notice(channel, '<<Added %s>>' % query)
         else:
-            self.msg(channel, '%s: Adding of the factoid failed. Make sure you are using the proper syntax.'%nick)
+            self.msg(channel, '%s: Adding of the factoid failed. Make sure you are using the proper syntax.' % nick)
     def su_load(self, nick, data, channel):
+        '''Load a module; Parameters: a module name'''
         query = data[data.find(' :')+2:]
         query = query[query.find('load ')+5:]
         if api.load_module(self.__address__, query):
-            self.notice(channel, '<<Loaded %s>>'%query)
+            self.notice(channel, '<<Loaded %s>>' % query)
         else:
-            self.notice(channel, 'Error loading %s'%query)
+            self.notice(channel, 'Error loading %s' % query)
     def su_py(self, nick, data, channel):
+        '''Execute a Python expression; Parameters: a python expression'''
         if 'py ' not in data:
-            self.msg(channel, '%s: ...'%nick)
+            self.msg(channel, '%s: ...' % nick)
             return
         self.q = data[data.find('py ')+3:]
         try:
             ret = str(eval(self.q))
         except Exception, e:
-            ret = '<<Error %s; %s>>'%(type(e), e.args)
+            ret = '<<Error %s; %s>>' % (type(e), e.args)
         self.msg(channel, ret)
     def su_connect(self, nick, data, channel):
+        '''Connect to another network; Parameters: address'''
         tmp = data[data.find('connect ')+8:]
-        self.notice(channel, '<<Connecting to %s>>'%tmp)
+        self.notice(channel, '<<Connecting to %s>>' % tmp)
         api.backend.connect(tmp, 6667, False)
     def su_reload(self, nick, data, channel):
+        '''Reload a module; Parameters: module'''
         tmp = data[data.find('reload ')+7:]
         thread.start_new_thread(api.backend.connections[self.__address__].reload_module, (tmp, ))
-        self.notice(channel, '<<Reloaded %s>>'%tmp)
+        self.notice(channel, '<<Reloaded %s>>' % tmp)
     def su_del(self, nick, data, channel):
+        '''Delete a factoid; Parameters: factoid'''
         tmp = data[data.find('del ')+4:]
-        self.del_factoid(tmp)
-        self.notice(channel, '<<Delete %s>>'%tmp)
+        del_factoid(tmp)
+        self.notice(channel, '<<Delete %s>>' % tmp)
+def write_dict(self):
+    file = open('database.json', 'w')
+    file.write(json.dumps(dict))
+    file.close()
+def del_factoid(self, query):
+    if query in dict:
+        del dict[query]
+def read_dict(self):
+    f = open('database.json')
+    dict = json.load(f)
+    f.close()

@@ -2,7 +2,10 @@ import api, config
 import urllib, thread, re
 import json
 from xml.dom.minidom import parse, parseString
-class module(api.module):
+
+class Module(api.module):
+    '''A module for preforming web lookups of various
+    facts. Responds to "what is" questings best'''
     url = 'https://duckduckgo.com/?q = %s&o = x'
     freebase = 'https://api.freebase.com/api/experimental/topic/standard?id = /en/%s'
     def __init__(self, address):

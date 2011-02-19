@@ -1,8 +1,9 @@
 import re, api, time, config, thread, colorz, sqlite3
 reportchan = "#mithos-ctl"
-class module(api.module):
+class Module(api.module):
+    '''A Module for controlling the bot'''
     def privmsg(self, nick, data, channel):
-        if api.check_if_super_user(data) ==  True:
+        if api.check_if_super_user(data):
             ldata = data.lower()
             msgl = ldata[ldata.find(' :')+2:]
             msg = data[data.find(' :')+2:]

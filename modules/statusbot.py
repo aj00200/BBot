@@ -1,7 +1,7 @@
 """This module allows users to set a status that others can query."""
 
 import api, config, time, thread
-class module(api.module):
+class Module(api.module):
     commands = ['status', 'whereis', 'notify', 'timer', 'rawtimer']
     def __init__(self, server):
         self.statuses = {}

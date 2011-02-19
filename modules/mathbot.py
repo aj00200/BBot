@@ -1,7 +1,7 @@
 from __future__ import division
 import re, api, math, config
 import libs.mathwiz as geo
-class module(api.module):
+class Module(api.module):
     def __init__(self, address):
         api.module.__init__(self, address)
         api.register_commands(self.__address__, ['math', 'math help'])

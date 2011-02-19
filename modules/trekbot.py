@@ -2,7 +2,7 @@
 promoting and more. It can be used to manage channels on networks without services, such as EFnet."""
 
 import api, config
-class module(api.module):
+class Module(api.module):
     commands = ['op', 'deop', 'kick', 'ban', 'unban', 'nick', 'echo', 'mode', 'voice', 'devoice', 'blacklist', 'unblacklist', 'listbl', 'whitelist', 'unwhitelist', 'topic']
     def __init__(self, server = config.network):
         self.blacklist = []
