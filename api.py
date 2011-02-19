@@ -52,15 +52,19 @@ def get_command_list(address):
 
 # Hooks
 hooks={}
-def hook_command(name,callback,server):
+su_hooks={}
+def hook_command(name,callback,server,su=False):
 	'''Hook a command for use by the backend, using this when possible will increase the speed of the bot and your module'''
 	if (server not in hooks):
 		return False
 	elif (name in hooks[server]):
 		return False
 	try:
-		hooks[name]=callback
-		return True
+		if not su:
+			hooks[server][name]=callback
+			return True
+		else:
+			su_hooks[server][name]=callback
 	except:
 		return False
 # Base Module

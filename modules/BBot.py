@@ -29,7 +29,7 @@ class module(api.module):
 		self.command_list=[]
 		self.command_start=':'+config.cmd_char
 		self.funcs={
-			'hit':self.hit,
+#			'hit':self.hit,
 			'version':self.version,
 			'goog':self.goog,
 			'wiki':self.wiki,

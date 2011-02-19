@@ -76,12 +76,15 @@ class Connection(asynchat.async_chat):
 		if data[:4]=='PING':
 			self.push('PONG %s\r\n'%data[5:])
 		elif command == 'PRIVMSG':
-			nick=data[1:data.find('!')]
+			nick = data[1:data.find('!')]
 			channel=data[data.find('MSG')+4:data.find(' :')]
 			for module in self.modules:
 				module.privmsg(nick,data,channel)
-			for cmd in api.hooks[self.__address__]:
-				cmd(nick,channel,api.get_message(data))
+			if ' :%s'%config.cmd_char in data:
+				msg = api.get_message(data)
+				cmd = msg[msg.find(config.cmd_char)+1:msg.find(' ')]
+				if cmd in api.hooks[self.__address__]:
+					api.hooks[self.__address__][cmd](nick,channel,msg)
 		elif command == 'NOTICE':
 			nick=data[1:data.find('!')]
 			channel=data[data.find('ICE')+4:data.find(' :')]

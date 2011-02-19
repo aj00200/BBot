@@ -12,3 +12,17 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(api.get_message(':a!b@c PRIVMSG #d :msg'),'msg')
     def test_host_in_list(self):
         self.assertEqual(api.host_in_list(':a!b@c PRIVMSG #d :e',['c']),True)
+    # Command Hooks
+    def test_hooks_existence(self):
+        self.assertEqual(api.hooks,{})
+    def test_hook_server_must_exist(self):
+        api.hooks={}
+        api.hook_command('blah',self.null_callback,'irc.fakenetwork.example.com')
+        self.assertEqual(api.hooks,{})
+    def test_hook_command_function(self):
+        api.hooks={'irc.pretendnetwork.example.com':{}}
+        api.hook_command('blah',self.null_callback,'irc.pretendnetwork.example.com')
+        self.assertEqual(api.hooks,{'irc.pretendnetwork.example.com':{'blah':self.null_callback}})
+    # Misc
+    def null_callback(a1=None,a2=None,a3=None,a4=None,a5=None,a6=None):
+        pass
