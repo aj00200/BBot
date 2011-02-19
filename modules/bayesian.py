@@ -23,8 +23,8 @@ class module(api.module):
         d=str(data.lower())
         for each in self.remove:
             d=d.replace(each,'')
-        stat=self.get_stat(api.getMessage(d))
-        if api.checkIfSuperUser(d):
+        stat=self.get_stat(api.get_message(d))
+        if api.check_if_super_user(d):
             if '?spam ' in d:
                 self.spam(d[d.find('spam ')+5:].lower())
                 return
@@ -46,9 +46,9 @@ class module(api.module):
                 if stat>self.banat:
                     self.mode(nick,channel,'+b')
         if stat>self.spamat:
-            self.spam(api.getMessage(d))
+            self.spam(api.get_message(d))
         elif stat<self.legitat:
-            self.legit(api.getMessage(d))
+            self.legit(api.get_message(d))
     def spam(self,data):
         for word in str(data).split():
             tmp=self.c.execute('''select * from stats where word=?''',(self.safety(word),)).fetchall()

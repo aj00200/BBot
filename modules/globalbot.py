@@ -4,7 +4,7 @@ class module(api.module):
     def __init__(self,server):
         api.module.__init__(self,server)
     def privmsg(self,nick,data,channel):
-        if api.checkIfSuperUser(data,config.superusers) and ':?global ' in data:
+        if api.check_if_super_user(data,config.superusers) and ':?global ' in data:
             self.broadcast=data[data.find('global ')+8:]
             for each in config.autojoin:
                 self.msg(each,self.broadcast)

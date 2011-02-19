@@ -2,26 +2,26 @@
 
 import re,api,time,config,thread,colorz,sqlite3
 class module(api.module):
-    commands=['slower','faster','?;','setspeed','rehash','protect','sql']
     def __init__(self,server):
+        api.module.__init__(self,server)
+        api.register_commands(self.__address__,['?;','rehash'])
         self.nicklists={}
-        self.hilight_limit=api.getConfigInt('BlockBot','hilight-limit')
-        findlist=api.getConfigStr('BlockBot','spam-strings').split('^^^@@@^^^')
+        self.hilight_limit=api.get_config_int('BlockBot','hilight-limit')
+        findlist=api.get_config_str('BlockBot','spam-strings').split('^^^@@@^^^')
         self.findlist=[]
         for each in findlist:
             self.findlist.append(re.compile(each))
-        self.flood_speed=api.getConfigFloat('BlockBot','flood-speed')
+        self.flood_speed=api.get_config_float('BlockBot','flood-speed')
         self.repeatlimit=3
         self.repeat_time=3
         self.repeat_1word=4
         self.msglist=[]
         self.lastnot=('BBot',time.time(),'sdkljfls')
-        api.module.__init__(self,server)
 
     def privmsg(self,nick,data,channel):
         self.ldata=data.lower()
-        if api.checkIfSuperUser(data,config.superusers):
-            if ':?;' in self.ldata:
+        if api.check_if_super_user(data,config.superusers):
+            if ' :?; ' in self.ldata:
                 word=data[data.find(' :'+config.cmd_char+'; ')+4+len(config.cmd_char):]
                 self.findlist.append(word)
         else:
@@ -34,7 +34,6 @@ class module(api.module):
 	        msg=ldata[ldata.find(' :')+2:]
 	        for each in self.findlist:
 	            if re.search(each,ldata):
-	                self.mode('*!*@%s'%api.getHost(data),channel,'+b')
 	                self.kick(nick,channel,'You have matched a spam string and have been banned from the channel, if you think this is a mistake, contact a channel op about being unbanned')
 	                return 0
 	        try:
@@ -45,7 +44,7 @@ class module(api.module):
 	                elif msg.split()>1:
 	                    if (self.msglist[0][2]==self.msglist[1][2]==self.msglist[2][2]) and (self.msglist[0][1]-self.msglist[1][1]<self.repeat_time):
 	                        self.kick(nick,channel,'Please do not repeat')
-	                        self.mode('*!*@%s'%api.getHost(data),channel,'+b')
+	                        self.mode('*!*@%s'%api.get_host(data),channel,'+b')
 	        except IndexError:
 	            pass
     def check_hilight(self,nick,data,channel):
@@ -63,7 +62,6 @@ class module(api.module):
 
     def get_join(self,nick,channel,ip,user):
         '''Add user to nicklist, and preform optional proxy scan'''
-        #webchat=(str(blockbotlib.hex2dec('0x'+str(user[1:3])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[3:5])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[5:7])))+'.'+str(blockbotlib.hex2dec('0x'+str(user[7:9]))))
         if channel in self.nicklists and nick not in self.nicklists[channel]:
             self.nicklists[channel].append(nick)
         else:

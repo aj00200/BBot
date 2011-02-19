@@ -1,8 +1,10 @@
 from __future__ import division
-import q,re,api,math,config
+import re,api,math,config
 import libs.mathwiz as geo
 class module(api.module):
-	commands=['math','math help','hex','dec2hex','dec2oct']
+	def __init__(self,address):
+		api.module.__init__(self,address)
+		api.register_commands(self.__address__,['math','math help'])
 	allow={
 	')':'..0..',
 	'sqrt(':'..1..',
@@ -32,7 +34,7 @@ class module(api.module):
 	
 	'!g':'6.67428',
 	'!pi':'3.1415926535897932384626433832795028841971693993751',
-	'!c':'2.99792458',
+	'!c':'299792458',
 	'!e':'2.7182818284590452353602874713526624977572',
 	'!F':'96485'
 	}
@@ -72,11 +74,11 @@ class module(api.module):
 		elif ':%smath '%config.cmd_char in ldata:
 			self.e=data[data.find('math ')+5:]
 			for each in self.allow:
-				self.e=self.e.replace(each,self.allow[each])
+				self.e=self.e.replace(each,' %s '%self.allow[each])
 			for each in self.chars:
 				self.e=self.e.replace(each,'')
 			for each in self.invert:
-				self.e=self.e.replace(each,self.invert[each])
+				self.e=self.e.replace(' %s '%each,self.invert[each])
 			self.e=self.e.replace('//','.0/')
 			try:
 				if self.e.find('**')!=-1:

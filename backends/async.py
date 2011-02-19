@@ -1,16 +1,19 @@
 #Asynchat Backend for BBot
 import socket,asynchat,asyncore,re,time,ssl
 import bbot,config
+import api
 
-import errno
 connections={}
 class Connection(asynchat.async_chat):
 	re001=re.compile('\.* 001')
-	reNOTICE=re.compile('!(.)+ NOTICE (.)+ :')
 	def __init__(self,address,port,use_ssl):
+		# Setup Asynchat
 		asynchat.async_chat.__init__(self)
 		self.ssl=use_ssl; self.data=''; self.__address__=address
 		self.modules=[]; self.set_terminator('\r\n')
+
+		# Setup Command Hooks
+		api.hooks[address]={}
 
 		# Setup Socket
 		self.sock=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -25,8 +28,15 @@ class Connection(asynchat.async_chat):
 				print('If you need help, join #bbot on irc.fossnet.info (port 6667; ssl: 6670)')
 				print('\x1B[m\x1B[m')
 				raise ssl.SSLError(e)
+			except socket.error,e:
+				print('There was an error connecting to %s'%address)
+				return
 		else:
-			self.sock.connect((address,port))
+			try:
+				self.sock.connect((address,port))
+			except socket.error,e:
+				print('There was an error connecting to %s'%address)
+				return
 			self.set_socket(self.sock)
 
 		# Load Modules
@@ -38,7 +48,7 @@ class Connection(asynchat.async_chat):
 		try:
 			self.modules.append(getattr(__import__('modules.'+module),module).module(self.__address__))
 			return True
-		except ImportError:
+		except ImportError,e:
 			print(' * ImportError loading %s'%module)
 	def unload_module(self,module):
 		for mod in self.modules:
@@ -51,7 +61,7 @@ class Connection(asynchat.async_chat):
 		time.sleep(2)
 		self.load_module(module)
 	def handle_connect(self):
-		print('* Connected')
+		print(' * Connected')
 		self.push('NICK %s\r\nUSER %s %s %s :%s\r\n'%(config.nick,config.nick,config.nick,config.nick,config.nick))
 	def get_data(self):
 		r=self.data
@@ -61,20 +71,26 @@ class Connection(asynchat.async_chat):
 		data=self.get_data()
 		if re.search(config.ignore,data.lower()):
 			return
-		print(data)
+		command=data.split(' ',2)[1]
+		print('Recv: %s'%data)
 		if data[:4]=='PING':
 			self.push('PONG %s\r\n'%data[5:])
-		elif re.search(self.reNOTICE,data):
+		elif command == 'PRIVMSG':
+			nick = data[1:data.find('!')]
+			channel=data[data.find('MSG')+4:data.find(' :')]
+			for module in self.modules:
+				module.privmsg(nick,data,channel)
+			if ' :%s'%config.cmd_char in data:
+				msg = api.get_message(data)
+				cmd = msg[msg.find(config.cmd_char)+1:msg.find(' ')]
+				if cmd in api.hooks[self.__address__]:
+					api.hooks[self.__address__][cmd](nick,channel,msg)
+		elif command == 'NOTICE':
 			nick=data[1:data.find('!')]
 			channel=data[data.find('ICE')+4:data.find(' :')]
 			for module in self.modules:
 				module.get_notice(nick,data,channel)
-		elif ' PRIVMSG ' in data:
-			nick=data[1:data.find('!')]
-			channel=data[data.find('MSG')+4:data.find(' :')]
-			for module in self.modules:
-				module.privmsg(nick,data,channel)
-		elif ' JOIN :#' in data:
+		elif command == 'JOIN':
 			nick=data.split('!')[0][1:]
 			if nick.find('#')==-1:
 				channel=data[data.find(' :#')+2:]
@@ -84,7 +100,7 @@ class Connection(asynchat.async_chat):
 				for module in self.modules:
 					module.get_join(nick,user,host,channel)
 		elif re.search(self.re001,data):
-			if bbot.api.getConfigBool('main','use-services'):
+			if bbot.api.get_config_bool('main','use-services'):
 				self.push('PRIVMSG NickServ :IDENTIFY %s %s\r\n'%(config.username,config.password))
 				time.sleep(config.sleep_after_id)
 			for channel in config.autojoin:

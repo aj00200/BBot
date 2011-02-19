@@ -1,7 +1,7 @@
 """This module allows channel operators to execute several commands through BBot, such as kicking, banning,
 promoting and more. It can be used to manage channels on networks without services, such as EFnet."""
 
-import q,api,config
+import api,config
 class module(api.module):
 	commands=['op','deop','kick','ban','unban','nick','echo','mode','voice','devoice','blacklist','unblacklist','listbl','whitelist','unwhitelist','topic']
 	def __init__(self,server=config.network):
@@ -14,7 +14,7 @@ class module(api.module):
 		for each in self.wlconfig:
 			self.whitelist.append(each.strip('\r\n'))
 		del self.blconfig,self.wlconfig
-		self.proxyscan=api.getConfigBool('trekbot','proxy-scan')
+		self.proxyscan=api.get_config_bool('trekbot','proxy-scan')
 		api.module.__init__(self,server)
 		
 		self.su_funcs={
@@ -42,7 +42,7 @@ class module(api.module):
 		}
 	def privmsg(self,nick,data,channel):
 		ldata=data.lower()
-		self.superuser=api.checkIfSuperUser(data,config.superusers)
+		self.superuser=api.check_if_super_user(data,config.superusers)
 		# Superuser Commands
 		if self.superuser:
 			if ' :%s'%config.cmd_char in data:

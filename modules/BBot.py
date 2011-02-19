@@ -17,33 +17,22 @@ except:
 class module(api.module):
 	goog_str='https://encrypted.google.com/search?q=%s'
 	wiki_str='https://secure.wikimedia.org/wikipedia/en/wiki/%s'
-	kb_str='http://www.kb.aj00200.heliohost.org/index.py?q=%s'
 	stop_words=[
 		' a ',' the ',' was ',' an '
 	]
 	is_words=[
 		' was ',' are ',' am '
 	]
-	def get_command_list(self):
-		try:
-			time.sleep(5)
-			for module in BBot.networks[config.network]:
-				for command in module.commands:
-					self.command_list.append(command)
-		except Exception,e:
-			print 'Error: %s; with args: %s;'%(type(e),e.args)
 	def __init__(self,server):
 		api.module.__init__(self,server)
-		api.register_commands(self.__address__,['goog','wiki','kb','hit','add','del','writedb','load','reload','version','connect','py'])
+		api.register_commands(self.__address__,['goog','wiki','hit','add','del','writedb','load','reload','version','connect','py'])
 		self.command_list=[]
 		self.command_start=':'+config.cmd_char
-		#thread.start_new_thread(self.get_command_list,())
 		self.funcs={
-			'hit':self.hit,
+#			'hit':self.hit,
 			'version':self.version,
 			'goog':self.goog,
 			'wiki':self.wiki,
-			'kb':self.kb,
 			'help':self.help
 		}
 		self.sufuncs={
@@ -58,6 +47,10 @@ class module(api.module):
 			'connect':self.su_connect,
 			'del':self.su_del
 		}
+
+		# Hook Commands
+		api.hook_command('hit',self.hit,server)
+		api.hook_command('version',self.version,server)
 		self.lnick=config.nick.lower()
 	def __destroy__(self):
 		pass
@@ -73,7 +66,7 @@ class module(api.module):
 				cmd=cmd[:cmd.find(' ')]
 
 			#Superuser Commands
-			if api.checkIfSuperUser(data):
+			if api.check_if_super_user(data):
 				if ' > ' in data:
 					channel=data[data.find(' > ')+3:]
 					data=data[:data.find(' > ')]
@@ -93,8 +86,9 @@ class module(api.module):
 				self.query(cmd,nick,channel)
 
 		#Check if I've been pinged
-		if re.search(':'+re.escape(self.lnick)+'[:,]',ldata):
-			q=ldata[ldata.find(self.lnick)+len(self.lnick):]
+		if (' :%s: '%self.lnick in ldata) or (' :%s, '%self.lnick in ldata):
+			msg=api.get_message(data).lower()
+			q=msg[msg.find(self.lnick)+len(self.lnick)+2:]
 			self.query(q,nick,channel)
 			return 0
 
@@ -120,9 +114,9 @@ class module(api.module):
 			if d[0] == '433':
 				# Nick is already in use
 				self.raw('NICK %s_'%config.nick)
-				if api.getConfigBool('main','use-services'):
+				if api.get_config_bool('main','use-services'):
 					self.msg('NickServ','GHOST %s %s'%(config.nick,config.password))
-					time.sleep(api.getConfigFloat('main','wait-after-identify'))
+					time.sleep(api.get_config_float('main','wait-after-identify'))
 					self.raw('NICK %s'%config.nick)
 	def add_factoid(self,query,nick):
 		tmp=query
@@ -155,23 +149,22 @@ class module(api.module):
 			self.msg(channel,str(dict[q].replace('%n',nick)))
 
 	#////////Single Functions/////////
-	def hit(self,nick,data,channel):
+	def hit(self,nick,channel,message):
 		'''Causes BBot to punch someone'''
-		who=data[data.find('hit ')+4:]
-		self.msg(channel,'\x01ACTION punches %s\x01'%who)
-	def version(self,nick,data,channel):
+		if 'hit ' in message:
+			who=message[message.find('hit ')+4:]
+			self.msg(channel,'\x01ACTION punches %s\x01'%who)
+	def version(self,nick,channel,message):
 		'''Sends the version number to the channel'''
 		self.msg(channel,'I am version %s'%BBot.version)
 	def goog(self,nick,data,channel):
-		if 'goog ' in data:
+		if 'goog ' in api.get_message(data):
 			w=str(data[data.find('goog ')+5:].replace(' ','+'))
 			self.msg(channel,self.goog_str%w)
 	def wiki(self,nick,data,channel):
-		w=data[data.find('wiki ')+5:].replace(' ','_')
-		self.msg(channel,self.wiki_str%w)
-	def kb(self,nick,data,channel):
-		w=data[data.find('kb ')+3:]
-		self.msg(channel,self.kb_str%w)
+		if 'wiki ' in api.get_message(data):
+			w=data[data.find('wiki ')+5:].replace(' ','_')
+			self.msg(channel,self.wiki_str%w)
 	def help(self,nick,data,channel):
 		self.msg(channel,'%s: %s'%(nick,', '.join(api.get_command_list(self.__address__))))
 	def su_join(self,nick,data,channel):
@@ -200,6 +193,9 @@ class module(api.module):
 		else:
 			self.notice(channel,'Error loading %s'%query)
 	def su_py(self,nick,data,channel):
+		if 'py ' not in data:
+			self.msg(channel,'%s: ...'%nick)
+			return
 		self.q=data[data.find('py ')+3:]
 		try:
 			ret=str(eval(self.q))
