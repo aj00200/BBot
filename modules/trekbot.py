@@ -3,7 +3,6 @@ promoting and more. It can be used to manage channels on networks without servic
 
 import api, config
 class Module(api.module):
-    commands = ['op', 'deop', 'kick', 'ban', 'unban', 'nick', 'echo', 'mode', 'voice', 'devoice', 'blacklist', 'unblacklist', 'listbl', 'whitelist', 'unwhitelist', 'topic']
     def __init__(self, server = config.network):
         self.blacklist = []
         self.blconfig = open('trekbot/blacklist', 'r').readlines()
@@ -31,15 +30,16 @@ class Module(api.module):
         api.hook_command('topic', self.set_topic, server, su = True)
         api.hook_command('ban', self.set_ban, server, su = True)
         api.hook_command('unban', self.del_ban, server, su = True)
-        api.hook_command('lostbl', self.blacklist_list, server, su = True)
+        api.hook_command('listbl', self.blacklist_list, server, su = True)
         api.hook_command('blacklist', self.blacklist_add, server, su = True)
         api.hook_command('unblacklist', self.blacklist_del, server, su = True)
         api.hook_command('listwl', self.whitelist_list, server, su = True)
-        api.hook_command('whilelist', self.whitelist_list, server, su = True)
+        api.hook_command('whitelist', self.whitelist_add, server, su = True)
         api.hook_command('unwhitelist', self.whitelist_del, server, su = True)
         api.hook_command('kick', self.kick_user, server, su = True)
         api.hook_command('invite', self.invite_user, server, su = True)
         api.hook_command('rehash_trekbot', self.__init__, server, su = True)
+
     def write_blacklist(self):
         self.blconfig = open('trekbot/blacklist', 'w')
         for each in self.blacklist:
@@ -50,17 +50,11 @@ class Module(api.module):
         for each in self.whitelist:
             self.wlconfig.write(each+'\n')
 
-    def get_join(self, nick, channel, ip, user):
-        if not ip in self.blacklist:
-            if not ip in self.whitelist:
-                if self.proxyscan:
-                    self.scan(ip, channel, nick)
-                else:
-                    self.kick(nick, channel, 'Sorry')
-            else:
-                self.mode(nick, channel, '+v')
-        else:
-            self.kick(nick, channel, 'You are on the blacklist, please message a channel op about getting removed from the list')
+    def get_join(self, nick, user, ip, channel):
+        if (ip in self.blacklist):
+            self.kick(nick,channel,'You are on the blacklist')
+        elif (ip in self.whitelist):
+            self.mode(nick,channel,'+v')
 
     def scan(self, ip, channel, nick):
         self.scansafe = 1
@@ -75,13 +69,13 @@ class Module(api.module):
                 print lport
                 if 808 in lport or 23 in lport or 110 in lport or 1080 in lport or 29505 in lport or 80 in lport or 8080 in lports or 3246 in lports:
                     self.scansafe = 0
-                    print 'DRONE'
+                    print(' * Detected possible drone at: %s' % ip)
             del self.nm
             if self.scansafe:
                 self.mode(nick, channel, '+v')
         except:
-            print 'PYTHON NMAP CRASH'
-    
+            print('The port scanner in TrekBot has crashed')
+
     # Superuser Commands
     def op(self, nick, channel, param = None):
         if not param:

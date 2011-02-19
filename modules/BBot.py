@@ -90,7 +90,7 @@ class Module(api.module):
         # Answer basic questions
         ldata = ldata.replace('whats', 'what is')
         if re.search('(what|where|who) (is|was|are|am)', ldata):
-            for word in self.stop_words3:
+            for word in self.stop_words:
                 ldata = ldata.replace(word, ' ')
             for word in self.is_words:
                 ldata = ldata.replace(word, ' is ')
