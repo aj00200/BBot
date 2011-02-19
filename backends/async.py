@@ -94,11 +94,21 @@ class Connection(asynchat.async_chat):
             channel = data[data.find('MSG')+4:data.find(' :')]
             for module in self.modules:
                 module.privmsg(nick, data, channel)
+            # Command Hooks
             if ' :%s' % config.cmd_char in data:
+                prm = None
                 msg = api.get_message(data)
-                cmd = msg[msg.find(config.cmd_char)+1:msg.find(' ')]
+                cmd = msg[msg.find(config.cmd_char)+1:]
+                if ' ' in cmd:
+                    prm = cmd[cmd.find(' ')+1:]
+                    cmd = cmd[:cmd.find(' ')]
+
                 if cmd in api.hooks[self.__address__]:
                     api.hooks[self.__address__][cmd](nick, channel, msg)
+                # Superuser Hooks
+                if api.check_if_super_user(data):
+                    if cmd in api.su_hooks[self.__address__]:
+                        api.su_hooks[self.__address__][cmd](nick, channel, prm)
 
         elif command ==  'NOTICE':
             nick = data[1:data.find('!')]
