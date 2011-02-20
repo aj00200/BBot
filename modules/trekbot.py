@@ -1,19 +1,25 @@
-"""This module allows channel operators to execute several commands through BBot, such as kicking, banning, 
-promoting and more. It can be used to manage channels on networks without services, such as EFnet."""
+'''This module allows channel operators to execute several commands through BBot, such as kicking, banning, 
+promoting and more. It can be used to manage channels on networks without services, such as EFnet.'''
 
 import api, config
 class Module(api.module):
     def __init__(self, server = config.network):
-        self.blacklist = []
+        self.blacklist = [] # Load Blacklist
         self.blconfig = open('trekbot/blacklist', 'r').readlines()
         for each in self.blconfig:
             self.blacklist.append(each.strip('\r\n'))
-        self.whitelist = []
+
+        self.whitelist = [] # Load Whitelist
         self.wlconfig = open('trekbot/whitelist', 'r').readlines()
         for each in self.wlconfig:
             self.whitelist.append(each.strip('\r\n'))
         del self.blconfig, self.wlconfig
+        # Read config
         self.proxyscan = api.get_config_bool('trekbot', 'proxy-scan')
+        # Setup Variables
+        self.pending_bans = {}
+        self.pending_unbans = {}
+    
         api.module.__init__(self, server)
 
         # Hook Superuser Commands
@@ -40,21 +46,34 @@ class Module(api.module):
         api.hook_command('invite', self.invite_user, server, su = True)
         api.hook_command('rehash_trekbot', self.__init__, server, su = True)
 
+    def get_raw(self, type, data):
+        if type == 'code':
+            if data[0] == '311': # Whois host line
+                nick = data[1].split()[3]
+                host = data[1].split()[5]
+                if nick in self.pending_bans:
+                    for channel in self.pending_bans[nick]:
+                        self.mode('*!*@%s' % host, channel, '+b')
+                if nick in self.pending_unbans:
+                    for channel in self.pending_unbans[nick]:
+                        self.mode('*!*@%s' % host, channel, '-b')
     def write_blacklist(self):
+        '''Write the blacklist to the harddrive'''
         self.blconfig = open('trekbot/blacklist', 'w')
         for each in self.blacklist:
             self.blconfig.write(each+'\n')
 
     def write_whitelist(self):
+        '''Write the whitelist to the harddrive'''
         self.wlconfig = open('trekbot/whitelist', 'w')
         for each in self.whitelist:
             self.wlconfig.write(each+'\n')
 
     def get_join(self, nick, user, ip, channel):
         if (ip in self.blacklist):
-            self.kick(nick,channel,'You are on the blacklist')
+            self.kick(nick, channel, 'You are on the blacklist')
         elif (ip in self.whitelist):
-            self.mode(nick,channel,'+v')
+            self.mode(nick, channel, '+v')
 
     def scan(self, ip, channel, nick):
         self.scansafe = 1
@@ -78,42 +97,49 @@ class Module(api.module):
 
     # Superuser Commands
     def op(self, nick, channel, param = None):
+        '''Op a user or yourself; Parameters: (optional) nick'''
         if not param:
             self.mode(nick, channel, '+o')
         else:
             self.mode(param, channel, '+o')
 
     def deop(self, nick, channel, param = None):
+        '''Deop a user or yourself; Parameters: (optional) nick'''
         if not param:
             self.mode(nick, channel, '-o')
         else:
             self.mode(param, channel, '-o')
 
     def voice(self, nick, channel, param = None):
+        '''Voice a user or yourself; Parameters: (optional) nick'''
         if not param:
             self.mode(nick, channel, '+v')
         else:
             self.mode(param, channel, '+v')
 
     def devoice(self, nick, channel, param = None):
+        '''Devoice a user or yourself; Parameters: (optional) nick'''
         if not param:
             self.mode(nick, channel, '-v')
         else:
             self.mode(param, channel, '-v')
 
     def quiet(self, nick, channel, param = None):
+        '''Quiet a user; Parameters: nick'''
         if not param:
             self.msg(channel, '%s: be careful or I will quiet you :P'%nick)
         else:
             self.mode(param, channel, '+q')
 
     def unquiet(self, nick, channel, param = None):
+        '''Unquiet a nick; Parameters: nick'''
         if not param:
-            self.msg(channel, '%s: You need to tell me what to unquiet.  I can\'t unquiet [NULL]!'%nick)
+            self.mode(nick, channel, '-q')
         else:
             self.mode(param, channel, '-q')
 
     def nick(self, nick, channel, param = None):
+        '''Change to a new nickname; Parameters: new nickname'''
         if not param:
             self.msg(channel, '%s: You need to have a nick following the command'%nick)
         else:
@@ -121,50 +147,65 @@ class Module(api.module):
             self.raw('NICK %s'%param)
 
     def set_mode(self, nick, channel, param = None):
+        '''Set a mode on the channel; Parameters: mode string (like "+o bbot")'''
         if not param:
-            self.msg(channel, '%s: You need to tell me what modes to set'%nick)
+            self.msg(channel, '%s: You need to tell me what modes to set' % nick)
         else:
             self.mode('', channel, param)
 
     def echo(self, nick, channel, param = None):
+        '''Say what the parmeter is; Parameters: a string to say'''
         if not param:
-            self.msg(channel, '%s: I can\'t echo nothing'%nick)
+            self.msg(channel, '%s: I can\'t echo nothing' % nick)
         else:
             self.msg(channel, param)
 
     def set_topic(self, nick, channel, param = None):
+        '''Set the topic in the channel; Parameters: a topic string'''
         if not param:
-            self.msg(channel, '%s: You need to specify a topic'%nick)
+            self.msg(channel, '%s: You need to specify a topic' % nick)
         else:
             self.raw('TOPIC %s :%s'%(channel, param))
 
     def set_ban(self, nick, channel, param = None):
+        '''Set a ban on a user's host; Parameters: nick'''
         if not param:
-            self.msg(channel, '%s: You need to specify what to ban'%nick)
+            self.msg(channel, '%s: You need to specify who to ban' % nick)
         else:
-            self.mode(param, channel, '+b')
+            if param in self.pending_bans:
+                self.pending_bans[param].append(channel)
+            else:
+                self.pending_bans[param] = [channel]
+            self.raw('WHOIS %s' % param)
 
     def del_ban(self, nick, channel, param = None):
+        '''Unban a user's host; Parameters: nick'''
         if not param:
-            self.msg(channel, '%s: You need to specify what to unban'%nick)
+            self.msg(channel, '%s: You need to specify who to unban' % nick)
         else:
-            self.mode(param, channel, '-b')
+            if param  in self.pending_unbans:
+                self.pending_unbans[param].append(channel)
+            else:
+                self.pending_unbans[param] = [channel]
+            self.raw('WHOIS %s' % param)
 
     def kick_user(self, nick, channel, param = None):
+        '''Kick a user from a channel; Parameters: nick'''
         if not param:
-            self.msg(channel, '%s: You need to tell me who to kick'%nick)
+            self.msg(channel, '%s: You need to tell me who to kick' % nick)
         else:
             message = ''
             if ' ' in param.strip(' '):
                 message = param[param.find(' ')+1:]
                 param = param[:param.find(' ')]
             else:
-                message = 'You have been kicked from the channel.  (requested by %s)'%nick
+                message = 'You have been kicked from the channel.  (requested by %s)' % nick
             self.kick(param, channel, message)
 
     def invite_user(self, nick, channel, param = None):
+        '''Invite a user to a channel; Parameters: nick'''
         if not param:
-            self.msg(channel, '%s: You need to give me parameters for me to invite a user!'%nick)
+            self.msg(channel, '%s: You need to tell me who to invite!'%nick)
         else:
             targetchan = ''
             targetuser = ''
@@ -178,9 +219,11 @@ class Module(api.module):
 
     #Blacklist/Whitelist Commands - SuperUser Only
     def blacklist_list(self, nick, channel, param = None):
+        '''PMs the caller the list of blacklisted hosts'''
         self.msg(nick, str(self.blacklist))
 
     def blacklist_add(self, nick, channel, param = None):
+        '''Adds a host to the blacklist'''
         if not param in self.blacklist:
             self.blacklist.append(param)
             self.write_blacklist()
@@ -188,6 +231,7 @@ class Module(api.module):
             self.msg(nick, 'That host is already blacklisted.')
 
     def blacklist_del(self, nick, channel, param = None):
+        '''Removes a host from the blacklist'''
         if param in self.blacklist:
             self.blacklist.pop(self.blacklist.index(param))
             self.write_blacklist()
@@ -195,9 +239,11 @@ class Module(api.module):
             self.msg(nick, 'That host is not blacklisted.')
 
     def whitelist_list(self, nick, channel, param = None):
+        '''PMs the caller the list of whitelisted hosts'''
         self.msg(nick, str(self.whitelist))
 
     def whitelist_add(self, nick, channel, param = None):
+        '''Adds a host to the whitelist'''
         if not param:
             self.msg(channel, '%s: You need to specify something to add to the whitelist.'%nick)
         else:
@@ -206,7 +252,9 @@ class Module(api.module):
                 self.write_whitelist()
             else:
                 self.msg(nick, 'That host is already whitelisted.')
+
     def whitelist_del(self, nick, channel, param = None):
+        '''Deletes a host from the whitelist'''
         if not param:
             self.msg(channel, '%s: You need to specify something to remove from the whitelist.'%nick)
         else:

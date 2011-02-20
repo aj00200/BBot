@@ -61,7 +61,7 @@ class Connection(asynchat.async_chat):
 
     def unload_module(self, module):
         for mod in self.modules:
-            if str(type(mod)) ==  "<class 'modules.%s.module'>" % module:
+            if str(type(mod)) ==  "<class 'modules.%s.Module'>" % module:
                 print ' * Removing module %s for network %s' % (module, self.__address__)
                 self.modules.pop(self.modules.index(mod))
 
@@ -95,6 +95,8 @@ class Connection(asynchat.async_chat):
             for module in self.modules:
                 module.privmsg(nick, data, channel)
             # Command Hooks
+            if channel == config.nick:
+                channel = nick
             if ' :%s' % config.cmd_char in data:
                 prm = None
                 msg = api.get_message(data)
@@ -104,7 +106,7 @@ class Connection(asynchat.async_chat):
                     cmd = cmd[:cmd.find(' ')]
 
                 if cmd in api.hooks[self.__address__]:
-                    api.hooks[self.__address__][cmd](nick, channel, msg)
+                    api.hooks[self.__address__][cmd](nick, channel, prm)
                 # Superuser Hooks
                 if api.check_if_super_user(data):
                     if cmd in api.su_hooks[self.__address__]:
@@ -136,7 +138,7 @@ class Connection(asynchat.async_chat):
         elif re.search('[0-9]+ *' + config.nick, data):
             code = data.split()[1]
             for module in self.modules:
-                module.get_raw('CODE', (code, data))
+                module.get_raw('code', (code, data))
 
     def collect_incoming_data(self, data):
         self.data += data

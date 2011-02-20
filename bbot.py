@@ -1,7 +1,7 @@
 #! /usr/bin/python
 #This Code is licensed under the GNU GPL v3
 
-VERSION = '7.0.0b3'
+VERSION = '7.0.0b4pre'
 import asyncore
 
 import config

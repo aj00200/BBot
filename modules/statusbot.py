@@ -1,28 +1,26 @@
-"""This module allows users to set a status that others can query."""
+'''This module allows users to set a status that others can query.'''
 
-import api, config, time, thread
+import api
+import config
+
 class Module(api.module):
-    commands = ['status', 'whereis', 'notify', 'timer', 'rawtimer']
     def __init__(self, server):
         self.statuses = {}
         api.module.__init__(self, server)
-    def privmsg(self, nick, data, channel):
-        if ':%sstatus '%config.cmd_char in data:
-            words = data[data.find('status ')+7:]
-            self.statuses[nick.lower()] = words
-        elif 'whereis' in data:
-            who = data[data.find('whereis ')+8:].strip(' ')
-            if who.lower() in self.statuses:
-                self.msg(channel, '%s: %s\'s status is: %s'%(nick, who, self.statuses[who.lower()]))
-        if api.check_if_super_user(data):
-            if '%stimer'%config.cmd_char in data:
-                words = data[data.find('timer ')+6:]
-                words = words.split('m ', 1)
-                thread.start_new_thread(self.timer, (words[0], 'PRIVMSG %s :%s'%(channel, words[1])))
-            elif '%srawtimer '%config.cmd_char in data:
-                words = data[data.find('rawtimer ')+9:]
-                words = words.split('m ', 1)
-                thread.start_new_thread(self.timer, (words[0], words[1]))
-    def timer(self, wait, message):
-        time.sleep(float(wait)*60)
-        self.raw(message)
+
+        # Hook commands
+        api.hook_command('status', self.status, server)
+        api.hook_command('whereis', self.whereis, server)
+
+    def status(self, nick, channel, param = None):
+        '''Set your status for other people to see'''
+        self.statuses[nick.lower()] = param
+
+    def whereis(self, nick, channel, param = None):
+        '''Check the status of someone; Parameters: None'''
+        if param in self.statuses:
+            self.msg(channel, '%s: %s left the status: %s' % (nick, param, self.statuses[param]))
+        elif not param:
+            self.msg(channel, '%s: who\'s status do you want?' % nick)
+        else:
+            self.msg(channel, '%s: that person has not left a status.' % nick)

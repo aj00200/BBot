@@ -52,11 +52,6 @@ def register_commands(address, cmds):
                 commands[address] += [cmd]
     except:
         pass
-def get_command_list(address):
-    try:
-        return commands[address]
-    except:
-        return 'There was an error processing your request'
 
 # Hooks
 hooks = {}
@@ -75,6 +70,15 @@ def hook_command(name, callback, server, su = False):
             su_hooks[server][name] = callback
     except:
         return False
+def get_command_list(address, su = False):
+    try:
+        if not su:
+            return list(hooks[address])
+        else:
+            return list(su_hooks[address])
+    except:
+        return 'There was an error processing your request'
+
 # Base Module
 class module(object):
     '''Base class that all modules should use to maintain best compatibility with future versions of the API'''
