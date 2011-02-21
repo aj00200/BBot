@@ -6,8 +6,8 @@ from xml.dom.minidom import parse, parseString
 class Module(api.module):
     '''A module for preforming web lookups of various
     facts. Responds to "what is" questings best'''
-    url = 'https://duckduckgo.com/?q = %s&o = x'
-    freebase = 'https://api.freebase.com/api/experimental/topic/standard?id = /en/%s'
+    url = 'https://duckduckgo.com/?q=%s&o=xml'
+    freebase = 'https://api.freebase.com/api/experimental/topic/standard?id=/en/%s'
     def __init__(self, address):
         api.module.__init__(self, address)
         api.register_commands(self.__address__, ['ddg'])
@@ -25,9 +25,9 @@ class Module(api.module):
                 ldata = ldata.replace(' an ', ' ')
                 ldata = ldata.replace(' are ', ' is ')
                 qu = 'what is '+ldata[ldata.find(' is ')+4:]
-                #self.ddg(nick, data, channel, qu, reply_on_notfound = False)
-                self.fb(nick, data, channel, qu, True)
-    def ddg(self, nick, data, channel, query, True):
+                self.ddg(nick, data, channel, qu, reply_on_notfound = False)
+                #self.fb(nick, data, channel, qu, reply_on_notfound = True)
+    def ddg(self, nick, data, channel, query, reply_on_notfound = True):
          t = urllib.urlretrieve(self.url%urllib.quote_plus(query))
          xml = parse(t[0])
          try:
@@ -46,10 +46,10 @@ class Module(api.module):
         t = urllib.urlopen(self.freebase%urllib.quote_plus(qu))
         j = json.load(t)
         try:
-            r = j['/en/%s'%qu]['result']['description']
-            self.msg(channel, '%s: %s'%(nick, r.split('. ')[0]))
+            r = j['/en/%s' % qu]['result']['description']
+            self.msg(channel, '%s: %s' % (nick, r.split('. ')[0]))
         except Exception, e:
             print j['/en/%s'%qu]
-            print 'Error: %s, %s'%(e.__repr__(), e.args)
+            print 'Error: %s, %s' % (e.__repr__(), e.args)
             if reply_on_notfound:
                 self.msg(channel, '%s: Sorry, could not find it'%nick)
