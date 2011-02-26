@@ -18,6 +18,8 @@ class Module(api.module):
 
     def whereis(self, nick, channel, param = None):
         '''Check the status of someone; Parameters: None'''
+        if ' ' in param:
+            param = param.strip()
         if param in self.statuses:
             self.msg(channel, '%s: %s left the status: %s' % (nick, param, self.statuses[param]))
         elif not param:

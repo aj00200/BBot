@@ -10,7 +10,8 @@ class Module(api.module):
     freebase = 'https://api.freebase.com/api/experimental/topic/standard?id=/en/%s'
     def __init__(self, address):
         api.module.__init__(self, address)
-        api.register_commands(self.__address__, ['ddg'])
+        api.hook_command('define', self.ddg_define, address)
+
     def privmsg(self, nick, data, channel):
          if ':'+config.cmd_char+'ddg ' in data:
                 query = data[data.find('ddg ')+4:]
@@ -27,7 +28,11 @@ class Module(api.module):
                 qu = 'what is '+ldata[ldata.find(' is ')+4:]
                 self.ddg(nick, data, channel, qu, reply_on_notfound = False)
                 #self.fb(nick, data, channel, qu, reply_on_notfound = True)
-    def ddg(self, nick, data, channel, query, reply_on_notfound = True):
+
+    def ddg_define(self, nick, channel, param = None):
+        self.ddg(nick, channel, 'define %s' % param, reply_on_notfound = True)
+
+    def ddg(self, nick, channel, query, reply_on_notfound = True):
          t = urllib.urlretrieve(self.url%urllib.quote_plus(query))
          xml = parse(t[0])
          try:
@@ -40,7 +45,8 @@ class Module(api.module):
                 except:
                     if reply_on_notfound:
                          self.msg(channel, '%s: Sorry, but I could not find what %s is'%(nick, query))
-    def fb(self, nick, data, channel, query, reply_on_notfound = True):
+
+    def fb(self, nick, channel, query, reply_on_notfound = True):
         '''Query Freebase for the query'''
         qu = query.replace(' ', '_').replace('what_is_', '')
         t = urllib.urlopen(self.freebase%urllib.quote_plus(qu))
