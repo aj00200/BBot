@@ -2,7 +2,7 @@
 
 import re
 import time
-import thead
+import thread
 
 import api
 import colorz

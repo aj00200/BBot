@@ -1,5 +1,5 @@
 c_open = '\x1B['
-close = open+'m'
+close = c_open+'m'
 colors = {
     'red':'31;40m', 
     'green':'32;40m', 
