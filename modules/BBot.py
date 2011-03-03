@@ -126,8 +126,7 @@ class Module(api.module):
 
     def query(self, query, nick, channel):
         '''Querys the database for the factoid 'query', and returns its value to the channel if it is found'''
-        q = unicode(query.lower())
-        if q in dict:
+        if query in dict:
             self.msg(channel, str(dict[q].replace('%n', nick)))
 
     # Single Functions
