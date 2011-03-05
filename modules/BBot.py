@@ -22,7 +22,7 @@ except:
     print(' * Could not load the factoid file')
     dict = {}
 class Module(api.module):
-    goog_str = 'https://encrypted.google.com/search?q = %s'
+    goog_str = 'https://encrypted.google.com/search?q=%s'
     wiki_str = 'https://secure.wikimedia.org/wikipedia/en/wiki/%s'
     stop_words = [
         ' a ', ' the ', ' was ', ' an '
