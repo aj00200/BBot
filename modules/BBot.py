@@ -127,7 +127,7 @@ class Module(api.module):
     def query(self, query, nick, channel):
         '''Querys the database for the factoid 'query', and returns its value to the channel if it is found'''
         if query in dict:
-            self.msg(channel, str(dict[q].replace('%n', nick)))
+            self.msg(channel, str(dict[query].replace('%n', nick)))
 
     # Single Functions
     def hit(self, nick, channel, param = None):
