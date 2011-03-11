@@ -5,33 +5,37 @@ import time
 import thread
 
 import api
-import colorz
 import config
 
 class Module(api.module):
     def __init__(self, server):
         api.module.__init__(self, server)
-        api.register_commands(self.__address__, ['?;', 'rehash'])
-        self.nicklists = {}
+
+        # Hook Commands
+        api.hook_command(';', self.set_spam_string, server, su = True)
+
+        # Load/Set Settings
         self.hilight_limit = api.get_config_int('BlockBot', 'hilight-limit')
         findlist = api.get_config_str('BlockBot', 'spam-strings').split('^^^@@@^^^')
-        self.findlist = []
-        for each in findlist:
-            self.findlist.append(re.compile(each))
         self.flood_speed = api.get_config_float('BlockBot', 'flood-speed')
         self.repeatlimit = 3
         self.repeat_time = 3
         self.repeat_1word = 4
+
+        # Compile Spam Strings        
+        self.findlist = []
+        for each in findlist:
+            self.findlist.append(re.compile(each))
+
+        # Load Default Data
         self.msglist = []
+        self.nicklists = {}
         self.lastnot = ('BBot', time.time(), 'sdkljfls')
 
     def privmsg(self, nick, data, channel):
+        '''Check messages for spam'''
         self.ldata = data.lower()
-        if api.check_if_super_user(data, config.superusers):
-            if ' :?; ' in self.ldata:
-                word = data[data.find(' :'+config.cmd_char+'; ')+4+len(config.cmd_char):]
-                self.findlist.append(word)
-        else:
+        if not api.check_if_super_user(data, config.superusers):
             thread.start_new_thread(self.check_hilight, (nick, data, channel))
             self.msglist.insert(0, (nick, time.time(), data))
             if len(self.msglist)>5:
@@ -39,21 +43,27 @@ class Module(api.module):
             ident = data[data.find('@'):data.find(' PRIVMSG ')]
             ldata = data.lower()
             msg = ldata[ldata.find(' :')+2:]
+
+            # Check for spam strings
             for each in self.findlist:
                 if re.search(each, ldata):
                     self.kick(nick, channel, 'You have matched a spam string and have been banned from the channel, if you think this is a mistake, contact a channel op about being unbanned')
-                    return 0
+                    return
             try:
                 if self.msglist[0][0] == self.msglist[1][0] == self.msglist[2][0]:
+                    # Check for flooding
                     if (self.msglist[0][1]-self.msglist[2][1])<self.flood_speed:
                         self.kick(nick, channel, 'It is against the rules to flood')
-                        return 0
+                        return
+
+                    # Check for repeating
                     elif msg.split()>1:
                         if (self.msglist[0][2] == self.msglist[1][2] == self.msglist[2][2]) and (self.msglist[0][1]-self.msglist[1][1]<self.repeat_time):
-                            self.kick(nick, channel, 'Please do not repeat')
                             self.mode('*!*@%s'%api.get_host(data), channel, '+b')
+                            self.kick(nick, channel, 'Please do not repeat')
             except IndexError:
                 pass
+
     def check_hilight(self, nick, data, channel):
         '''Check if nick has pinged more than self.hilight_limit people, and if so, kick them'''
         ldata = data[data.find(' :')+2:].lower()
@@ -73,6 +83,7 @@ class Module(api.module):
             self.nicklists[channel].append(nick)
         else:
             self.nicklists[channel] = [nick]
+
     def get_notice(self, nick, channel, data):
         ldata = data.lower()
         self.olastnot = (self.lastnot[:])
@@ -85,6 +96,7 @@ class Module(api.module):
             if re.search(each, ldata):
                 self.kick(nick, channel, 'You have matched a spam string and have been banned. If this was a mistake, please contact a channel op to get unbanned')
                 self.mode(nick, channel, '+b')
+
     def get_raw(self, type, data):
         if type == 'PART' or type == 'KICK':
             try:
@@ -109,3 +121,13 @@ class Module(api.module):
                 self.nicklists[channel] = []
             for each in safe_names:
                 self.nicklists[channel].append(each)
+
+    # Supueruser Commands
+    def set_spam_string(self, nick, channel, param = None):
+        '''Set a spam string to automatically kick on'''
+        if param:
+            try:
+                self.findlist.append(re.compile(param))
+                self.msg(channel, '%s: string blacklisted' % nick)
+            except:
+                self.msg(channel, '%s: error banning string' % nick)

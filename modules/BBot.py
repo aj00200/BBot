@@ -142,11 +142,13 @@ class Module(api.module):
 
     def goog(self, nick, channel, param = None):
         '''Give a Google URL for a search; Parameters: search query'''
-        self.msg(channel, self.goog_str % param.replace(' ','+'))
+        if param:
+            self.msg(channel, self.goog_str % param.replace(' ','+'))
 
     def wiki(self, nick, channel, param = None):
         '''Give a Wikipedia URL for a page; Parameters: page name'''
-        self.msg(channel, self.wiki_str % param.replace(' ', '_'))
+        if param:
+            self.msg(channel, self.wiki_str % param.replace(' ', '_'))
 
     def help(self, nick, channel, param = None):
         '''Display help options; Parameters: None'''
