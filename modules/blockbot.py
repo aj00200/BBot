@@ -15,7 +15,7 @@ class Module(api.module):
         api.hook_command(';', self.set_spam_string, server, su = True)
 
         # Load/Set Settings
-        self.hilight_limit = api.get_config_int('BlockBot', 'hilight-limit')
+        self.hilight_limit = api.get_config_int('BlockBot', 'highlight-limit')
         findlist = api.get_config_str('BlockBot', 'spam-strings').split('^^^@@@^^^')
         self.flood_speed = api.get_config_float('BlockBot', 'flood-speed')
         self.repeatlimit = 3
@@ -72,7 +72,7 @@ class Module(api.module):
         found = 0
         for each in self.nicklists[channel]:
             if each in ldata:
-                found+= 1
+                found += 1
         if found>self.hilight_limit:
             print '* kicking %s out of %s'%(nick, channel)
             self.kick(nick, channel, 'Please do not ping that many people')

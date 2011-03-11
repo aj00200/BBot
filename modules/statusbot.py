@@ -14,11 +14,16 @@ class Module(api.module):
 
     def status(self, nick, channel, param = None):
         '''Set your status for other people to see'''
-        self.statuses[nick.lower()] = param
+        if param:
+            self.statuses[nick.lower()] = param
+            self.msg(channel, '%s: your status is set.' % nick)
+        elif nick in self.statuses:
+            del self.statuses[nick]
+            self.msg(channel, '%s: status cleared.' % nick)
 
     def whereis(self, nick, channel, param = None):
         '''Check the status of someone; Parameters: None'''
-        if ' ' in param:
+        if param and ' ' in param:
             param = param.strip()
         if param in self.statuses:
             self.msg(channel, '%s: %s left the status: %s' % (nick, param, self.statuses[param]))

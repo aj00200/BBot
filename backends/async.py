@@ -142,6 +142,7 @@ class Connection(asynchat.async_chat):
 
     def collect_incoming_data(self, data):
         self.data += data
+
 def connect(address, port = 6667, use_ssl = False):
     '''Connect to an IRC network
     address - The network address of the IRC network
