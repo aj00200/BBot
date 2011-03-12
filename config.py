@@ -9,6 +9,7 @@ try:
     if '--local-config' in sys.argv:
         raise Exception('Use local config!')
     file = open(os.getenv('HOME') + '/.BBot/config.cfg', 'r')
+    sys.path.insert(1, os.getenv('HOME') + '/.BBot')
     print(' * Loaded config.cfg from your home directory')
 except:
     if '--user-config' in sys.argv:

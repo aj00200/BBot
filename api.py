@@ -81,9 +81,11 @@ def get_command_list(address, su = False):
 
 # Base Module
 class module(object):
-    '''Base class that all modules should use to maintain best compatibility with future versions of the API'''
+    '''Base class that all modules should use to maintain best compatibility
+    with future versions of the API'''
     def __init__(self, address):
         self.__address__ = address
+        self.connection = backend.connections[address]
     # Receive
     def privmsg(self, nick, data, channel):
         '''Called every time a PRIVMSG is recieved.
@@ -131,5 +133,5 @@ class module(object):
         '''Send raw data to the server
         Example: self.raw('PRIVMSG #bbot :This is a raw message')
         Note: the line ending is not required'''
-        backend.connections[self.__address__].push('%s\r\n'%(data))
+        self.connection.push('%s\r\n'%(data))
         print 'Send: %s' % data

@@ -45,7 +45,8 @@ class Connection(asynchat.async_chat):
                 return
             self.set_socket(self.sock)
 
-        # Load Modules
+    def load_modules(self):
+        '''Load all the modules which are set in the config'''
         for module in config.modules:
             self.load_module(module)
 
@@ -149,3 +150,4 @@ def connect(address, port = 6667, use_ssl = False):
     port - On optional argument that specifies the port to connect on
     ssl - A boolean argument specifying wether or not to use SSL'''
     connections[address] = Connection(address, port, use_ssl)
+    connections[address].load_modules()

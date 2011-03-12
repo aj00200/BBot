@@ -197,16 +197,14 @@ class Module(api.module):
 
     def su_add(self, nick, channel, param = None):
         '''Add a factoid; Parameters: a factoid name and a factoid body seperated by ":::" - For example, ?add test:::%n: it works!'''
-        if channel == config.nick:
-            channel = nick
         if param:
-            query = param.split(':::')
+            query = param.split(':::', 1)
             if self.add_factoid(query, nick):
                 self.notice(channel, '<<Added %s>>' % query)
             else:
                 self.msg(channel, '%s: Adding of the factoid failed. Make sure you are using the proper syntax.' % nick)
         else:
-            self.msg(channel,'%s: you must specify a factoid to add')
+            self.msg(channel,'%s: you must specify a factoid to add' % nick)
 
     def su_load(self, nick, channel, param = None):
         '''Load a module; Parameters: a module name'''
