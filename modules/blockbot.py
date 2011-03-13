@@ -7,16 +7,16 @@ import thread
 import api
 import config
 
-class Module(api.module):
+class Module(api.Module):
     def __init__(self, server):
-        api.module.__init__(self, server)
+        super(Module, self).__init__(server)
 
         # Hook Commands
         api.hook_command(';', self.set_spam_string, server, su = True)
 
         # Load/Set Settings
         self.hilight_limit = api.get_config_int('BlockBot', 'highlight-limit')
-        findlist = api.get_config_str('BlockBot', 'spam-strings').split('^^^@@@^^^')
+        findlist = api.get_config_str('BlockBot', 'spam-strings')
         self.flood_speed = api.get_config_float('BlockBot', 'flood-speed')
         self.repeatlimit = 3
         self.repeat_time = 3
@@ -24,8 +24,9 @@ class Module(api.module):
 
         # Compile Spam Strings        
         self.findlist = []
-        for each in findlist:
-            self.findlist.append(re.compile(each))
+        if findlist != '':
+            for each in findlist.split('^^^@@@^^^'):
+                self.findlist.append(re.compile(each))
 
         # Load Default Data
         self.msglist = []
@@ -90,7 +91,7 @@ class Module(api.module):
         self.lastnot = (nick, time.time())
         if self.olastnot[0] == self.lastnot[0]:
             if (self.lastnot[1]-self.olastnot[1])<self.flood_speed:
-                self.kick(nick, channel, 'Please don\'t use the notice command so much')
+                self.kick(nick, channel, 'Please don\'t use so many notices')
                 self.mode(channel, '+q', nick)
         for each in self.findlist:
             if re.search(each, ldata):
@@ -109,8 +110,9 @@ class Module(api.module):
                 for channel in self.nicklists:
                     if data[0] in self.nicklists[channel]:
                         self.nicklists[channel].pop(self.nicklists[channel].index(data[0]))
-            except Exception, e:
+            except Exception:
                 pass
+
         elif type == 'CODE' and data[0] == '353':
             channel = data[1][data[1].find(' =  ')+2:data[1].find(' :')]
             names = data[1][data[1].find(' :')+2:].split()

@@ -10,11 +10,13 @@ try:
         raise Exception('Use local config!')
     file = open(os.getenv('HOME') + '/.BBot/config.cfg', 'r')
     sys.path.insert(1, os.getenv('HOME') + '/.BBot')
+    PATH = os.getenv('HOME') + '/.BBot/'
     print(' * Loaded config.cfg from your home directory')
 except:
     if '--user-config' in sys.argv:
         raise Exception('Local config could not be read.')
     file = open('config.cfg', 'r')
+    PATH = ''
     print(' * Loaded config.cfg out of local directory')
 
 c = ConfigParser.ConfigParser()

@@ -80,7 +80,7 @@ def get_command_list(address, su = False):
         return 'There was an error processing your request'
 
 # Base Module
-class module(object):
+class Module(object):
     '''Base class that all modules should use to maintain best compatibility
     with future versions of the API'''
     def __init__(self, address):

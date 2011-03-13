@@ -1,11 +1,10 @@
 import api
 import config
 
-class Module(api.module):
+class Module(api.Module):
     '''A module for making global announcements'''
     commands = ['global']
-    def __init__(self, server):
-        api.module.__init__(self, server)
+
     def privmsg(self, nick, data, channel):
         if api.check_if_super_user(data, config.superusers):
             if ':?global ' in data:

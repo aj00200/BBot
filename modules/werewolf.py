@@ -8,9 +8,11 @@ import api
 import config
 import libs.wolflib
 
-class Module(api.module):
-    def __init__(self, address):
-        api.module.__init__(self, address)        
+class Module(api.Module):
+    '''This module is responsible for most of the game, however, some aspects
+    are located within libs.wolflib'''
+    def __init__(self, server):
+        super(Module, self).__init__(server)
         self.vars = {
             'main_channel':api.get_config_str('werewolf', 'main-channel'), 
             'wolf_channel':api.get_config_str('werewolf', 'wolf-channel'), 

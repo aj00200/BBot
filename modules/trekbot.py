@@ -1,26 +1,30 @@
-'''This module allows channel operators to execute several commands through BBot, such as kicking, banning, 
-promoting and more. It can be used to manage channels on networks without services, such as EFnet.'''
+'''This module allows channel operators to execute several commands through
+BBot, such as kicking, banning, promoting and more. 
+It can be used to manage channels on networks without services.'''
 
-import api, config
-class Module(api.module):
+import api
+import config
+class Module(api.Module):
     def __init__(self, server = config.network):
         self.blacklist = [] # Load Blacklist
-        self.blconfig = open('trekbot/blacklist', 'r').readlines()
+        self.blconfig = open(config.PATH+'trekbot/blacklist', 'r').readlines()
         for each in self.blconfig:
             self.blacklist.append(each.strip('\r\n'))
 
         self.whitelist = [] # Load Whitelist
-        self.wlconfig = open('trekbot/whitelist', 'r').readlines()
+        self.wlconfig = open(config.PATH+'trekbot/whitelist', 'r').readlines()
         for each in self.wlconfig:
             self.whitelist.append(each.strip('\r\n'))
         del self.blconfig, self.wlconfig
+
         # Read config
         self.proxyscan = api.get_config_bool('trekbot', 'proxy-scan')
+
         # Setup Variables
         self.pending_bans = {}
         self.pending_unbans = {}
     
-        api.module.__init__(self, server)
+        super(Module, self).__init__(server)
 
         # Hook Superuser Commands
         api.hook_command('op', self.op, server, su = True)
@@ -57,6 +61,7 @@ class Module(api.module):
                 if nick in self.pending_unbans:
                     for channel in self.pending_unbans[nick]:
                         self.mode('*!*@%s' % host, channel, '-b')
+
     def write_blacklist(self):
         '''Write the blacklist to the harddrive'''
         self.blconfig = open('trekbot/blacklist', 'w')
@@ -76,21 +81,20 @@ class Module(api.module):
             self.mode(nick, channel, '+v')
 
     def scan(self, ip, channel, nick):
-        self.scansafe = 1
+        '''Preform a port scan on an ip address and check for common proxies'''
+        scansafe = 1
         try:
             print('Scanning '+ip)
-            self.nm = nmap.PortScanner()
-            #80, 8080, 1080, 3246
-            self.nm.scan(ip, '808, 23, 1080, 110, 29505, 8080, 3246', '-T5')
+            nm = nmap.PortScanner()
+            nm.scan(ip, '808, 23, 1080, 110, 29505, 8080, 3246', '-T5')
             for each in nm.all_hosts():
-                print each+':::'
+                print each
                 lport = nm[each]['tcp'].keys()
                 print lport
                 if 808 in lport or 23 in lport or 110 in lport or 1080 in lport or 29505 in lport or 80 in lport or 8080 in lports or 3246 in lports:
-                    self.scansafe = 0
+                    scansafe = 0
                     print(' * Detected possible drone at: %s' % ip)
-            del self.nm
-            if self.scansafe:
+            if scansafe:
                 self.mode(nick, channel, '+v')
         except:
             print('The port scanner in TrekBot has crashed')

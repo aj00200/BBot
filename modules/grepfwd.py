@@ -1,18 +1,23 @@
-import q, re, api
-class Module(api.module):
+import re
+import api
+
+class Module(api.Module):
     '''A module for matching regular expressions and
     forwarding the data to a nick or channel'''
-    commands = ['grepfwd']
     def __init__(self, server):
+        super(Module, self).__init__(server)
+        api.hook_command('grepfwd', self.grepfwd, server, su = True)
         self.fwds = {}
-        api.module.__init__(self, server)
+
     def privmsg(self, nick, data, channel):
         for each in self.fwds:
             if re.search(each, data):
-                self.append((self.fwds[each], data))
+                self.msg(self.fwds[each], data)
+
     def grepfwd(self, nick, channel, param = None):
-        if ' > ' in message:
-            self.add_fwd(message)
-    def add_fwd(self, data):
+        if param and ' > ' in param:
+            self.add_fwd(param)
+
+    def add_fwd(self, param):
         query = param.split(' > ')
         self.fwds[query[0]] = query[1]

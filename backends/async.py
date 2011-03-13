@@ -1,5 +1,7 @@
-#Asynchat Backend for BBot
-import socket, asynchat, re, time, ssl
+'''An asynchat backend for BBot'''
+import socket, asynchat
+import re, time, ssl, traceback
+
 import bbot, config
 import api
 
@@ -27,20 +29,20 @@ class Connection(asynchat.async_chat):
                 self.ssl_sock = ssl.wrap_socket(self.sock)
                 self.ssl_sock.connect((address, port))
                 self.set_socket(self.ssl_sock)
-            except ssl.SSLError, e:
-                print('\x1B[31m');
+            except ssl.SSLError, error:
+                print('\x1B[31m')
                 print('There has been an SSL error while connecting to the server')
                 print('Please make sure you are using the proper port')
                 print('If you need help, join #bbot on irc.fossnet.info (port 6667; ssl: 6670)')
                 print('\x1B[m\x1B[m')
-                raise ssl.SSLError(e)
-            except socket.error, e:
+                raise ssl.SSLError(error)
+            except socket.error, error:
                 print('There was an error connecting to %s' % address)
                 return
         else:
             try:
                 self.sock.connect((address, port))
-            except socket.error, e:
+            except socket.error, error:
                 print('There was an error connecting to %s' % address)
                 return
             self.set_socket(self.sock)
@@ -51,24 +53,34 @@ class Connection(asynchat.async_chat):
             self.load_module(module)
 
     def handle_error(self):
-        raise
+        traceback.print_exc()
 
     def load_module(self, module):
         try:
             self.modules.append(getattr(__import__('modules.'+module), module).Module(self.__address__))
             return True
-        except ImportError, e:
-            print(' * ImportError loading %s'%module)
+        except ImportError, error:
+            try:
+                self.modules.append(getattr(__import__('usermodules.'+module), module).Module(self.__address__))
+                return True
+            except ImportError, error2:
+                print(' * ImportError loading %s' % module)
+                return False
 
     def unload_module(self, module):
         for mod in self.modules:
-            if str(type(mod)) ==  "<class 'modules.%s.Module'>" % module:
+            if (str(type(mod)) ==  "<class 'modules.%s.Module'>" % module
+                        or str(type(mod)) == "<class 'usermodules.%s.Module'>"
+                        % module):
                 print ' * Removing module %s for network %s' % (module, self.__address__)
                 self.modules.pop(self.modules.index(mod))
 
     def reload_module(self, module):
         self.unload_module(module)
-        reload(getattr(__import__('modules.'+module), module))
+        try:
+            reload(getattr(__import__('modules.'+module), module))
+        except ImportError, error:
+            reload(getattr(__import__('usermodules.'+module), module))
         time.sleep(2)
         self.load_module(module)
 
@@ -77,9 +89,9 @@ class Connection(asynchat.async_chat):
         self.push('NICK %s\r\nUSER %s %s %s :%s\r\n' % (config.nick, config.nick, config.nick, config.nick, config.nick))
 
     def get_data(self):
-        r = self.data
+        ret = self.data
         self.data = ''
-        return r
+        return ret
 
     def found_terminator(self):
         data = self.get_data()

@@ -1,10 +1,14 @@
 from __future__ import division
-import re, api, math, config
+import math
+
+import api
 import libs.mathwiz as geo
-class Module(api.module):
-    def __init__(self, address):
-        api.module.__init__(self, address)
-        api.register_commands(self.__address__, ['math', 'math help'])
+
+class Module(api.Module):
+    def __init__(self, server):
+        super(Module, self).__init__(server)
+        api.hook_command('math', self.math, server)
+
     allow = {
     ')':'..0..', 
     'sqrt(':'..1..', 
@@ -66,48 +70,58 @@ class Module(api.module):
     '..24..':'geo.inch('
     
     }
-    chars = '_ghijklmnopqrstuvwyz#@$\'"!: = GHIJKLMNOPQRSTUVWYZ'
-    def privmsg(self, nick, data, channel):
-        ldata = data.lower()
-        if ':'+config.cmd_char+'math help' in ldata:
-            self.msg(channel, nick+' : +, -, *, /, %, sqrt, pow, ceil, floor, log, asin, acos, atan, atan2, sin, cos, tan')
-        elif ':%smath '%config.cmd_char in ldata:
-            self.e = data[data.find('math ')+5:]
+    chars = '_ghijklmnopqrstuvwyz#@$\'"!: = '
+
+    def math(self, nick, channel, param = None):
+        '''Functions and operators supported are: +, -, *, /, %, sqrt, pow, ceil, floor, log, sin, cos, tan'''
+        if param:
+            expr = param.lower()
             for each in self.allow:
-                self.e = self.e.replace(each, ' %s '%self.allow[each])
+                expr = expr.replace(each, ' %s ' % self.allow[each])
             for each in self.chars:
-                self.e = self.e.replace(each, '')
+                expr = expr.replace(each, '')
             for each in self.invert:
-                self.e = self.e.replace(' %s '%each, self.invert[each])
-            self.e = self.e.replace('//', '.0/')
+                expr = expr.replace(' %s ' % each, self.invert[each])
+            expr = expr.replace('//', '.0/')
             try:
-                if self.e.find('**')!= -1:
+                if '**' in expr:
                     raise Disallowed('**')
-                self.msg(channel, str(eval(self.e)))
+                self.msg(channel, str(eval(expr)))
             except Exception, e:
                 self.report_error(channel, e)
+
     def report_error(self, channel, e):
-        self.msg(channel, 'Error %s; with arguments %s'%(type(e), e.args))
+        '''Report an error encountered while evaluating an expression
+        to the channel from which the command orgionated'''
+        self.msg(channel, 'Error %s; with arguments %s' % (type(e), e.args))
+
 class Disallowed(Exception):
     def __init__(self, string):
-        self.args = ['%s is not allowed!'%string]
-# === Custom Functions === 
+        self.args = ['%s is not allowed!' % string]
+
 class num(int):
-    def __init__(self, num):
-        self.hex = hex(num)
-        self.dec = int(num)
-        self.oct = oct(num)
+    '''A class to hold a number in decimal, hex, and octal forms'''
+    def __init__(self, number):
+        self.hex = hex(number)
+        self.dec = int(number)
+        self.oct = oct(number)
         try:
-            self.bin = bin(num)
-        except:
+            self.bin = bin(number)
+        except Exception:
             self.bin = 'Upgrade to python2.6 or 2.7 please'
+
     def __str__(self):
-        return '<hex %s; dec %s; oct %s; bin %s;>'%(self.hex, self.dec, self.oct, self.bin)
-def hex2dec(hex):
-    return int(hex, 16)
-def dec2hex(dec):
-    return '%X'%dec
-def dec2oct(dec):
-    return '%o'%dec
-def oct2dec(oct):
-    return int(oct(oct))
+        return '<hex %s; dec %s; oct %s; bin %s;>'% (self.hex, self.dec, self.oct, self.bin)
+
+def hex2dec(hexnum):
+    '''Convert a base 16 number to base 10'''
+    return int(hexnum, 16)
+def dec2hex(decimal):
+    '''Convert a base 10 number to base 16'''
+    return '%X' % decimal
+def dec2oct(decimal):
+    '''Convert a base 10 number to base 8'''
+    return '%o' % decimal
+def oct2dec(octal):
+    '''Convert a base 8 number to base 10'''
+    return int(oct(octal))

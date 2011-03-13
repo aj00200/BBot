@@ -1,8 +1,8 @@
 """This module allows for easy factoid tracking a la Infobot, in addition to
-generating URLs for common websites, such as Google SSL, Wikipedia SSL and
-aj00200's Knowledge Base. It also allows the admin to execute functions like
-loading modules, connecting to other networks and more. Additionally, it can
-output important BBot information like its version."""
+generating URLs for common websites, such as Google SSL and Wikipedia SSL.
+It also allows the admin to execute functions like loading modules,
+connecting to other networks and more. Additionally, it can output important 
+BBot information like its version."""
 
 import re
 import time
@@ -21,7 +21,8 @@ try:
 except:
     print(' * Could not load the factoid file')
     dict = {}
-class Module(api.module):
+
+class Module(api.Module):
     goog_str = 'https://encrypted.google.com/search?q=%s'
     wiki_str = 'https://secure.wikimedia.org/wikipedia/en/wiki/%s'
     stop_words = [
@@ -30,8 +31,10 @@ class Module(api.module):
     is_words = [
         ' was ', ' are ', ' am '
     ]
+
     def __init__(self, server):
-        api.module.__init__(self, server)
+        super(Module, self).__init__(server)
+
         self.command_list = []
         self.command_start = ':'+config.cmd_char
         self.cmd_len = len(self.command_start)

@@ -3,10 +3,10 @@
 import api
 import config
 
-class Module(api.module):
+class Module(api.Module):
     def __init__(self, server):
+        super(Module, self).__init__(server)
         self.statuses = {}
-        api.module.__init__(self, server)
 
         # Hook commands
         api.hook_command('status', self.status, server)
