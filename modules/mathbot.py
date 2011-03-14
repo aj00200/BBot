@@ -68,9 +68,8 @@ class Module(api.Module):
     '..22..':'geo.line(', 
     '..23..':'geo.cm(', 
     '..24..':'geo.inch('
-    
     }
-    chars = '_ghijklmnopqrstuvwyz#@$\'"!: = '
+    chars = '_ghijklmnopqrstuvwyz#@$\'"!:='
 
     def math(self, nick, channel, param = None):
         '''Functions and operators supported are: +, -, *, /, %, sqrt, pow, ceil, floor, log, sin, cos, tan'''
@@ -82,7 +81,6 @@ class Module(api.Module):
                 expr = expr.replace(each, '')
             for each in self.invert:
                 expr = expr.replace(' %s ' % each, self.invert[each])
-            expr = expr.replace('//', '.0/')
             try:
                 if '**' in expr:
                     raise Disallowed('**')
@@ -90,10 +88,10 @@ class Module(api.Module):
             except Exception, e:
                 self.report_error(channel, e)
 
-    def report_error(self, channel, e):
+    def report_error(self, channel, error):
         '''Report an error encountered while evaluating an expression
         to the channel from which the command orgionated'''
-        self.msg(channel, 'Error %s; with arguments %s' % (type(e), e.args))
+        self.msg(channel, 'Error %s; Arguments %s' % (type(error), error.args))
 
 class Disallowed(Exception):
     def __init__(self, string):

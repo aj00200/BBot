@@ -53,6 +53,8 @@ class Module(api.Module):
                 except IndexError:
                     if reply_on_notfound:
                         self.msg(channel, '%s: Sorry, but I could not find what %s is.' % (nick, param))
+            except UnicodeEncodeError:
+                self.msg(channel, '%s: there was an error while looking up your query' % nick)
 
     def freebase(self, nick, channel, query, reply_on_notfound = True):
         '''Query Freebase for the query'''

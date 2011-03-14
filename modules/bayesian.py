@@ -21,7 +21,7 @@ class Module(api.Module):
         self.remove = ['-', '.', ', ', '_', '+', '\'', '"']
         api.module.__init__(self, server)
 
-    def __destroy__(self):
+    def destroy(self):
         self.db.commit()
         del self.db, self.c
 

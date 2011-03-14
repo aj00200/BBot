@@ -59,26 +59,25 @@ class Connection(asynchat.async_chat):
         try:
             self.modules.append(getattr(__import__('modules.'+module), module).Module(self.__address__))
             return True
-        except ImportError, error:
+        except ImportError:
             try:
                 self.modules.append(getattr(__import__('usermodules.'+module), module).Module(self.__address__))
                 return True
-            except ImportError, error2:
+            except ImportError:
                 print(' * ImportError loading %s' % module)
                 return False
 
     def unload_module(self, module):
         for mod in self.modules:
-            if (str(type(mod)) ==  "<class 'modules.%s.Module'>" % module
-                        or str(type(mod)) == "<class 'usermodules.%s.Module'>"
-                        % module):
+            if (str(type(mod)) ==  "<class 'modules.%s.Module'>" % module or str(type(mod)) == "<class 'usermodules.%s.Module'>" % module):
                 print ' * Removing module %s for network %s' % (module, self.__address__)
+                mod.destroy()
                 self.modules.pop(self.modules.index(mod))
 
     def reload_module(self, module):
         self.unload_module(module)
         try:
-            reload(getattr(__import__('modules.'+module), module))
+            self.modules.append(reload(getattr(__import__('modules.'+module), module)).Module(self.__address__))
         except ImportError, error:
             reload(getattr(__import__('usermodules.'+module), module))
         time.sleep(2)

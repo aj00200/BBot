@@ -41,26 +41,12 @@ def load_module(server, module):
     '''Tell the backend to load a module for a connection'''
     return backend.connections[server].load_module(module)
 
-# Command List
-commands = {}
-def register_commands(address, cmds):
-    if address not in commands:
-        commands[address] = []
-    try:
-        for cmd in cmds:
-            if cmd not in commands[address]:
-                commands[address] += [cmd]
-    except:
-        pass
-
 # Hooks
 hooks = {}
 su_hooks = {}
 def hook_command(name, callback, server, su = False):
     '''Hook a command for use by the backend, using this when possible will increase the speed of the bot and your module'''
     if (server not in hooks):
-        return False
-    elif (name in hooks[server]):
         return False
     try:
         if not su:
@@ -70,6 +56,7 @@ def hook_command(name, callback, server, su = False):
             su_hooks[server][name] = callback
     except:
         return False
+
 def get_command_list(address, su = False):
     try:
         if not su:
@@ -83,9 +70,14 @@ def get_command_list(address, su = False):
 class Module(object):
     '''Base class that all modules should use to maintain best compatibility
     with future versions of the API'''
+    # Setup and Destroy the module
     def __init__(self, address):
         self.__address__ = address
         self.connection = backend.connections[address]
+    def destroy(self):
+        '''This is called when the module is unloaded, or possibly when the
+        bot is shut down.'''
+        pass
     # Receive
     def privmsg(self, nick, data, channel):
         '''Called every time a PRIVMSG is recieved.
