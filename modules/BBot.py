@@ -14,7 +14,7 @@ import bbot as BBot
 
 try:
     import json
-    file = open('database.json')
+    file = open(config.PATH + 'database.json')
     dict = json.load(file)
     file.close()
     del file
@@ -250,7 +250,7 @@ class Module(api.Module):
 
 def write_dict():
     '''Write all factoids to the hard drive'''
-    file = open('database.json', 'w')
+    file = open(config.PATH + 'database.json', 'w')
     file.write(json.dumps(dict))
     file.close()
 def del_factoid(query):
