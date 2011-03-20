@@ -1,0 +1,115 @@
+#! /usr/bin/python
+import os
+import subprocess
+import ConfigParser
+HOME_PATH = os.getenv('HOME') + '/'
+CONFIG_PATH = os.getenv('HOME') + '/.BBot/config.cfg'
+config = ConfigParser.RawConfigParser()
+
+# Main Settings
+config.add_section('main')
+# Nickname
+print('''
+What do you want your bot's nickname to be?''')
+config.set('main', 'nick', raw_input('nick: '))
+
+# Use Services
+print('''
+Should your bot use services like ChanServ
+or nickserv to identify or preform other functions?
+Please enter either True or False''')
+config.set('main', 'use-services', raw_input('Use services: '))
+
+# Services Authentication
+print('''
+If your bot is using services, what is its username
+and password. If services are not being used, just leave them
+blank''')
+config.set('main', 'username', raw_input('Username: '))
+config.set('main', 'password', raw_input('Password: '))
+
+# Network
+print('''
+What is the address of the network you will be connecting
+to? You can specify a server as well.''')
+config.set('main', 'network', raw_input('Network: '))
+
+# Port
+print('''
+What port should your bot use? If you don't know, use 6667.
+Please note that SSL is supported. If you plan to use SSL,
+make sure you select the SSL port for your network''')
+config.set('main', 'port', input('Port: '))
+
+# SSL
+print('''
+Should your bot use SSL? If you don't know, type False''')
+config.set('main', 'ssl', raw_input('SSL: '))
+
+# Channels
+print('''
+What channels should your bot join on connect?
+Seperate each channel name by a space and please include the
+# with the channel name.''')
+config.set('main', 'channels', raw_input('Channels: '))
+
+# Superusers
+print('''
+What is your hostname or cloak on the network? This will give
+you the ability to control the bot as a Superuser.
+WARNING: If you don't set this properly, you could be opening
+security bugs or not be able to control the bot.''')
+config.set('main', 'super-users', raw_input('Hostname: '))
+
+print('''
+What should your bot's command character be? This is the
+character that is used before all commands like a ? for
+ the command ?wiki. Mutliple letters are allowed''')
+config.set('main', 'command-char', raw_input('Command Character: '))
+
+print('''
+ === Thank you for setting up BBot ===
+ Your configuration file is now being finalized
+ Please wait while this complets, it should be done soon
+''')
+
+# Set Other values which are defined by default
+print(' * Setting up default modules')
+config.set('main', 'modules', 'blockbot BBot trekbot ddgbot mathbot statusbot')
+config.set('main', 'wait-after-identify', 5)
+config.set('main', 'read-wait', 512)
+print(' * Setting up password-guard')
+config.set('main', 'ignore-re', '(config.pass|dir.config)')
+config.set('main', 'backend', 'async')
+
+# Set BlockBot Options
+print(' * Setting up BlockBot anti-spam')
+config.add_section('BlockBot')
+config.set('BlockBot', 'highlight-limit', 5)
+config.set('BlockBot', 'repeat-limit', 3)
+config.set('BlockBot', 'spam-strings', '')
+config.set('BlockBot', 'flood-speed', 1.5)
+
+# Set TrekBot Options
+print(' * Setting up TrekBot channel manager')
+config.add_section('trekbot')
+config.set('trekbot', 'proxy-scan', False)
+
+# Make blank trekbot files
+print(' * Creating blank whitelists and blacklists')
+subprocess.call(['mkdir', HOME_PATH + '.BBot'])
+subprocess.call(['mkdir', HOME_PATH + '.BBot/trekbot'])
+subprocess.call(['touch', HOME_PATH + '.BBot/trekbot/whitelist'])
+subprocess.call(['touch', HOME_PATH + '.BBot/trekbot/blacklist'])
+
+print('''
+ * Now writing your file to disk
+   This file may be found at ~/.BBot/config.cfg
+
+Thanks for installing BBot!''')
+
+with open(CONFIG_PATH, 'wb') as configfile:
+    config.write(configfile)
+
+print('''Done!
+''')

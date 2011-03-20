@@ -1,14 +1,12 @@
 import urllib, re
 import json
-from xml.dom.minidom import parse
-
 import api
 
 class Module(api.Module):
     '''A module for preforming web lookups of various
     facts. Responds to "what is" questings best'''
     urls = {
-        'ddg': 'https://duckduckgo.com/?q=%s&o=xml',
+        'ddg': 'https://duckduckgo.com/?q=%s&o=json&d=1',
         'fb': 'https://api.freebase.com/api/experimental/topic/standard?id=/en/%s'
     }
     def __init__(self, server):
@@ -26,7 +24,7 @@ class Module(api.Module):
             ldata = ldata.replace(' was ', ' ')
             ldata = ldata.replace(' an ', ' ')
             ldata = ldata.replace(' are ', ' is ')
-            query = 'what is '+ldata[ldata.find(' is ')+4:]
+            query = ldata[ldata.find(' is ')+4:]
             self.ddg(nick, channel, query, reply_on_notfound = False)
             #self.freebase(nick, data, channel, qu, reply_on_notfound = True)
 
@@ -40,21 +38,16 @@ class Module(api.Module):
         else:
             url = self.urls['ddg'] % urllib.quote_plus(param)
             data = urllib.urlretrieve(url)
-            xml = parse(data[0])
-            try:
-                abstract = xml.getElementsByTagName('AbstractText')
-                abstract = str(abstract[0].childNodes[0].wholeText)
-                self.msg(channel, '%s: %s' % (nick, abstract))
-            except IndexError:
-                try:
-                    abstract = xml.getElementsByTagName('Answer')
-                    abstract = str(abstract[0].childNodes[0].wholeText)
-                    self.msg(channel, '%s: %s' % (nick, abstract))
-                except IndexError:
-                    if reply_on_notfound:
-                        self.msg(channel, '%s: Sorry, but I could not find what %s is.' % (nick, param))
-            except UnicodeEncodeError:
-                self.msg(channel, '%s: there was an error while looking up your query' % nick)
+            response = json.load(open(data[0], 'r'))
+            definition = response['Definition']
+            if response['Definition']:
+                self.msg(channel, '%s: %s' %
+                         (nick, str(response['Definition'])))
+            elif response['Answer']:
+                self.msg(channel, '%s: %s' %
+                         (nick, str(response['Answer'])))
+            elif reply_on_notfound:
+                self.msg(channel, '%s: Sorry, but I could not find what %s is.' % (nick, param))
 
     def freebase(self, nick, channel, query, reply_on_notfound = True):
         '''Query Freebase for the query'''
@@ -63,7 +56,7 @@ class Module(api.Module):
         document = json.load(data)
         try:
             description = document['/en/%s' % query]['result']['description']
-            self.msg(channel, '%s: %s' % (nick, description.split('. ')[0]))
+            self.msg(channel, '%s: %s' % (nick, str(description.split('. ')[0])))
         except Exception, error:
             print document['/en/%s' % query]
             print 'Error: %s, %s' % (error.__repr__(), error.args)
