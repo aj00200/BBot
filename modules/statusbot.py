@@ -1,7 +1,6 @@
 '''This module allows users to set a status that others can query.'''
 
 import api
-import config
 
 class Module(api.Module):
     def __init__(self, server):
@@ -26,7 +25,8 @@ class Module(api.Module):
         if param and ' ' in param:
             param = param.strip()
         if param in self.statuses:
-            self.msg(channel, '%s: %s left the status: %s' % (nick, param, self.statuses[param]))
+            self.msg(channel, '%s: %s left the status: %s' %
+                     (nick, param, self.statuses[param.lower()]))
         elif not param:
             self.msg(channel, '%s: who\'s status do you want?' % nick)
         else:
