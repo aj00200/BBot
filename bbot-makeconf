@@ -61,12 +61,20 @@ WARNING: If you don't set this properly, you could be opening
 security bugs or not be able to control the bot.''')
 config.set('main', 'super-users', raw_input('Hostname: '))
 
+# Command Character
 print('''
 What should your bot's command character be? This is the
 character that is used before all commands like a ? for
  the command ?wiki. Mutliple letters are allowed''')
 config.set('main', 'command-char', raw_input('Command Character: '))
 
+# Quit Message
+print('''
+What would you like your bot's default quit message to be?
+This will be used whenever a superuser runs the quit command''')
+config.set('main', 'quit-message', raw_input('Quit Message: '))
+
+# -Thanks for setting up BBot
 print('''
  === Thank you for setting up BBot ===
  Your configuration file is now being finalized

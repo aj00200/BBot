@@ -3,7 +3,7 @@
 It is licensed under the GNU GPL v3 license as well as the MIT license.
 See the LICENSE file for more details'''
 
-VERSION = '7.0.1'
+VERSION = '7.0.2'
 import sys
 import asyncore
 

@@ -1,5 +1,6 @@
 import config
 backend = getattr(__import__('backends.%s'%config.backend), config.backend)
+
 def get_config_str(cat, name):
     '''Get a string out of the bot's configuration file'''
     return config.c.get(cat, name)
@@ -58,6 +59,7 @@ def hook_command(name, callback, server, su = False):
         return False
 
 def get_command_list(address, su = False):
+    '''Get a list of commands which are hooked for a specfic server'''
     try:
         if not su:
             return list(hooks[address])

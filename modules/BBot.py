@@ -23,6 +23,7 @@ except:
     dict = {}
 
 class Module(api.Module):
+    # Setup module constants
     goog_str = 'https://encrypted.google.com/search?q=%s'
     wiki_str = 'https://secure.wikimedia.org/wikipedia/en/wiki/%s'
     stop_words = [
@@ -31,6 +32,9 @@ class Module(api.Module):
     is_words = [
         ' was ', ' are ', ' am '
     ]
+
+    # Load settings from the config file
+    quit_message = api.get_config_str('main', 'quit-message')
 
     def __init__(self, server):
         super(Module, self).__init__(server)
@@ -49,9 +53,10 @@ class Module(api.Module):
         api.hook_command('wiki', self.wiki, server)
         # Hook Superuser Commands
         api.hook_command('join', self.su_join, server, su = True)
+        api.hook_command('quit', self.su_quit, server, su = True)
+        api.hook_command('part', self.su_part, server, su = True)
         api.hook_command('writedb', self.su_writedb, server, su = True)
         api.hook_command('raw', self.su_raw, server, su = True)
-        api.hook_command('part', self.su_part, server, su = True)
         api.hook_command('add', self.su_add, server, su = True)
         api.hook_command('load', self.su_load, server, su = True)
         api.hook_command('reload', self.su_reload, server, su = True)
@@ -155,7 +160,7 @@ class Module(api.Module):
 
     def help(self, nick, channel, param = None):
         '''Display help options; Parameters: None'''
-        self.msg(channel, '%s: please use the command %snhelp for normal help or %snsuhelp for superuser help' %
+        self.msg(channel, '%s: please use the command %nhelp for normal help or %shelp for superuser help' %
                  (nick, config.cmd_char, config.cmd_char))
 
     def normal_help(self, nick, channel, param = None):
@@ -197,6 +202,13 @@ class Module(api.Module):
             self.raw('PART %s' % param)
         else:
             self.msg(channel, '%s: you need to specify a channel' % nick)
+
+    def su_quit(self, nick, channel, param = None):
+        '''Quit; Parameters: an optional quit message'''
+        if param:
+            self.raw('QUIT :%s' % param)
+        else:
+            self.raw('QUIT :%s' % self.quit_message)
 
     def su_add(self, nick, channel, param = None):
         '''Add a factoid; Parameters: a factoid name and a factoid body seperated by ":::" - For example, ?add test:::%n: it works!'''
