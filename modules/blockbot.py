@@ -113,7 +113,7 @@ class Module(api.Module):
 
         # Check notice for spam strings
         for each in self.findlist:
-            if re.search(each, ldata):
+            if re.search(each, data):
                 self.kick(nick, channel, 'You have matched a spam string and have been banned. If this was a mistake, please contact a channel op to get unbanned')
                 self.mode(nick, channel, '+b')
 
