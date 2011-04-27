@@ -25,21 +25,24 @@ class TestAPI(unittest.TestCase):
 
     def test_host_in_list(self):
         '''Test if the host_in_list function is working'''
-        self.assertEqual(api.host_in_list(':a!b@c PRIVMSG #d :e', ['c']), True)
+        self.assertEqual(api.host_in_list(':a!b@c PRIVMSG #d :e', ['c']),
+                         True, 'api.host_in_list is not functioning')
 
     # Command Hooks
     def test_hooks_existence(self):
         '''Ensure that the hooks variable is existent and available to
         external modules such as the backend which must use it'''
-        self.assertEqual(api.hooks, {})
+        self.assertEqual(api.hooks, {},
+                         'api.hooks does not exist or contains data')
 
     def test_hook_server_must_exist(self):
         '''Make sure that the server the command is being hooked to is
         checked to exist before hooking the command'''
         api.hooks = {}
         api.hook_command('blah',
-                         self.null_callback, 'irc.fakenetwork.example.com')
-        self.assertEqual(api.hooks, {})
+                         self.null_callback, 'irc.doesnotexist.com')
+        self.assertEqual(api.hooks, {},
+                         'Hooks are being created for nonexistant nets')
 
     def test_hook_command_function(self):
         '''Test to make sure that the hook_command function actually

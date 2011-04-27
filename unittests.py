@@ -13,12 +13,13 @@ if ('--help') in sys.argv:
 if ('--test' in sys.argv):
     tests = sys.argv[sys.argv.find('--test')+1].split(', ')
 else:
-    tests = ['api']
+    tests = ['api', 'backends_async']
 
 # Import test classes
 if ('api' in tests):
     from unittests.test_api import TestAPI
-
+if ('backends_async' in tests):
+    from unittests.test_backends_async import TestAsync
 
 # Run the loaded tests
 if (__name__ ==  '__main__'):

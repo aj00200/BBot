@@ -160,8 +160,7 @@ class Module(api.Module):
 
     def help(self, nick, channel, param = None):
         '''Display help options; Parameters: None'''
-        self.msg(channel, '%s: please use the command %nhelp for normal help or %shelp for superuser help' %
-                 (nick, config.cmd_char, config.cmd_char))
+        self.msg(channel, '%s: please use the command %snhelp for normal help or %shelp for superuser help' % (nick, config.cmd_char, config.cmd_char))
 
     def normal_help(self, nick, channel, param = None):
         '''List the commands usable by normal users; Parameters: (optional) command name'''
