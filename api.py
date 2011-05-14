@@ -41,7 +41,10 @@ def check_if_super_user(data, superusers = config.superusers):
 def load_module(server, module):
     '''Tell the backend to load a module for a connection'''
     return backend.connections[server].load_module(module)
-
+def connected_to(server):
+    if server in backend.connections:
+        return True
+    return False
 # Hooks
 hooks = {}
 su_hooks = {}
@@ -55,6 +58,7 @@ def hook_command(name, callback, server, su = False):
             return True
         else:
             su_hooks[server][name] = callback
+            return True
     except:
         return False
 
@@ -67,6 +71,24 @@ def get_command_list(address, su = False):
             return list(su_hooks[address])
     except:
         return 'There was an error processing your request'
+
+mode_hooks = {}
+def hook_mode(callback, server):
+    '''Hook mode changes and call the callback function each time it changes'''
+    if not connected_to(server):
+        return False
+    if server in mode_hooks:
+        mode_hooks[server].append(callback)
+    else:
+        mode_hooks[server] = [callback]
+    return True
+
+def unhook_mode(server, callback):
+    try:
+        mode_hooks[server].remove(callback)
+        return True
+    except Exception as e:
+        return False
 
 # Base Module
 class Module(object):

@@ -21,6 +21,7 @@ class Connection(asynchat.async_chat):
         # Setup Command Hooks
         api.hooks[address] = {}
         api.su_hooks[address] = {}
+        api.mode_hooks[address] = []
 
         # Setup Socket
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -139,6 +140,14 @@ class Connection(asynchat.async_chat):
                 user = user1.replace("!", "")
                 for module in self.modules:
                     module.get_join(nick, user, host, channel)
+
+        elif command == 'MODE':
+            nick = api.get_nick(data)
+            channel = data[data.find('MODE ')+5:]
+            mode = channel[channel.find(' ')+1:]
+            channel = channel[:channel.find(' ')]
+            for hook in api.mode_hooks[self.__address__]:
+                hook(nick, channel, mode)
 
         elif re.search(self.re001, data):
             if bbot.api.get_config_bool('main', 'use-services'):
