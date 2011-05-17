@@ -80,8 +80,6 @@ class Module(api.Module):
     def get_mps(self, user_msgs):
         '''Count the number of messages sent per second'''
         time_range = user_msgs[0][3] - user_msgs[-1][3]
-        print('[*] Type time_range: %s' % type(time_range))
-        print('[*] Type len(user_msgs): %s' % type(len(user_msgs)))
         print(len(user_msgs) / time_range)
         return len(user_msgs) / time_range
                 
