@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#! /usr/bin/env python
 import os
 import subprocess
 import ConfigParser
@@ -96,7 +96,7 @@ config.add_section('BlockBot')
 config.set('BlockBot', 'highlight-limit', 5)
 config.set('BlockBot', 'repeat-limit', 3)
 config.set('BlockBot', 'spam-strings', '')
-config.set('BlockBot', 'flood-speed', 1.5)
+config.set('BlockBot', 'mps-limit', 2.8)
 
 # Set TrekBot Options
 print(' * Setting up TrekBot channel manager')

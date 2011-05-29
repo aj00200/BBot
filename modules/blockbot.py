@@ -17,8 +17,8 @@ class Module(api.Module):
         # Load/Set Settings
         self.hilight_limit = api.get_config_int('BlockBot', 'highlight-limit')
         findlist = api.get_config_str('BlockBot', 'spam-strings')
-        self.mps_limit = 2.7
-        self.storage_time = 10
+        self.mps_limit = api.get_config_float('BlockBot', 'mps-limit')
+        self.storage_time = 25
         self.repeat_limit = 3
         self.repeat_time = 3
         self.repeat_1word = 4
@@ -80,8 +80,9 @@ class Module(api.Module):
     def get_mps(self, user_msgs):
         '''Count the number of messages sent per second'''
         time_range = user_msgs[0][3] - user_msgs[-1][3]
-        print(len(user_msgs) / time_range)
-        return len(user_msgs) / time_range
+        mps =  len(user_msgs) / time_range
+        print(mps)
+        return mps
                 
 
     def check_hilight(self, nick, data, channel):
