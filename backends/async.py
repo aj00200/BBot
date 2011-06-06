@@ -13,7 +13,7 @@ class Connection(asynchat.async_chat):
         asynchat.async_chat.__init__(self)
 
         self.data = ''
-        self.modules = []
+        self.modules = {}
         self.ssl = use_ssl
         self.__address__ = address
         self.set_terminator('\r\n')
@@ -58,30 +58,28 @@ class Connection(asynchat.async_chat):
 
     def load_module(self, module):
         try:
-            self.modules.append(getattr(__import__('modules.'+module), module).Module(self.__address__))
+            self.modules[module] = getattr(__import__('modules.'+module), module).Module(self.__address__)
             return True
         except ImportError:
             try:
-                self.modules.append(getattr(__import__('usermodules.'+module), module).Module(self.__address__))
+                self.modules[module] = getattr(__import__('usermodules.'+module), module).Module(self.__address__)
                 return True
             except ImportError:
                 print(' * ImportError loading %s' % module)
                 return False
 
     def unload_module(self, module):
-        for mod in self.modules:
-            if (str(type(mod)) ==  "<class 'modules.%s.Module'>" % module or str(type(mod)) == "<class 'usermodules.%s.Module'>" % module):
-                print ' * Removing module %s for network %s' % (module, self.__address__)
-                mod.destroy()
-                self.modules.pop(self.modules.index(mod))
+        if module in self.modules:
+            print ' * Removing module %s for network %s' % (module, self.__address__)
+            self.modules[module].destroy()
+            del self.modules[module]
 
     def reload_module(self, module):
         self.unload_module(module)
         try:
-            self.modules.append(reload(getattr(__import__('modules.'+module), module)).Module(self.__address__))
+            reload(getattr(__import__('modules.'+module), module)).Module(self.__address__)
         except ImportError, error:
             reload(getattr(__import__('usermodules.'+module), module))
-        time.sleep(2)
         self.load_module(module)
 
     def handle_connect(self):
@@ -106,7 +104,7 @@ class Connection(asynchat.async_chat):
             nick = data[1:data.find('!')]
             channel = data[data.find('MSG')+4:data.find(' :')]
             for module in self.modules:
-                module.privmsg(nick, data, channel)
+                self.modules[module].privmsg(nick, data, channel)
             # Command Hooks
             if channel == config.nick:
                 channel = nick
@@ -129,7 +127,7 @@ class Connection(asynchat.async_chat):
             nick = data[1:data.find('!')]
             channel = data[data.find('ICE')+4:data.find(' :')]
             for module in self.modules:
-                module.get_notice(nick, data, channel)
+                self.modules[module].get_notice(nick, data, channel)
 
         elif command ==  'JOIN':
             nick = data.split('!')[0][1:]
@@ -139,7 +137,7 @@ class Connection(asynchat.async_chat):
                 user1 = data[data.find('!'):data.find('@')]
                 user = user1.replace("!", "")
                 for module in self.modules:
-                    module.get_join(nick, user, host, channel)
+                    self.modules[module].get_join(nick, user, host, channel)
 
         elif command == 'MODE':
             nick = api.get_nick(data)
@@ -159,7 +157,7 @@ class Connection(asynchat.async_chat):
         elif re.search('[0-9]+ *' + config.nick, data):
             code = data.split()[1]
             for module in self.modules:
-                module.get_raw('code', (code, data))
+                self.modules[module].get_raw('code', (code, data))
 
     def collect_incoming_data(self, data):
         self.data += data

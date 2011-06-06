@@ -20,7 +20,6 @@ class Module(api.Module):
         self.mps_limit = api.get_config_float('BlockBot', 'mps-limit')
         self.storage_time = 25
         self.repeat_limit = 3
-        self.repeat_time = 3
         self.repeat_1word = 4
 
         # Compile Spam Strings        
@@ -44,7 +43,7 @@ class Module(api.Module):
             ldata = data.lower()
             for each in self.findlist:
                 if re.search(each, ldata):
-                    self.kick(nick, channel, 'You have matched a spam string and have been banned from the channel, if you think this is a mistake, contact a channel op about being unbanned')
+                    self.kick(nick, channel, 'You have matched a spam string and have been banned, if you this is a mistake, contact a channel op to be unbanned')
                     return
 
             # Extract messages by this user
@@ -56,6 +55,7 @@ class Module(api.Module):
             # Check for flooding
             if self.get_mps(user_msgs) > self.mps_limit:
                 self.kick(nick, channel, 'Please do not flood')
+                self.msglist.pop(0)
 
             # Check for repeats
             strings = []
@@ -67,6 +67,7 @@ class Module(api.Module):
                     repeats += 1
             if repeats > self.repeat_limit-1:
                 self.kick(nick, channel, 'Do not repeat yourself...')
+                self.msglist.pop(0)
 
             # Clear out old messages
             now = time.time()
@@ -81,7 +82,7 @@ class Module(api.Module):
         '''Count the number of messages sent per second'''
         time_range = user_msgs[0][3] - user_msgs[-1][3]
         mps =  len(user_msgs) / time_range
-        print(mps)
+        self.msg('#bbot', '%s/s' % mps)
         return mps
                 
 
