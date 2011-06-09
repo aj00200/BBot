@@ -82,7 +82,6 @@ class Module(api.Module):
         '''Count the number of messages sent per second'''
         time_range = user_msgs[0][3] - user_msgs[-1][3]
         mps =  len(user_msgs) / time_range
-        self.msg('#bbot', '%s/s' % mps)
         return mps
                 
 
