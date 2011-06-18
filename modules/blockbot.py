@@ -1,5 +1,4 @@
-"""This module implements flood control and anti-spam measures."""
-
+'''This module implements flood control and anti-spam measures.'''
 import re
 import time
 import thread

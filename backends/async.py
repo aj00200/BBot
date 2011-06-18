@@ -16,6 +16,7 @@ class Connection(asynchat.async_chat):
         self.modules = {}
         self.ssl = use_ssl
         self.__address__ = address
+        self.netname = address.replace('irc.', '')
         self.set_terminator('\r\n')
 
         # Setup Command Hooks
@@ -32,9 +33,9 @@ class Connection(asynchat.async_chat):
                 self.set_socket(self.ssl_sock)
             except ssl.SSLError, error:
                 print('\x1B[31m')
-                print('There has been an SSL error while connecting to the server')
+                print('There has been a SSL error connecting to the server')
                 print('Please make sure you are using the proper port')
-                print('If you need help, join #bbot on irc.fossnet.info (port 6667; ssl: 6670)')
+                print('For help, try #bbot on irc.fossnet.info (ssl: 6670)')
                 print('\x1B[m\x1B[m')
                 raise ssl.SSLError(error)
             except socket.error, error:
@@ -70,7 +71,7 @@ class Connection(asynchat.async_chat):
 
     def unload_module(self, module):
         if module in self.modules:
-            print ' * Removing module %s for network %s' % (module, self.__address__)
+            self.output('Removing module %s' % (module, self.__address__))
             self.modules[module].destroy()
             del self.modules[module]
 
@@ -83,8 +84,8 @@ class Connection(asynchat.async_chat):
         self.load_module(module)
 
     def handle_connect(self):
-        print(' * Connected')
-        self.push('NICK %s\r\nUSER %s %s %s :%s\r\n' % (config.nick, config.nick, config.nick, config.nick, config.nick))
+        self.output('Connected')
+        self.push('NICK {0}\r\nUSER {0} {0} {0} :{0}\r\n'.format(config.nick))
 
     def get_data(self):
         ret = self.data
@@ -96,7 +97,7 @@ class Connection(asynchat.async_chat):
         if re.search(config.ignore, data.lower()):
             return
         command = data.split(' ', 2)[1]
-        print('Recv: %s' % data)
+        self.output('R: %s' % data)
         if data[:4] == 'PING':
             self.push('PONG %s\r\n' % data[5:])
 
@@ -149,7 +150,8 @@ class Connection(asynchat.async_chat):
 
         elif re.search(self.re001, data):
             if bbot.api.get_config_bool('main', 'use-services'):
-                self.push('PRIVMSG NickServ :IDENTIFY %s %s\r\n'%(config.username, config.password))
+                self.push('PRIVMSG NickServ :IDENTIFY %s %s\r\n' %
+                            (config.username, config.password))
                 time.sleep(config.sleep_after_id)
             for channel in config.autojoin:
                 self.push('JOIN %s\r\n'%channel)
@@ -161,6 +163,9 @@ class Connection(asynchat.async_chat):
 
     def collect_incoming_data(self, data):
         self.data += data
+        
+    def output(self, message):
+        print('[%s] %s' % (self.netname, message))
 
 def connect(address, port = 6667, use_ssl = False):
     '''Connect to an IRC network
