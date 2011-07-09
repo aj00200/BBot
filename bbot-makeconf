@@ -49,7 +49,7 @@ config.set('main', 'ssl', raw_input('SSL: '))
 # Channels
 print('''
 What channels should your bot join on connect?
-Seperate each channel name by a space and please include the
+Seperate each channel name by a comma (,) and please include the
 # with the channel name.''')
 config.set('main', 'channels', raw_input('Channels: '))
 
@@ -78,7 +78,7 @@ config.set('main', 'quit-message', raw_input('Quit Message: '))
 print('''
  === Thank you for setting up BBot ===
  Your configuration file is now being finalized
- Please wait while this complets, it should be done soon
+ Please wait while this completes, it should be done soon
 ''')
 
 # Set Other values which are defined by default
@@ -96,7 +96,7 @@ config.add_section('BlockBot')
 config.set('BlockBot', 'highlight-limit', 5)
 config.set('BlockBot', 'repeat-limit', 3)
 config.set('BlockBot', 'spam-strings', '')
-config.set('BlockBot', 'mps-limit', 2.8)
+config.set('BlockBot', 'mps-limit', 3.1)
 
 # Set TrekBot Options
 print(' * Setting up TrekBot channel manager')
@@ -110,8 +110,11 @@ subprocess.call(['mkdir', HOME_PATH + '.BBot/trekbot'])
 subprocess.call(['touch', HOME_PATH + '.BBot/trekbot/whitelist'])
 subprocess.call(['touch', HOME_PATH + '.BBot/trekbot/blacklist'])
 
+print(' * Finishing with ' + HOME_PATH + '.BBot/')
+subprocess.call(['mkdir', HOME_PATH + '.BBot/storage'])
+
 print('''
- * Now writing your file to disk
+ * Now writing your config file to disk
    This file may be found at ~/.BBot/config.cfg
 
 Thanks for installing BBot!''')

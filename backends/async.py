@@ -35,17 +35,17 @@ class Connection(asynchat.async_chat):
                 print('\x1B[31m')
                 print('There has been a SSL error connecting to the server')
                 print('Please make sure you are using the proper port')
-                print('For help, try #bbot on irc.fossnet.info (ssl: 6670)')
+                print('For help, try #bbot on irc.ospnet.org (ssl: 6697)')
                 print('\x1B[m\x1B[m')
                 raise ssl.SSLError(error)
             except socket.error, error:
-                print('There was an error connecting to %s' % address)
+                self.output('There was an error connecting')
                 return
         else:
             try:
                 self.sock.connect((address, port))
             except socket.error, error:
-                print('There was an error connecting to %s' % address)
+                self.output('There was an error connecting')
                 return
             self.set_socket(self.sock)
 
@@ -55,9 +55,11 @@ class Connection(asynchat.async_chat):
             self.load_module(module)
 
     def handle_error(self):
+        '''Print a traceback when an error happens'''
         traceback.print_exc()
 
     def load_module(self, module):
+        '''Load a module for the network'''
         try:
             self.modules[module] = getattr(__import__('modules.'+module), module).Module(self.__address__)
             return True
@@ -66,12 +68,12 @@ class Connection(asynchat.async_chat):
                 self.modules[module] = getattr(__import__('usermodules.'+module), module).Module(self.__address__)
                 return True
             except ImportError:
-                print(' * ImportError loading %s' % module)
+                self.output('ImportError loading %s' % module)
                 return False
 
     def unload_module(self, module):
         if module in self.modules:
-            self.output('Removing module %s' % (module, self.__address__))
+            self.output('Removing module %s' % module)
             self.modules[module].destroy()
             del self.modules[module]
 
@@ -97,7 +99,7 @@ class Connection(asynchat.async_chat):
         if re.search(config.ignore, data.lower()):
             return
         command = data.split(' ', 2)[1]
-        self.output('R: %s' % data)
+        self.output('R%s' % data)
         if data[:4] == 'PING':
             self.push('PONG %s\r\n' % data[5:])
 
@@ -165,6 +167,7 @@ class Connection(asynchat.async_chat):
         self.data += data
         
     def output(self, message):
+        '''Print a message and display the network name'''
         print('[%s] %s' % (self.netname, message))
 
 def connect(address, port = 6667, use_ssl = False):
