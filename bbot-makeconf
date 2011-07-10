@@ -13,11 +13,25 @@ print('''
 What do you want your bot's nickname to be?''')
 config.set('main', 'nick', raw_input('nick: '))
 
+# ident/USERname
+print('''
+What do you want your bot's ident to be?
+Please note that this setting takes no effect on servers that
+perform ident checks and there's an active identd running.''')
+config.set('main', 'ident', raw_input('ident: '))
+
+# Nickname
+print('''
+What do you want your bot's realname to be?
+This is only shown in the WHOIS.''')
+config.set('main', 'ircname', raw_input('ircname: '))
+
 # Use Services
 print('''
 Should your bot use services like ChanServ
-or nickserv to identify or preform other functions?
-Please enter either True or False''')
+or NickServ to identify or preform other functions?
+This currently only works for Atheme services.
+Please enter either True or False.''')
 config.set('main', 'use-services', raw_input('Use services: '))
 
 # Services Authentication

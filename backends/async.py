@@ -87,7 +87,7 @@ class Connection(asynchat.async_chat):
 
     def handle_connect(self):
         self.output('Connected')
-        self.push('NICK {0}\r\nUSER {0} {0} {0} :{0}\r\n'.format(config.nick))
+        self.push('NICK %s\r\nUSER %s 0 0 :%s\r\n'%(config.nick, config.ident, config.ircname))
 
     def get_data(self):
         ret = self.data
