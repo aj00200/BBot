@@ -4,7 +4,8 @@ There are various ways to download BBot, but the easiest way is to download a co
 # Installing and configuring BBot
 Extract those files anywhere on your hard drive and open a terminal.
 When you are in the terminal, change the directory (cd) to the one in which the BBot files are stored.
-Afterwards, rename or copy the config-dist file to simply "config" and modify it to fit your needs.
+Afterwards, rename or copy the config-dist file to simply "config" and modify it to fit your needs or run
+(On *NIX only) bbot-makeconf.
 
 # Running BBot
 Lastly, run the following command (without quotes): `python bbot.py`

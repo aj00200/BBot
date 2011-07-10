@@ -23,6 +23,8 @@ c = ConfigParser.ConfigParser()
 c.readfp(file)
 
 nick = c.get('main', 'nick')
+ident = c.get('main', 'ident')
+ircname = c.get('main', 'ircname')
 username = c.get('main', 'username')
 password = c.get('main', 'password')
 network = c.get('main', 'network')
