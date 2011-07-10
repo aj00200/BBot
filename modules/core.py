@@ -40,29 +40,8 @@ class Module(api.Module):
             channel = nick
         ldata = data.lower()
 
-        # Check if message is a command in channel
-        if is_channel:
-            if self.command_start in data:
-                cmd = data[data.find(self.command_start)+len(self.command_start):]
-        else:
-            cmd = data[data.find(' :')+2:]
-        if ' ' in cmd:
-            cmd = cmd[:cmd.find(' ')]
-
-        # Superuser Commands
-        if api.check_if_super_user(data):
-            if ' > ' in data:
-                channel = data[data.find(' > ')+3:]
-                data = data[:data.find(' > ')]
-    
-        # Normal Commands
-        cmd = data[data.find(self.command_start)+self.cmd_len:]
-        if ' | ' in cmd:
-            nick = cmd[cmd.find(' | ')+3:]
-            cmd = cmd[:cmd.find(' | ')]
-
         # Version ping
-        elif '\x01VERSION\x01' in data:
+        if '\x01VERSION\x01' in data:
             self.notice(nick, '\x01VERSION BBot Version %s\x01'%BBot.VERSION)
 
         # Prefix ping - responds with the current command char
