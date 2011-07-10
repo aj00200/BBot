@@ -2,7 +2,7 @@
 For instructions on how to install BBot, please see the INSTALL.md file.
 
 # License
-Everything in this package, unless otherwise noted, is available under the terms of the [GNU General Public License v3](http://www.gnu.org/licenses/gpl.html).
+Everything in this package, unless otherwise noted, is available under the terms of the [GNU General Public License v3](http://www.gnu.org/licenses/gpl.html) and the MIT General Public License].
 
 # Bugs
 Feel free to report bugs using our [issue tracking system](https://github.com/aj00200/BBot/issues).

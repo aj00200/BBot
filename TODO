@@ -2,3 +2,30 @@
 * Create a twisted backend
  === Module Changes Needed === 
 * Replace BlockBot() with Spam0
+
+ === CuleX's To Do List ===
+The following items are proposed
+* Lacks any kind of sane auth system.
+Proposal:
+Use Charybdis WHO %a to get account names on first channel join, then for any people joining subsequently and on PM if their accname isn't already known. If accountname is 0, they're not identified to services and thus need to identify (see also, auth <handle> <password>). Their auth is only accepted if they match a known host (i.e., CuleX!~culex@adsl-62-167-74-43.adslplus.ch matches *!*culex@*adslplus.ch. If that isn't the case, ignore and pretend nothing happened).
+Use flags to manage permissions. Superusers have all flags implied.
+No, I don't have the slightest clue on how to implement these things.
+* Commanding is a pain
+Command character(s) are nice, but only for channels. Something is, essentially, FUCKED UP if I have to send my PM commands to the bot with a command character. It's a PM for a reason. I've already started, but I don't really want to mess with the backend.
+* ZERO docs on modules and how they work
+Write extensive documentation (What's implemented in the backend?) on what functions exist and how they work. I still don't work how core.py (aka BBot.py in upstream) can set cmd and then call it a day.
+* Lacks separate settings for ircname and ident (cosmetical, implemented in my bbot-hydra fork already).
+* trekbot has a very faulty unban mechanism that just seems to work on *!*@host bans and uses very expensive WHOIS requests. Using WHOIS is *terrible* and should not even be considered. It bears risk to get itself killed on shitty UnrealIRCd/InspIRCd networks with opers and +W and wastes network resources. WHO really is the way to go.
+* It doesn't parse 005 yet. Code excerpt from BBot.py:
+        if '#' not in channel: # if message is a pm
+            channel = nick
+This is plain wrong. Different IRCds can use different channel prefixes. Maybe BBot will need to use local (&) channels, or even ! channels on IRCnet; at least that must be read from 005.
+005 example output Charybdis:
+:emerald.ospnet.org 005 L CHANTYPES=&# EXCEPTS INVEX CHANMODES=eIbq,k,flj,CFPcgimnpstz CHANLIMIT=&#:50 PREFIX=(ov)@+ MAXLIST=bqeI:100 MODES=4 NETWORK=OSPnet KNOCK STATUSMSG=@+ CALLERID=g :are supported by this server
+:emerald.ospnet.org 005 L SAFELIST ELIST=U CASEMAPPING=rfc1459 CHARSET=ascii NICKLEN=15 CHANNELLEN=50 TOPICLEN=390 ETRACE CPRIVMSG CNOTICE DEAF=D MONITOR=100 :are supported by this server
+:emerald.ospnet.org 005 L FNC TARGMAX=NAMES:1,LIST:1,KICK:1,WHOIS:1,PRIVMSG:4,NOTICE:4,ACCEPT:,MONITOR: EXTBAN=$,acjrxz WHOX CLIENTVER=3.0 :are supported by this server
+
+005 example output UnrealIRCd:
+:delta.bitsjointirc.net 005 L CMDS=KNOCK,MAP,DCCALLOW,USERIP UHNAMES NAMESX SAFELIST HCN MAXCHANNELS=25 CHANLIMIT=#:25 MAXLIST=b:60,e:60,I:60 NICKLEN=30 CHANNELLEN=32 TOPICLEN=307 KICKLEN=307 AWAYLEN=307 :are supported by this server
+:delta.bitsjointirc.net 005 L MAXTARGETS=20 WALLCHOPS WATCH=128 WATCHOPTS=A SILENCE=15 MODES=12 CHANTYPES=# PREFIX=(qaohv)~&@%+ CHANMODES=beI,kfL,lj,psmntirRcOAQKVCuzNSMTG NETWORK=BitsJoint-IRC CASEMAPPING=ascii EXTBAN=~,cqnrT ELIST=MNUCT :are supported by this server
+:delta.bitsjointirc.net 005 L STATUSMSG=~&@%+ EXCEPTS INVEX CALLERID=I :are supported by this server
