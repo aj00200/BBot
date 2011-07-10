@@ -1,8 +1,6 @@
 """This module allows for easy factoid tracking a la Infobot, in addition to
-generating URLs for common websites, such as Google SSL and Wikipedia SSL.
-It also allows the admin to execute functions like loading modules,
-connecting to other networks and more. Additionally, it can output important 
-BBot information like its version."""
+generating URLs for common websites, such as Google SSL and Wikipedia SSL and
+hitting people over IRC."""
 
 import re
 import time
@@ -33,9 +31,6 @@ class Module(api.Module):
         ' was ', ' are ', ' am '
     ]
 
-    # Load settings from the config file
-    quit_message = api.get_config_str('main', 'quit-message')
-
     def __init__(self, server):
         super(Module, self).__init__(server)
 
@@ -44,24 +39,13 @@ class Module(api.Module):
         self.cmd_len = len(self.command_start)
 
         # Hook Commands
-        api.hook_command('help', self.help, server)
-        api.hook_command('nhelp', self.normal_help, server)
-        api.hook_command('shelp', self.su_help, server)
         api.hook_command('hit', self.hit, server)
         api.hook_command('version', self.version, server)
         api.hook_command('goog', self.goog, server)
         api.hook_command('wiki', self.wiki, server)
         # Hook Superuser Commands
-        api.hook_command('join', self.su_join, server, su = True)
-        api.hook_command('quit', self.su_quit, server, su = True)
-        api.hook_command('part', self.su_part, server, su = True)
         api.hook_command('writedb', self.su_writedb, server, su = True)
-        api.hook_command('raw', self.su_raw, server, su = True)
         api.hook_command('add', self.su_add, server, su = True)
-        api.hook_command('load', self.su_load, server, su = True)
-        api.hook_command('reload', self.su_reload, server, su = True)
-        api.hook_command('py', self.su_py, server, su = True)
-        api.hook_command('connect', self.su_connect, server, su = True)
         api.hook_command('del', self.su_del, server, su = True)
 
     def privmsg(self, nick, data, channel):
@@ -104,24 +88,6 @@ class Module(api.Module):
             q = ldata[ldata.find(' is ')+4:].strip('?')
             self.query(q, nick, channel)
 
-        # Version ping
-        elif '\x01VERSION\x01' in data:
-            self.notice(nick, '\x01VERSION BBot Version %s\x01'%BBot.VERSION)
-
-        # Prefix ping - responds with the current command char
-        elif '\x01PREFIX\x01' in data:
-            self.notice(nick, '\x01PREFIX My current command character is: %s\x01'%config.cmd_char)
-
-    def get_raw(self, t, d):
-        if t ==  'code':
-            if d[0] ==  '433':
-                # Nick is already in use
-                self.raw('NICK %s_'%config.nick)
-                if api.get_config_bool('main', 'use-services'):
-                    self.msg('NickServ', 'GHOST %s %s'%(config.nick, config.password))
-                    time.sleep(api.get_config_float('main', 'wait-after-identify'))
-                    self.raw('NICK %s'%config.nick)
-
     def add_factoid(self, query, nick):
         tmp = query
         try:
@@ -151,63 +117,17 @@ class Module(api.Module):
     def goog(self, nick, channel, param = None):
         '''Give a Google URL for a search; Parameters: search query'''
         if param:
-            self.msg(channel, self.goog_str % param.replace(' ','+'))
+            self.msg(channel, self.goog_str % paaram.replace(' ','+'))
 
     def wiki(self, nick, channel, param = None):
         '''Give a Wikipedia URL for a page; Parameters: page name'''
         if param:
             self.msg(channel, self.wiki_str % param.replace(' ', '_'))
 
-    def help(self, nick, channel, param = None):
-        '''Display help options; Parameters: None'''
-        self.msg(channel, '%s: please use the command %snhelp for normal help or %shelp for superuser help' % (nick, config.cmd_char, config.cmd_char))
-
-    def normal_help(self, nick, channel, param = None):
-        '''List the commands usable by normal users; Parameters: (optional) command name'''
-        if param in api.hooks[self.__address__]:
-            self.msg(channel, '%s: %s' % (nick, api.hooks[self.__address__][param].__doc__))
-        else:                    
-            self.msg(channel, '%s: %s' % (nick, ', '.join(api.get_command_list(self.__address__))))
-
-    def su_help(self, nick, channel, param = None):
-        '''List the commands usable by super users; Parameters: (optional) command name'''
-        if param in api.su_hooks[self.__address__]:
-            self.msg(channel, '%s: %s' % (nick, api.su_hooks[self.__address__][param].__doc__))
-        else:
-            self.msg(channel, '%s: %s' % (nick, ', '.join(api.get_command_list(self.__address__, su = True))))
-
-    def su_join(self, nick, channel, param = None):
-        '''Have BBot join a channel; Parameters: channel'''
-        if param:
-            self.raw('JOIN %s' % param)
-        else:
-            self.msg(channel, '%s: You need to specify a channel' % nick)
-
     def su_writedb(self, nick, channel, param = None):
         '''Writes the factoids database to the harddrive; Parameters: None'''
         write_dict()
         self.notice(channel, '<<Wrote Database>>')
-
-    def su_raw(self, nick, channel, param = None):
-        '''Send a raw message to the server (warning, unexpected results may occur); Parameters: a raw command'''
-        if param:
-            self.raw(param)
-        else:
-            self.msg(channel,'%s: you need to specify a raw command' % nick)
-
-    def su_part(self, nick, channel, param = None):
-        '''Part a channel; Parameters: a channel name'''
-        if param:
-            self.raw('PART %s' % param)
-        else:
-            self.msg(channel, '%s: you need to specify a channel' % nick)
-
-    def su_quit(self, nick, channel, param = None):
-        '''Quit; Parameters: an optional quit message'''
-        if param:
-            self.raw('QUIT :%s' % param)
-        else:
-            self.raw('QUIT :%s' % self.quit_message)
 
     def su_add(self, nick, channel, param = None):
         '''Add a factoid; Parameters: a factoid name and a factoid body seperated by ":::" - For example, ?add test:::%n: it works!'''
@@ -219,37 +139,6 @@ class Module(api.Module):
                 self.msg(channel, '%s: Adding of the factoid failed. Make sure you are using the proper syntax.' % nick)
         else:
             self.msg(channel,'%s: you must specify a factoid to add' % nick)
-
-    def su_load(self, nick, channel, param = None):
-        '''Load a module; Parameters: a module name'''
-        if api.load_module(self.__address__, param):
-            self.notice(channel, '<<Loaded %s>>' % param)
-        else:
-            self.notice(channel, 'Error loading %s' % param)
-
-    def su_py(self, nick, channel, param = None):
-        '''Execute a Python expression; Parameters: a python expression'''
-        if not param:
-            self.msg(channel, '%s: ...' % nick)
-            return
-        try:
-            ret = str(eval(param))
-        except Exception, e:
-            ret = '<<Error %s; %s>>' % (type(e), e.args)
-        self.msg(channel, ret)
-
-    def su_connect(self, nick, channel, param = None):
-        '''Connect to another network; Parameters: address'''
-        if param:
-            self.notice(channel, '<<Connecting to %s>>' % param)
-            api.backend.connect(param, config.port, False)
-        else:
-            self.msg(channel, '%s: You need to specify an address' % nick)
-
-    def su_reload(self, nick, channel, param = None):
-        '''Reload a module; Parameters: module'''
-        thread.start_new_thread(api.backend.connections[self.__address__].reload_module, (param, ))
-        self.notice(channel, '<<Reloaded %s>>' % param)
 
     def su_del(self, nick, channel, param = None):
         '''Delete a factoid; Parameters: factoid'''
