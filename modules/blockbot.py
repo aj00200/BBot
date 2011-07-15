@@ -52,7 +52,7 @@ class Module(api.Module):
                     user_msgs.append((nick, msg[1], msg[2], msg[3]))
 
             # Check for flooding
-            if self.get_mps(user_msgs) > self.mps_limit:
+            if len(user_msgs) > 2 and self.get_mps(user_msgs) > self.mps_limit:
                 self.kick(nick, channel, 'Please do not flood')
                 self.msglist.pop(0)
 

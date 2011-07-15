@@ -1,7 +1,6 @@
 """This module contains most of the BBot core functionality, including help system and version output."""
 
 import time
-import thread
 
 import api
 import config
@@ -35,7 +34,8 @@ class Module(api.Module):
         api.hook_command('connect', self.su_connect, server, su = True)
 
     def privmsg(self, nick, data, channel):
-        is_channel = ('#' in channel or '&' in channel) # if message is a pm, this time with local channels not being ignored, too. This ACTUALLY should be parsed from numeric 005!
+        is_channel = ('#' in channel or '&' in channel) # if message is a pm; local channels not being ignored
+                                                        # should be parsed from numeric 005!
         if is_channel: 
             channel = nick
         ldata = data.lower()
@@ -138,5 +138,6 @@ class Module(api.Module):
 
     def su_reload(self, nick, channel, param = None):
         '''Reload a module; Parameters: module'''
-        thread.start_new_thread(api.backend.connections[self.__address__].reload_module, (param, ))
+        api.backend.connections[self.__address__].reload_module(param)
         self.notice(channel, '<<Reloaded %s>>' % param)
+ 
