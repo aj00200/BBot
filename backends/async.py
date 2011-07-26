@@ -115,16 +115,19 @@ class Connection(asynchat.async_chat):
                 prm = None
                 msg = api.get_message(data)
                 cmd = msg[msg.find(config.cmd_char)+1:]
+                user = User(nick)
+                user.ident = api.get_ident(data)
+                user.host = api.get_host(data)
                 if ' ' in cmd:
                     prm = cmd[cmd.find(' ')+1:]
                     cmd = cmd[:cmd.find(' ')]
 
                 if cmd in api.hooks[self.__address__]:
-                    api.hooks[self.__address__][cmd](nick, channel, prm)
+                    api.hooks[self.__address__][cmd](user, channel, prm)
                 # Superuser Hooks
                 if api.check_if_super_user(data):
                     if cmd in api.su_hooks[self.__address__]:
-                        api.su_hooks[self.__address__][cmd](nick, channel, prm)
+                        api.su_hooks[self.__address__][cmd](user, channel, prm)
 
         elif command ==  'NOTICE':
             nick = data[1:data.find('!')]
@@ -177,3 +180,6 @@ def connect(address, port = 6667, use_ssl = False):
     ssl - A boolean argument specifying wether or not to use SSL'''
     connections[address] = Connection(address, port, use_ssl)
     connections[address].load_modules()
+
+class User(str):
+    pass

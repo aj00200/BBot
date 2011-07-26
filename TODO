@@ -14,7 +14,6 @@ No, I don't have the slightest clue on how to implement these things.
 Command character(s) are nice, but only for channels. Something is, essentially, FUCKED UP if I have to send my PM commands to the bot with a command character. It's a PM for a reason. I've already started, but I don't really want to mess with the backend.
 * ZERO docs on modules and how they work
 Write extensive documentation (What's implemented in the backend?) on what functions exist and how they work. I still don't work how core.py (aka BBot.py in upstream) can set cmd and then call it a day.
-* Lacks separate settings for ircname and ident (cosmetical, implemented in my bbot-hydra fork already).
 * trekbot has a very faulty unban mechanism that just seems to work on *!*@host bans and uses very expensive WHOIS requests. Using WHOIS is *terrible* and should not even be considered. It bears risk to get itself killed on shitty UnrealIRCd/InspIRCd networks with opers and +W and wastes network resources. WHO really is the way to go.
 * It doesn't parse 005 yet. Code excerpt from BBot.py:
         if '#' not in channel: # if message is a pm
