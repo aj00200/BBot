@@ -98,7 +98,7 @@ class Module(api.Module):
             print '* kicking %s out of %s' % (nick, channel)
             self.kick(nick, channel, 'Please do not ping that many people')
 
-    def get_join(self, nick, channel, ip, user):
+    def get_join(self, nick, user, host, channel):
         '''Add user to nicklist, and preform optional proxy scan'''
         if channel in self.nicklists and nick not in self.nicklists[channel]:
             self.nicklists[channel].append(nick)
@@ -131,7 +131,8 @@ class Module(api.Module):
                 pass
 
         elif type == 'CODE' and data[0] == '353': # 353
-            channel = data[1][data[1].find(' =  ')+2:data[1].find(' :')]
+            print('Got code 353')
+            channel = data[1][data[1].find(' = ')+3:data[1].find(' :')]
             names = data[1][data[1].find(' :')+2:].split()
             safe_names = []
             for each in names:

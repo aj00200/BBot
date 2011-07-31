@@ -164,7 +164,7 @@ class Connection(asynchat.async_chat):
         elif re.search('[0-9]+ *' + config.nick, data):
             code = data.split()[1]
             for module in self.modules:
-                self.modules[module].get_raw('code', (code, data))
+                self.modules[module].get_raw('CODE', (code, data))
 
     def collect_incoming_data(self, data):
         self.data += data
