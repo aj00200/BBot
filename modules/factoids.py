@@ -4,13 +4,9 @@ import config
 
 try:
     import json
-    with open(config.PATH + 'database.json') as factoids:
-        dict = json.load(factoids)
+    factoids = open(config.PATH + 'database.json')
+    dict = json.load(factoids)
     del factoids
-    if factoids:
-        print 'file exists'
-    else:
-        print 'file gone'
 except:
     print(' * Could not load the factoid file')
     dict = {}
