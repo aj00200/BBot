@@ -1,5 +1,12 @@
- == THe Almighty To Do list == 
-* Create a twisted backend
+ == The Almighty To Do list == 
+* Create a twisted backend (eventually)
+* More PEP8
+  * Don't overwite file
+  * Don't overwrite type in get_raw
+  * Try to reduce line length in some cases
+  * Add some more whtiespace
+  * More docstrings
+
  === Module Changes Needed === 
 * Replace BlockBot() with Spam0
 

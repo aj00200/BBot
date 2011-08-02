@@ -102,6 +102,7 @@ class Module(object):
         '''This is called when the module is unloaded, or possibly when the
         bot is shut down.'''
         pass
+    
     # Receive
     def privmsg(self, nick, data, channel):
         '''Called every time a PRIVMSG is recieved.
@@ -120,15 +121,16 @@ class Module(object):
         type is set to 'CODE' when messages that corespond to a numberic code are recieved
         type is set to 'MODE' when a mode is changed'''
         pass
+    
     # Send
     def msg(self, channel, data = ' '):
         '''Send a message, data, to channel
         Example: self.msg('#bbot', 'Hello world!')'''
-        self.raw('PRIVMSG %s :%s\r\n'%(channel, data))
+        self.raw('PRIVMSG %s :%s\r\n' % (channel, data))
     def notice(self, channel, data):
         '''Send a notice to a channel
         Example: self.notice('#bbot', 'Please do not abuse the bots')'''
-        self.raw('NOTICE %s :%s\r\n'%(channel, data))
+        self.raw('NOTICE %s :%s\r\n' % (channel, data))
     def join(self, channel):
         '''Have BBot join a channel:
         Example: self.join('#bbot')'''
@@ -136,7 +138,7 @@ class Module(object):
     def part(self, channel, message = 'BBot the IRC Bot'):
         '''Have BBot part a channel
         Example: self.part('#bbot')'''
-        self.raw('PART %s :%s\r\n'%(channel, message))
+        self.raw('PART %s :%s\r\n' % (channel, message))
     def kick(self, nick, channel, message = ''):
         '''Kick a person out of a channel
         Example: self.kick('spammer', '#bbot', 'Spam is forbidden')'''
@@ -149,5 +151,5 @@ class Module(object):
         '''Send raw data to the server
         Example: self.raw('PRIVMSG #bbot :This is a raw message')
         Note: the line ending is not required'''
-        self.connection.push(b'%s\r\n'%(data))
+        self.connection.push(b'%s\r\n' % (data))
         print 'Send: %s' % data
