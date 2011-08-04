@@ -88,7 +88,7 @@ class Module(api.Module):
         try:
             if '<ACTION>'in query[1]:
                 tmp[1] = str(tmp[1].replace('<ACTION>', '\x01ACTION ')+'\x01')
-                database[query[0]] = query[1]
+            database[query[0]] = query[1]
             return True
         except IndexError:
             return False
