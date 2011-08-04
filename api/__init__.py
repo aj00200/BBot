@@ -1,5 +1,5 @@
 import config
-backend = getattr(__import__('backends.%s'%config.backend), config.backend)
+backend = getattr(__import__('backends.%s' % config.backend), config.backend)
 
 def get_config_str(cat, name):
     '''Get a string out of the bot's configuration file'''

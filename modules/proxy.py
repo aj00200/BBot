@@ -10,9 +10,9 @@ class Module(api.Module):
     net2 = 'irc.freenode.net'
 
     def privmsg(self, nick, data, channel):
-        if channel == self.chan1 and self.__server__ == self.net1:
+        if channel == self.chan1 and self.__address__ == self.net1:
             self.to = self.net2
-        elif channel == self.chan2 and self.__server__ == self.net2:
+        elif channel == self.chan2 and self.__address__ == self.net2:
             self.to = self.net1
         else:
             self.to = self.net1
