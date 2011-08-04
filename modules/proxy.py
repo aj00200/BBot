@@ -17,7 +17,7 @@ class Module(api.Module):
         else:
             self.to = self.net1
         try:
-            api.backend.connections[self.to].push('PRIVMSG %s :<%s> %s' %
+            api.backend.connections[self.to].push('PRIVMSG %s :<%s> %s\r\n' %
                                        (channel, nick, api.get_message(data)))
         except Exception:
             pass
