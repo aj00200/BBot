@@ -131,8 +131,11 @@ class Module(api.Module):
     def su_connect(self, nick, channel, param = None):
         '''Connect to another network; Parameters: address'''
         if param:
+            parts = param.split()
+            if len(parts) == 1:
+                parts.append(config.port)
             self.notice(channel, '<<Connecting to %s>>' % param)
-            api.backend.connect(param, config.port, False)
+            api.backend.connect(parts[0], int(parts[1]), False)
         else:
             self.msg(channel, '%s: You need to specify an address' % nick)
 

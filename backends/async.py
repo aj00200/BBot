@@ -178,6 +178,8 @@ def connect(address, port = 6667, use_ssl = False):
     address - The network address of the IRC network
     port - On optional argument that specifies the port to connect on
     ssl - A boolean argument specifying wether or not to use SSL'''
+    print('[*] Connecting to %s:%s; SSL: %s' % (address, port, use_ssl))
+    print(str(type(port)))
     connections[address] = Connection(address, port, use_ssl)
     connections[address].load_modules()
 
