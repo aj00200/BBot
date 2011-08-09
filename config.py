@@ -1,26 +1,27 @@
-'''Reads config.conf and parses common values
-for easy access by other modules'''
+'''Reads config.conf and parses common values for access by other modules'''
 import ConfigParser
 import sys
 import re
 import os
 
 try:
-    if '--local-config' in sys.argv:
-        raise Exception('Use local config!')
-    file = open(os.getenv('HOME') + '/.BBot/config.cfg', 'r')
+    config_file = open(os.getenv('HOME') + '/.BBot/config.cfg', 'r')
     sys.path.insert(1, os.getenv('HOME') + '/.BBot')
     PATH = os.getenv('HOME') + '/.BBot/'
-    print(' * Loaded config.cfg from your home directory')
-except:
-    if '--user-config' in sys.argv:
-        raise Exception('Local config could not be read.')
-    file = open('config.cfg', 'r')
-    PATH = ''
-    print(' * Loaded config.cfg out of local directory')
+    print('[*] Loaded config.cfg from your home directory')
+except IOError:
+    print('[*] Error loading config.cfg from your home directory')
+    print('    Try running bbot-makeconf if you are on Linux')
+    try:
+        config_file = open('config.cfg', 'r')
+        PATH = ''
+        print('[*] Loaded config.cfg from your local directory')
+    except IOError:
+        print('[*] Error loading config.cfg from your local directory')
+        print('    Either create it or run bbot-makeconf if you are on Linux')
 
 c = ConfigParser.ConfigParser()
-c.readfp(file)
+c.readfp(config_file)
 
 nick = c.get('main', 'nick')
 ident = c.get('main', 'ident')

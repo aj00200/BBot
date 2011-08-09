@@ -102,7 +102,7 @@ class triangle(polygon):
         self.sides = {
             'ab':float(distance(axy[0], axy[1], bxy[0], bxy[1])), 
             'bc':float(distance(bxy[0], bxy[1], cxy[0], cxy[1])), 
-            'ca':float(distance(cxy[0], cdy[1], axy[0], axy[1]))
+            'ca':float(distance(cxy[0], cxy[1], axy[0], axy[1]))
         }
         self.centroid = '%s, %s' % (round((axy[0]+bxy[0]+cxy[0])/3.0, 4), round((axy[1]+bxy[1]+cxy[1])/3.0, 4))
         if self.sides['ab'] == self.sides['bc'] == self.sides['ca']:

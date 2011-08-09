@@ -3,7 +3,7 @@
 It is licensed under the GNU GPL v3 license as well as the MIT license.
 See the README.md file for more details'''
 
-VERSION = '7.4.6'
+VERSION = '7.4.7'
 import sys
 import asyncore
 
@@ -11,10 +11,8 @@ import config
 import api
 
 if __name__ == '__main__':
-    if '--help' in sys.argv:
-        print('Current command line options are:')
-        print('  --local-config - Reads config.cfg from current directory')
-        print('  --user-config  - Reads config.cfg from the home directory')
+    if '--help' in sys.argv or '-v' in sys.argv or '--version' in sys.argv:
+        print('BBot the IRC Bot %s' % VERSION)
     else:
         print(' * Connecting to %s on port %s' % (config.network, config.port))
         api.backend.connect(config.network, config.port, config.ssl)
