@@ -1,4 +1,5 @@
 #! /usr/bin/python
+'''Run unittests on BBot and some of its modules.'''
 import sys
 import unittest
 

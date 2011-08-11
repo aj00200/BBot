@@ -1,6 +1,11 @@
 '''An asynchat backend for BBot'''
-import socket, asynchat
-import re, time, ssl, traceback
+import socket
+import asynchat
+import asyncore
+import traceback
+import time
+import ssl
+import re
 
 import bbot, config
 import api
@@ -184,3 +189,6 @@ def connect(address, port = 6667, use_ssl = False):
 
 class User(str):
     pass
+
+def loop():
+    asyncore.loop()
