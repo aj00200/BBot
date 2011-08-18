@@ -15,4 +15,4 @@ You will need to have Python installed to do this.
 
 If you want it to keep running after you close the terminal, use a multiplexer such as GNU Screen.
 
-BBot should now be running on your system, but if it isn't, you can always ask for help in #bbot on irc.ospnet.org (6667; SSL 6697)
+BBot should now be running on your system, but if it isn't, you can always ask for help in #bbot on irc.ospnet.org (SSL 6697 - SSL may be required in the near future)

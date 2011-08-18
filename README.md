@@ -13,4 +13,4 @@ You are free to reuse our code under the terms of the GPL v3. The easiest way to
 # Support
 
 ## IRC channel
-An easy way to get support is to hop on our IRC channel and chat with other users. It's the #BBot channel on the [OSPnet](http://ospnet.org) network: irc://irc.ospnet.org/#bbot
+An easy way to get support is to hop on our IRC channel and chat with other users. It's the #bbot channel on the [OSPnet](http://ospnet.org) network: irc://irc.ospnet.org/#bbot (SSL: 6697 - SSL may be required some time in the near future)
