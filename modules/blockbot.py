@@ -30,12 +30,12 @@ class Module(api.Module):
         # Load Default Data
         self.msglist = []
         self.nicklists = {}
-        self.lastnot = ('BBot', time.time(), 'sdkljfls')
+        self.lastnot = ('BBot', time.time(), '')
 
     def privmsg(self, nick, data, channel):
         '''Check messages for spam'''
-        self.msglist.insert(0, (nick, channel, api.get_message(data),
-                                time.time()))
+        self.msglist.insert(0, (nick, channel,
+                                api.get_message(data), time.time()))
 
         if not api.check_if_super_user(data, config.superusers):
             # Check for spam strings
@@ -130,8 +130,7 @@ class Module(api.Module):
             except Exception:
                 pass
 
-        elif type == 'CODE' and data[0] == '353': # 353
-            print('Got code 353')
+        elif type == 'CODE' and data[0] == '353':
             channel = data[1][data[1].find(' = ')+3:data[1].find(' :')]
             names = data[1][data[1].find(' :')+2:].split()
             safe_names = []

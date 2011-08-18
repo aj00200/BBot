@@ -1,3 +1,5 @@
+'''An API for BBot modules to use. Just `import api` and subclass api.Module.
+Other functions that are shared across modules are present as well.'''
 import config
 backend = getattr(__import__('backends.%s' % config.backend), config.backend)
 
@@ -26,12 +28,12 @@ def get_ident(data):
 def get_message(data):
     '''Returns the actual message that was sent'''
     return data[data.find(' :')+2:]
-def host_in_list(data, list):
+def host_in_list(data, host_list):
     '''Tells you if the host of the person who sent the message that is
     pased as the first arg is in the list of hosts which is the second arg'''
     host = get_host(data)
-    for su in list:
-        if host.find(su)!= -1:
+    for each in host_list:
+        if host.find(each)!= -1:
             return True
     else:
         return False
@@ -42,9 +44,11 @@ def load_module(server, module):
     '''Tell the backend to load a module for a connection'''
     return backend.connections[server].load_module(module)
 def connected_to(server):
+    '''Returns True if the bot is connected to server.'''
     if server in backend.connections:
         return True
     return False
+
 # Hooks
 hooks = {}
 su_hooks = {}
@@ -59,7 +63,7 @@ def hook_command(name, callback, server, su = False):
         else:
             su_hooks[server][name] = callback
             return True
-    except:
+    except IndexError:
         return False
 
 def get_command_list(address, su = False):
@@ -69,7 +73,7 @@ def get_command_list(address, su = False):
             return list(hooks[address])
         else:
             return list(su_hooks[address])
-    except:
+    except IndexError:
         return 'There was an error processing your request'
 
 mode_hooks = {}
@@ -87,7 +91,7 @@ def unhook_mode(server, callback):
     try:
         mode_hooks[server].remove(callback)
         return True
-    except Exception as e:
+    except IndexError:
         return False
 
 # Base Module
@@ -153,3 +157,8 @@ class Module(object):
         Note: the line ending is not required'''
         self.connection.push(b'%s\r\n' % (data))
         print 'Send: %s' % data
+        
+    # extra
+    def output(self, message):
+        '''Print a message with the server name prefix'''
+        self.connection.output(message)

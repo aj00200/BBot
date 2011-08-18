@@ -13,6 +13,7 @@ import api
 if __name__ == '__main__':
     if '--help' in sys.argv or '-v' in sys.argv or '--version' in sys.argv:
         print('BBot the IRC Bot %s' % VERSION)
+        sys.exit()
     else:
         api.backend.connect(config.network, config.port, config.ssl)
         api.backend.loop()
