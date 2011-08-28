@@ -138,7 +138,7 @@ class Module(api.Module):
             api.backend.connect(parts[0], int(parts[1]), config.ssl)
         else:
             self.msg(channel, '%s: You need to specify an address' % nick)
-net-19b.qe1.d1ih9s.IP
+
     def su_reload(self, nick, channel, param = None):
         '''Reload a module; Parameters: module'''
         api.backend.connections[self.__address__].reload_module(param)
