@@ -50,7 +50,9 @@ class Module(api.Module):
         api.hook_command('kick', self.kick_user, server, su = True)
         api.hook_command('invite', self.invite_user, server, su = True)
         api.hook_command('kickban', self.kick_ban, server, su = True)
-        api.hook_command('rehash_trekbot', self.__init__, server, su = True)
+        # The following line gives an error when used, it might be better to
+        #    make a load_whitelist method and hook a new command for it
+        # api.hook_command('rehash_trekbot', self.__init__, server, su = True)
 
     def get_raw(self, raw_type, data):
         if raw_type.lower() == 'code':
