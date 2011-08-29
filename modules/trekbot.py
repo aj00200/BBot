@@ -49,6 +49,7 @@ class Module(api.Module):
         api.hook_command('unwhitelist', self.whitelist_del, server, su = True)
         api.hook_command('kick', self.kick_user, server, su = True)
         api.hook_command('invite', self.invite_user, server, su = True)
+        api.hook_command('kickban', self.kick_ban, server, su = True)
         api.hook_command('rehash_trekbot', self.__init__, server, su = True)
 
     def get_raw(self, raw_type, data):
@@ -227,6 +228,21 @@ class Module(api.Module):
                 targetchan = channel
                 targetuser = param
             self.raw('INVITE %s :%s'%(targetuser, targetchan))
+
+    def kick_ban(self, nick, channel, param = None):
+        '''Kickban a user; parameters: nick'''
+        if not param:
+            self.msg(channel, '%s: You need to specify a target' % nick)
+        else:
+            #Begin code for banning.
+            if param  in self.pending_unbans:
+                self.pending_bans[param].append(channel)
+            else:
+                self.pending_bans[param] = [channel]
+            self.raw('WHOIS %s' % param)
+            #Begin code for kick
+            message = 'You have  been kicked from the channel.  (requested by %s)' % nick
+            self.kick(param, channel, message)
 
     #Blacklist/Whitelist Commands - SuperUser Only
     def blacklist_list(self, nick, channel, param = None):
