@@ -5,6 +5,7 @@ It can be used to manage channels on networks without services.'''
 import api
 import config
 class Module(api.Module):
+    '''A module to preform channel administration commands'''
     def __init__(self, server = config.network):
         self.blacklist = [] # Load Blacklist
         self.blconfig = open(config.PATH+'trekbot/blacklist', 'r').readlines()
@@ -176,7 +177,10 @@ class Module(api.Module):
         if not param:
             self.msg(channel, '%s: You need to specify who to ban' % nick)
         else:
-            if param in self.pending_bans:
+            if '!' in param:
+                self.mode(param, channel, '+b')
+                return
+            elif param in self.pending_bans:
                 self.pending_bans[param].append(channel)
             else:
                 self.pending_bans[param] = [channel]
@@ -187,7 +191,10 @@ class Module(api.Module):
         if not param:
             self.msg(channel, '%s: You need to specify who to unban' % nick)
         else:
-            if param  in self.pending_unbans:
+            if '!' in param:
+                self.mode(param, channel, '-b')
+                return
+            elif param  in self.pending_unbans:
                 self.pending_unbans[param].append(channel)
             else:
                 self.pending_unbans[param] = [channel]
