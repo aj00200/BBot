@@ -5,10 +5,14 @@ import re
 import os
 
 try:
-    config_file = open(os.getenv('HOME') + '/.BBot/config.cfg', 'r')
+    if '--config' in sys.argv:
+        config_file = open(sys.argv[sys.argv.index('--config') + 1])
+        print('[*] Loaded config.cfg from your --config setting')
+    else:
+        config_file = open(os.getenv('HOME') + '/.BBot/config.cfg', 'r')
+        print('[*] Loaded config.cfg from your home directory')
     sys.path.insert(1, os.getenv('HOME') + '/.BBot')
     PATH = os.getenv('HOME') + '/.BBot/'
-    print('[*] Loaded config.cfg from your home directory')
 except IOError:
     print('[*] Error loading config.cfg from your home directory')
     print('    Try running bbot-makeconf if you are on Linux')
@@ -19,6 +23,7 @@ except IOError:
     except IOError:
         print('[*] Error loading config.cfg from your local directory')
         print('    Either create it or run bbot-makeconf if you are on Linux')
+
 
 c = ConfigParser.ConfigParser()
 c.readfp(config_file)
