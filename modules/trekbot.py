@@ -50,8 +50,8 @@ class Module(api.Module):
         api.hook_command('invite', self.invite_user, server, su = True)
         api.hook_command('rehash_trekbot', self.__init__, server, su = True)
 
-    def get_raw(self, type, data):
-        if type == 'code':
+    def get_raw(self, raw_type, data):
+        if raw_type.lower() == 'code':
             if data[0] == '311': # Whois host line
                 nick = data[1].split()[3]
                 host = data[1].split()[5]
