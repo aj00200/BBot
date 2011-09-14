@@ -35,3 +35,5 @@ This is plain wrong. Different IRCds can use different channel prefixes. Maybe B
 :delta.bitsjointirc.net 005 L CMDS=KNOCK,MAP,DCCALLOW,USERIP UHNAMES NAMESX SAFELIST HCN MAXCHANNELS=25 CHANLIMIT=#:25 MAXLIST=b:60,e:60,I:60 NICKLEN=30 CHANNELLEN=32 TOPICLEN=307 KICKLEN=307 AWAYLEN=307 :are supported by this server
 :delta.bitsjointirc.net 005 L MAXTARGETS=20 WALLCHOPS WATCH=128 WATCHOPTS=A SILENCE=15 MODES=12 CHANTYPES=# PREFIX=(qaohv)~&@%+ CHANMODES=beI,kfL,lj,psmntirRcOAQKVCuzNSMTG NETWORK=BitsJoint-IRC CASEMAPPING=ascii EXTBAN=~,cqnrT ELIST=MNUCT :are supported by this server
 :delta.bitsjointirc.net 005 L STATUSMSG=~&@%+ EXCEPTS INVEX CALLERID=I :are supported by this server
+
+* Add 'sed' bot functionality.
