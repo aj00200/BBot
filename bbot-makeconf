@@ -116,6 +116,7 @@ config.set('BlockBot', 'mps-limit', 3.1)
 print(' * Setting up TrekBot channel manager')
 config.add_section('trekbot')
 config.set('trekbot', 'proxy-scan', False)
+config.set('trekbot', 'charybdis-net', False)
 
 # Make blank trekbot files
 print(' * Creating blank whitelists and blacklists')

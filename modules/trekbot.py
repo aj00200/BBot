@@ -20,6 +20,12 @@ class Module(api.Module):
 
         # Read config
         self.proxyscan = api.get_config_bool('trekbot', 'proxy-scan')
+        self.charybdis = api.get_config_bool('trekbot', 'charybdis-net')
+        
+        # # #
+        # THIS LINE IS FOR A FUTURE CONFIG OPTION!
+        # self.charybdis = api.get_config_bool('trekbot', 'charybdis-net')
+        # # #
 
         # Setup Variables
         self.pending_bans = {}
@@ -32,8 +38,6 @@ class Module(api.Module):
         api.hook_command('deop', self.deop, server, su = True)
         api.hook_command('voice', self.voice, server, su = True)
         api.hook_command('devoice', self.devoice, server, su = True)
-        api.hook_command('quiet', self.quiet, server, su = True)
-        api.hook_command('unquiet', self.unquiet, server, su = True)
         api.hook_command('nick', self.nick, server, su = True)
         api.hook_command('mode', self.mode, server, su = True)
         api.hook_command('echo', self.echo, server, su = True)
@@ -53,6 +57,13 @@ class Module(api.Module):
         # The following line gives an error when used, it might be better to
         #    make a load_whitelist method and hook a new command for it
         # api.hook_command('rehash_trekbot', self.__init__, server, su = True)
+        
+        #Defines charybdis only options.
+        if (self.charybdis):
+            api.hook_command('quiet', self.quiet, server, su = True)
+            api.hook_command('unquiet', self.unquiet, server, su = True)
+            api.hook_command('protect', self.protect_chan, server, su = True)
+            api.hook_command('unprotect', self.unprotect_chan, server, su = True)
 
     def get_raw(self, raw_type, data):
         if raw_type.lower() == 'code':
@@ -245,6 +256,14 @@ class Module(api.Module):
             #Begin code for kick
             message = 'You have  been kicked from the channel.  (requested by %s)' % nick
             self.kick(param, channel, message)
+
+    def protect_chan(self, nick, channel, param = None):
+        '''On charybdis-based networks with services integration with bans, initiates the command /mode channel +q $~a'''
+        self.mode('', channel, '+q $~a')
+
+    def unprotect_chan(self, nick, channel, param = None):
+        '''On charybdis-based networks with services integration with bans, initiates the command /mode channel -q $~a'''
+        self.mode('', channel, '-q $~a')
 
     #Blacklist/Whitelist Commands - SuperUser Only
     def blacklist_list(self, nick, channel, param = None):
