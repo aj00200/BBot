@@ -42,7 +42,7 @@ class Module(api.Module):
             ldata = data.lower()
             for each in self.findlist:
                 if re.search(each, ldata):
-                    self.kick(nick, channel, 'You have matched a spam string and have been banned, if you this is a mistake, contact a channel op to be unbanned')
+                    self.kick(nick, channel, 'You have matched a spam string and have been banned, if you think this is a mistake, contact a channel op to be unbanned')
                     return
 
             # Extract messages by this user
