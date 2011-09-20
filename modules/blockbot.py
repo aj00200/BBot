@@ -21,6 +21,7 @@ class Module(api.Module):
         self.repeat_limit = 3
         self.repeat_1word = 4
         self.blacklistkickmsg = api.get_config_str('BlockBot','blacklist-kick-msg')
+        self.floodkickmsg = api.get_config_str('BlockBot', 'flood-kick-msg')
 
         # Compile Spam Strings        
         self.findlist = []
@@ -54,7 +55,7 @@ class Module(api.Module):
 
             # Check for flooding
             if len(user_msgs) > 2 and self.get_mps(user_msgs) > self.mps_limit:
-                self.kick(nick, channel, 'Please do not flood')
+                self.kick(nick, channel, self.floodkickmsg)
                 self.msglist.pop(0)
 
             # Check for repeats
