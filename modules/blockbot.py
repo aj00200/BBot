@@ -20,7 +20,7 @@ class Module(api.Module):
         self.storage_time = 25
         self.repeat_limit = 3
         self.repeat_1word = 4
-	self.blacklistkickmsg = api.get_config_str('BlockBot','blacklist-kick-msg')
+        self.blacklistkickmsg = api.get_config_str('BlockBot','blacklist-kick-msg')
 
         # Compile Spam Strings        
         self.findlist = []
