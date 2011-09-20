@@ -21,11 +21,9 @@ class Module(api.Module):
         # Read config
         self.proxyscan = api.get_config_bool('trekbot', 'proxy-scan')
         self.charybdis = api.get_config_bool('trekbot', 'charybdis-net')
-        
-        # # #
-        # THIS LINE IS FOR A FUTURE CONFIG OPTION!
-        # self.charybdis = api.get_config_bool('trekbot', 'charybdis-net')
-        # # #
+	
+	# New Test Variables
+	self.defkickmsg = api.get_config_str('trekbot', 'default-kick-msg')
 
         # Setup Variables
         self.pending_bans = {}
@@ -225,6 +223,7 @@ class Module(api.Module):
                 param = param[:param.find(' ')]
             else:
                 message = 'You have been kicked from the channel.  (requested by %s)' % nick
+		message = self.defkickmsg % nick
             self.kick(param, channel, message)
 
     def invite_user(self, nick, channel, param = None):

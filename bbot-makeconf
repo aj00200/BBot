@@ -117,6 +117,7 @@ print(' * Setting up TrekBot channel manager')
 config.add_section('trekbot')
 config.set('trekbot', 'proxy-scan', False)
 config.set('trekbot', 'charybdis-net', False)
+config.set('trekbot', 'default-kick-msg', 'You have been kicked from the channel.  (requested by %s)')
 
 # Make blank trekbot files
 print(' * Creating blank whitelists and blacklists')
