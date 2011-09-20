@@ -111,6 +111,7 @@ config.set('BlockBot', 'highlight-limit', 5)
 config.set('BlockBot', 'repeat-limit', 3)
 config.set('BlockBot', 'spam-strings', '')
 config.set('BlockBot', 'mps-limit', 3.1)
+config.set('BlockBot', 'blacklist-kick-msg', 'You have matched a spam string and have been banned, if you think this is a mistake, contact a channel op to be unbanned.')
 
 # Set TrekBot Options
 print(' * Setting up TrekBot channel manager')
