@@ -24,6 +24,7 @@ class Module(api.Module):
 	
 	# New Test Variables
 	self.defkickmsg = api.get_config_str('trekbot', 'default-kick-msg')
+        self.blacklistkickmsg = api.get_config_str('trekbot', 'blacklist-kick-msg')
 
         # Setup Variables
         self.pending_bans = {}
@@ -89,7 +90,7 @@ class Module(api.Module):
 
     def get_join(self, nick, user, ip, channel):
         if (ip in self.blacklist):
-            self.kick(nick, channel, 'You are on the blacklist')
+            self.kick(nick, channel, self.blacklistkickmsg)
         elif (ip in self.whitelist):
             self.mode(nick, channel, '+v')
 
@@ -222,7 +223,6 @@ class Module(api.Module):
                 message = param[param.find(' ')+1:]
                 param = param[:param.find(' ')]
             else:
-                message = 'You have been kicked from the channel.  (requested by %s)' % nick
 		message = self.defkickmsg % nick
             self.kick(param, channel, message)
 
