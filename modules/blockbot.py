@@ -23,6 +23,7 @@ class Module(api.Module):
         self.blacklistkickmsg = api.get_config_str('BlockBot','blacklist-kick-msg')
         self.floodkickmsg = api.get_config_str('BlockBot', 'flood-kick-msg')
         self.repeatkickmsg = api.get_config_str('BlockBot', 'repeat-kick-msg')
+        self.masspingkickmsg = api.get_config_str('BlockBot', 'mass-ping-kick-msg')
 
         # Compile Spam Strings        
         self.findlist = []
@@ -99,7 +100,7 @@ class Module(api.Module):
                 found += 1
         if found > self.hilight_limit:
             print '* kicking %s out of %s' % (nick, channel)
-            self.kick(nick, channel, 'Please do not ping that many people')
+            self.kick(nick, channel, self.masspingkickmsg)
 
     def get_join(self, nick, user, host, channel):
         '''Add user to nicklist, and preform optional proxy scan'''
