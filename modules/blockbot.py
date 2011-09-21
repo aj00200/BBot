@@ -22,6 +22,7 @@ class Module(api.Module):
         self.repeat_1word = 4
         self.blacklistkickmsg = api.get_config_str('BlockBot','blacklist-kick-msg')
         self.floodkickmsg = api.get_config_str('BlockBot', 'flood-kick-msg')
+        self.repeatkickmsg = api.get_config_str('BlockBot', 'repeat-kick-msg')
 
         # Compile Spam Strings        
         self.findlist = []
@@ -67,7 +68,7 @@ class Module(api.Module):
                 else:
                     repeats += 1
             if repeats > self.repeat_limit-1:
-                self.kick(nick, channel, 'Do not repeat yourself...')
+                self.kick(nick, channel, self.repeatkickmsg)
                 self.msglist.pop(0)
 
             # Clear out old messages

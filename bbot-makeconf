@@ -97,7 +97,7 @@ print('''
 
 # Set Other values which are defined by default
 print(' * Setting up default modules')
-config.set('main', 'modules', 'blockbot BBot trekbot ddgbot mathbot statusbot')
+config.set('main', 'modules', 'blockbot BBot trekbot ddgbot mathbot statusbot factoids')
 config.set('main', 'wait-after-identify', 5)
 config.set('main', 'read-wait', 512)
 print(' * Setting up password-guard')
@@ -113,6 +113,7 @@ config.set('BlockBot', 'spam-strings', '')
 config.set('BlockBot', 'mps-limit', 3.1)
 config.set('BlockBot', 'blacklist-kick-msg', 'You have matched a spam string and have been banned, if you think this is a mistake, contact a channel op to be unbanned.')
 config.set('BlockBot', 'flood-kick-msg', 'Please do not flood the channel.')
+config.set('BlockBot', 'repeat-kick-msg', 'Please do not repeat yourself rapidly.')
 
 # Set TrekBot Options
 print(' * Setting up TrekBot channel manager')
