@@ -21,9 +21,9 @@ class Module(api.Module):
         # Read config
         self.proxyscan = api.get_config_bool('trekbot', 'proxy-scan')
         self.charybdis = api.get_config_bool('trekbot', 'charybdis-net')
-	
-	# New Test Variables
-	self.defkickmsg = api.get_config_str('trekbot', 'default-kick-msg')
+
+        # New Test Variables
+        self.defkickmsg = api.get_config_str('trekbot', 'default-kick-msg')
         self.blacklistkickmsg = api.get_config_str('trekbot', 'blacklist-kick-msg')
 
         # Setup Variables
@@ -223,7 +223,7 @@ class Module(api.Module):
                 message = param[param.find(' ')+1:]
                 param = param[:param.find(' ')]
             else:
-		message = self.defkickmsg % nick
+                message = self.defkickmsg % nick
             self.kick(param, channel, message)
 
     def invite_user(self, nick, channel, param = None):
