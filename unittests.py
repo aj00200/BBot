@@ -20,7 +20,8 @@ else:
 if ('api' in tests):
     from unittests.test_api import TestAPI
 if ('backends_async' in tests):
-    from unittests.test_backends_async import TestAsync
+    # from unittests.test_backends_async import TestAsync
+    print('tests for backends_async do not exist yet')
 
 # Run the loaded tests
 if (__name__ ==  '__main__'):
