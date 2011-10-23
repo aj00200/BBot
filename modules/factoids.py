@@ -42,6 +42,7 @@ class Module(api.Module):
         # Check if message is a command
         if self.command_start in data:
             cmd = data[data.find(self.command_start)+len(self.command_start):]
+            cmd = cmd.lower()
             if ' ' in cmd:
                 cmd = cmd[:cmd.find(' ')]
 
@@ -88,7 +89,7 @@ class Module(api.Module):
         try:
             if '<ACTION>'in query[1]:
                 tmp[1] = str(tmp[1].replace('<ACTION>', '\x01ACTION ')+'\x01')
-            database[query[0]] = query[1]
+            database[query[0].lower()] = query[1]
             return True
         except IndexError:
             return False
