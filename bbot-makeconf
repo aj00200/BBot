@@ -20,7 +20,7 @@ Please note that this setting takes no effect on servers that
 perform ident checks and there's an active identd running.''')
 config.set('main', 'ident', raw_input('ident: '))
 
-# Nickname
+# Real Name
 print('''
 What do you want your bot's realname to be?
 This is only shown in the WHOIS.''')
