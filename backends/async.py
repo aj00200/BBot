@@ -56,16 +56,16 @@ class Connection(asynchat.async_chat):
             self.set_socket(self.sock)
 
     def load_modules(self):
-        '''Load all the modules which are set in the config'''
+        '''Load all the modules which are set in the config.'''
         for module in config.modules:
             self.load_module(module)
 
     def handle_error(self):
-        '''Print a traceback when an error happens'''
+        '''Print a traceback when an error happens.'''
         traceback.print_exc()
 
     def load_module(self, module):
-        '''Load a module for the network'''
+        '''Load a module for the network.'''
         try:
             self.modules[module] = getattr(__import__('modules.'+module), module).Module(self.__address__)
             return True
@@ -78,12 +78,17 @@ class Connection(asynchat.async_chat):
                 return False
 
     def unload_module(self, module):
+        '''Unload a module for the network.'''
         if module in self.modules:
             self.output('Removing module %s' % module)
             self.modules[module].destroy()
             del self.modules[module]
 
     def reload_module(self, module):
+        '''Reload a module by calling the unload_module method followed
+        by a reload of the file and finally running the load_module
+        method to reload the module for the network.
+        '''
         self.unload_module(module)
         try:
             reload(getattr(__import__('modules.'+module), module)).Module(self.__address__)
@@ -102,10 +107,14 @@ class Connection(asynchat.async_chat):
 
     def found_terminator(self):
         data = self.get_data()
+        # Check if we should ignore this message
         if re.search(config.ignore, data.lower()):
             return
-        command = data.split(' ', 2)[1]
+
         self.output('R%s' % data)
+
+        # Take an accion based on the command
+        command = data.split(' ', 2)[1]
         if data[:4] == 'PING':
             self.push('PONG %s\r\n' % data[5:])
 
@@ -176,20 +185,25 @@ class Connection(asynchat.async_chat):
         self.data += data
         
     def output(self, message):
-        '''Print a message and display the network name'''
+        '''Print a message and display the network name.'''
         print('[%s] %s' % (self.netname, message))
 
 def connect(address, port = 6667, use_ssl = False):
-    '''Connect to an IRC network
+    '''Connect to an IRC network:
     address - The network address of the IRC network
     port - On optional argument that specifies the port to connect on
-    ssl - A boolean argument specifying wether or not to use SSL'''
+    ssl - A boolean argument specifying wether or not to use SSL
+    '''
     print('[*] Connecting to %s:%s; SSL: %s' % (address, port, use_ssl))
     connections[address] = Connection(address, port, use_ssl)
     connections[address].load_modules()
 
 class User(str):
+    '''An object which stores data on a user. It subclasses the str
+    object to maintain backwards compatibility.
+    '''
     pass
 
 def loop():
+    '''Start the backend loop.'''
     asyncore.loop()
