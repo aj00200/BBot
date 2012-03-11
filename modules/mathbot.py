@@ -69,7 +69,7 @@ class Module(api.Module):
     '..23..':'geo.cm(', 
     '..24..':'geo.inch('
     }
-    chars = '_ghijklmnopqrstuvwyz#@$\'"!:='
+    chars = '_ghijklmnopqrstuvwyz#@$\'"!:=`'
 
     def math(self, nick, channel, param = None):
         '''Functions and operators supported are: +, -, *, /, %, sqrt, pow, ceil, floor, log, sin, cos, tan'''
