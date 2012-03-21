@@ -31,8 +31,6 @@ c.readfp(config_file)
 nick = c.get('main', 'nick')
 ident = c.get('main', 'ident')
 ircname = c.get('main', 'ircname')
-username = c.get('main', 'username')
-password = c.get('main', 'password')
 network = c.get('main', 'network')
 port = c.getint('main', 'port')
 ssl = c.getboolean('main', 'ssl')
@@ -43,5 +41,13 @@ sleep_after_id = c.getfloat('main', 'wait-after-identify')
 wait_recv = c.getint('main', 'read-wait')
 cmd_char = c.get('main', 'command-char')
 ignore = re.compile(c.get('main', 'ignore-re'))
+
+# May not exist
+try:
+    username = c.get('main', 'username')
+    password = c.get('main', 'password')
+except ConfigParser.NoOptionError:
+    username = ''
+    password = ''
 
 backend = c.get('main', 'backend')

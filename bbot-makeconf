@@ -1,16 +1,18 @@
 #! /usr/bin/env python
 import os
-import subprocess
 import ConfigParser
 HOME_PATH = os.getenv('HOME') + '/'
 CONFIG_PATH = os.getenv('HOME') + '/.BBot/config.cfg'
 config = ConfigParser.RawConfigParser()
 
+def touch(fname, times = None):
+    with file(fname, 'a'):
+        os.utime(fname, times)
+
 # Main Settings
 config.add_section('main')
 # Nickname
-print('''
-What do you want your bot's nickname to be?''')
+print("What do you want your bot's nickname to be?")
 config.set('main', 'nick', raw_input('nick: '))
 
 # ident/USERname
@@ -32,15 +34,14 @@ Should your bot use services like ChanServ
 or NickServ to identify or preform other functions?
 This currently only works for Atheme services.
 Please enter either True or False.''')
-config.set('main', 'use-services', raw_input('Use services: '))
+services = raw_input('Use services: ')
+config.set('main', 'use-services', services)
 
 # Services Authentication
-print('''
-If your bot is using services, what is its username
-and password. If services are not being used, just leave them
-blank''')
-config.set('main', 'username', raw_input('Username: '))
-config.set('main', 'password', raw_input('Password: '))
+if services.lower() in ('1', 'yes', 'true', 'on'):
+    print("\nWhat is name and password for services?")
+    config.set('main', 'username', raw_input('Username: '))
+    config.set('main', 'password', raw_input('Password: '))
 
 # Network
 print('''
@@ -126,13 +127,13 @@ config.set('trekbot', 'blacklist-kick-msg', 'You are currently blacklisted on th
 
 # Make blank trekbot files
 print(' * Creating blank whitelists and blacklists')
-subprocess.call(['mkdir', HOME_PATH + '.BBot'])
-subprocess.call(['mkdir', HOME_PATH + '.BBot/trekbot'])
-subprocess.call(['touch', HOME_PATH + '.BBot/trekbot/whitelist'])
-subprocess.call(['touch', HOME_PATH + '.BBot/trekbot/blacklist'])
+os.mkdir(HOME_PATH + '.BBot')
+os.mkdir(HOME_PATH + '.BBot/trekbot')
+touch(HOME_PATH + '.BBot/trekbot/whitelist')
+touch(HOME_PATH + '.BBot/trekbot/blacklist')
 
 print(' * Finishing with ' + HOME_PATH + '.BBot/')
-subprocess.call(['mkdir', HOME_PATH + '.BBot/storage'])
+os.mkdir(HOME_PATH + '.BBot/storage')
 
 print('''
  * Now writing your config file to disk
@@ -143,5 +144,4 @@ Thanks for installing BBot!''')
 with open(CONFIG_PATH, 'wb') as configfile:
     config.write(configfile)
 
-print('''Done!
-''')
+print("Done!\n")
