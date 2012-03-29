@@ -41,6 +41,7 @@ class Module(api.Module):
         api.hook_command('mode', self.mode, server, su = True)
         api.hook_command('echo', self.echo, server, su = True)
         api.hook_command('say', self.echo, server, su = True)
+        api.hook_command('me', self.me, server, su = True)
         api.hook_command('topic', self.set_topic, server, su = True)
         api.hook_command('ban', self.set_ban, server, su = True)
         api.hook_command('unban', self.del_ban, server, su = True)
@@ -177,6 +178,13 @@ class Module(api.Module):
             self.msg(channel, '%s: I can\'t echo nothing' % nick)
         else:
             self.msg(channel, param)
+
+    def me(self, nick, channel, param = None):
+        '''Say the parameter as an ACTION; Parameters: a string to say'''
+        if not param:
+            self.msg(channel, '%s: I need an action to preform.' % nick)
+        else:
+            self.msg(channel, '\x01ACTION %s\x01' % param)
 
     def set_topic(self, nick, channel, param = None):
         '''Set the topic in the channel; Parameters: a topic string'''
