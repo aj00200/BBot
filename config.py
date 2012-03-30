@@ -9,20 +9,21 @@ try:
         config_file = open(sys.argv[sys.argv.index('--config') + 1])
         print('[*] Loaded config.cfg from your --config setting')
     else:
-        config_file = open(os.getenv('HOME') + '/.BBot/config.cfg', 'r')
+        config = os.path.join(os.getenv('HOME'), '.BBot', 'config.cfg')
+        config_file = open(config, 'r')
         print('[*] Loaded config.cfg from your home directory')
-    sys.path.insert(1, os.getenv('HOME') + '/.BBot')
-    PATH = os.getenv('HOME') + '/.BBot/'
+        PATH = os.path.join(os.getenv('HOME'), '.BBot')
+    sys.path.insert(1, PATH)
 except IOError:
     print('[*] Error loading config.cfg from your home directory')
-    print('    Try running bbot-makeconf if you are on Linux')
+    print('    Try running python bbot-makeconf')
     try:
         config_file = open('config.cfg', 'r')
         PATH = ''
         print('[*] Loaded config.cfg from your local directory')
     except IOError:
         print('[*] Error loading config.cfg from your local directory')
-        print('    Either create it or run bbot-makeconf if you are on Linux')
+        print('    Either create it or run python bbot-makeconf')
 
 
 c = ConfigParser.ConfigParser()

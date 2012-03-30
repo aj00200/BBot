@@ -1,8 +1,8 @@
 #! /usr/bin/env python
 import os
 import ConfigParser
-HOME_PATH = os.getenv('HOME') + '/'
-CONFIG_PATH = os.getenv('HOME') + '/.BBot/config.cfg'
+HOME_PATH = os.getenv('HOME')
+CONFIG_PATH = os.path.join(HOME_PATH, '.BBot', 'config.cfg')
 config = ConfigParser.RawConfigParser()
 
 def touch(fname, times = None):
@@ -127,13 +127,13 @@ config.set('trekbot', 'blacklist-kick-msg', 'You are currently blacklisted on th
 
 # Make blank trekbot files
 print(' * Creating blank whitelists and blacklists')
-os.mkdir(HOME_PATH + '.BBot')
-os.mkdir(HOME_PATH + '.BBot/trekbot')
-touch(HOME_PATH + '.BBot/trekbot/whitelist')
-touch(HOME_PATH + '.BBot/trekbot/blacklist')
+os.mkdir(os.path.join(HOME_PATH, '.BBot'))
+os.mkdir(os.path.join(HOME_PATH, '.BBot', 'trekbot'))
+touch(os.path.join(HOME_PATH, '.BBot', 'trekbot', 'whitelist'))
+touch(os.path.join(HOME_PATH, '.BBot', 'trekbot', 'blacklist'))
 
-print(' * Finishing with ' + HOME_PATH + '.BBot/')
-os.mkdir(HOME_PATH + '.BBot/storage')
+print(' * Finishing with ' + os.path.join(HOME_PATH, '.BBot'))
+os.mkdir(os.path.join(HOME_PATH, '.BBot', 'storage'))
 
 print('''
  * Now writing your config file to disk
