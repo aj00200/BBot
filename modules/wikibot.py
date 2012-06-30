@@ -1,8 +1,12 @@
+'''Provide URLs for [[wikitext]] links.'''
 import re
 import api
 
 class Module(api.Module):
-    wiki_url = 'https://secure.wikimedia.org/wikipedia/en/wiki/%s'
+    '''Send SSL Wikipedia links to a channel when someone puts the "link"
+    brackets around some words.
+    '''
+    wiki_url = 'https://en.wikipedia.org/wiki/%s'
     def privmsg(self, nick, data, channel):
         data = api.get_message(data)
         if re.search('\[\[.*\]\]', data):

@@ -1,5 +1,6 @@
 '''An API for BBot modules to use. Just `import api` and subclass api.Module.
-Other functions that are shared across modules are present as well.'''
+Other functions that are shared across modules are present as well.
+'''
 import config
 backend = getattr(__import__('backends.%s' % config.backend), config.backend)
 
@@ -17,7 +18,8 @@ def get_config_bool(cat, name):
     return config.c.getboolean(cat, name)
 def get_host(data):
     '''Returns the hostname (IP address) of the person who
-    sent the message passed to the variable data'''
+    sent the message passed to the variable data
+    '''
     return data[data.find('@')+1:data.find(' ')]
 def get_nick(data):
     '''Returns the nick of the person who sent the message passed as data'''
@@ -30,7 +32,8 @@ def get_message(data):
     return data[data.find(' :')+2:]
 def host_in_list(data, host_list):
     '''Tells you if the host of the person who sent the message that is
-    pased as the first arg is in the list of hosts which is the second arg'''
+    pased as the first arg is in the list of hosts which is the second arg
+    '''
     host = get_host(data)
     for each in host_list:
         if host.find(each)!= -1:
@@ -90,6 +93,7 @@ def hook_mode(callback, server):
     return True
 
 def unhook_mode(server, callback):
+    '''Unhook a mode callback.'''
     try:
         mode_hooks[server].remove(callback)
         return True
@@ -99,11 +103,12 @@ def unhook_mode(server, callback):
 # Base Module
 class Module(object):
     '''Base class that all modules should use to maintain best compatibility
-    with future versions of the API'''
-    # Setup and Destroy the module
+    with future versions of the API
+    '''
     def __init__(self, address):
         self.__address__ = address
         self.connection = backend.connections[address]
+
     def destroy(self):
         '''This is called when the module is unloaded, or possibly when the
         bot is shut down.'''

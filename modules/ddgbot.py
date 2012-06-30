@@ -1,3 +1,6 @@
+'''Query the Duck Duck Go one-click info API for information requested
+inside of an IRC channel.
+'''
 import urllib, re
 import json
 import api
@@ -29,6 +32,7 @@ class Module(api.Module):
             #self.freebase(nick, data, channel, qu, reply_on_notfound = True)
 
     def ddg_define(self, nick, channel, param = None):
+        '''Look up a definition of a word.'''
         self.ddg(nick, channel, 'define %s' % param, reply_on_notfound = True)
 
     def ddg(self, nick, channel, param = None, reply_on_notfound = True):

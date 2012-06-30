@@ -124,7 +124,7 @@ class Module(api.Module):
             try:
                 if data[0] in self.nicklists[data[2]]:
                     self.nicklists[data[2]].pop(self.nicklists[data[2]].index(data[0]))
-            except:
+            except Exception:
                 pass
         elif type == 'QUIT': # Quit
             try:
@@ -152,5 +152,5 @@ class Module(api.Module):
             try:
                 self.findlist.append(re.compile(param))
                 self.msg(channel, '%s: string blacklisted' % nick)
-            except:
+            except Exception:
                 self.msg(channel, '%s: error banning string' % nick)

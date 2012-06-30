@@ -5,7 +5,6 @@ See the README.md file for more details'''
 
 VERSION = '7.5.8'
 import sys
-import asyncore
 
 import config
 import api
