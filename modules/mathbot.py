@@ -9,6 +9,11 @@ class Module(api.Module):
         super(Module, self).__init__(server)
         api.hook_command('math', self.math, server)
 
+    globalspace = {
+        'math': math,
+        'geo': geo
+    }
+
     allow = {
     ')':'..0..', 
     'sqrt(':'..1..', 
@@ -57,17 +62,17 @@ class Module(api.Module):
     '..11..':'math.cos(', 
     '..12..':'math.tan(', 
     '..13..':'geo.midpoint(', 
-    '..14..':'geo.triangle(', 
+    '..14..':'geo.Triangle(', 
     '..15..':'geo.distance(', 
     '..16..':'.points(', 
     '..17..':'.area(', 
     '..18..':'.perimeter(', 
-    '..19..':'geo.undefined()', 
-    '..20..':'geo.square(', 
+    '..19..':'geo.Undefined()', 
+    '..20..':'geo.Square(', 
     '..21..':'num(', 
-    '..22..':'geo.line(', 
-    '..23..':'geo.cm(', 
-    '..24..':'geo.inch('
+    '..22..':'geo.Line(', 
+    '..23..':'geo.Cm(', 
+    '..24..':'geo.Inch('
     }
     chars = '_ghijklmnopqrstuvwyz#@$\'"!:=`'
 
@@ -84,9 +89,9 @@ class Module(api.Module):
             try:
                 if '**' in expr:
                     raise Disallowed('**')
-                self.msg(channel, str(eval(expr)))
-            except Exception, e:
-                self.report_error(channel, e)
+                self.msg(channel, str(eval(expr, self.globalspace)))
+            except Exception as err:
+                self.report_error(channel, err)
 
     def report_error(self, channel, error):
         '''Report an error encountered while evaluating an expression

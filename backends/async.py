@@ -120,7 +120,7 @@ class Connection(asynchat.async_chat):
 
         elif command ==  'PRIVMSG':
             nick = data[1:data.find('!')]
-            channel = data[data.find('MSG')+4:data.find(' :')]
+            channel = data[data.find(' PRIVMSG ')+9:data.find(' :')]
             for module in self.modules:
                 self.modules[module].privmsg(nick, data, channel)
             # Command Hooks
@@ -146,7 +146,8 @@ class Connection(asynchat.async_chat):
 
         elif command ==  'NOTICE':
             nick = data[1:data.find('!')]
-            channel = data[data.find('ICE')+4:data.find(' :')]
+            channel = data[data.find(' NOTICE ')+8:data.find(' :')]
+            print('channel: "%s"' % channel)
             for module in self.modules:
                 self.modules[module].get_notice(nick, data, channel)
 
@@ -162,7 +163,7 @@ class Connection(asynchat.async_chat):
 
         elif command == 'MODE':
             nick = api.get_nick(data)
-            channel = data[data.find('MODE ')+5:]
+            channel = data[data.find(' MODE ')+6:]
             mode = channel[channel.find(' ')+1:]
             channel = channel[:channel.find(' ')]
             for hook in api.mode_hooks[self.__address__]:

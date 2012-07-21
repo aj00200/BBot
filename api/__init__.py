@@ -102,8 +102,8 @@ def unhook_mode(server, callback):
 
 # Base Module
 class Module(object):
-    '''Base class that all modules should use to maintain best compatibility
-    with future versions of the API
+    '''Base class that all modules should use to maintain decent
+    compatibility with future versions of the API
     '''
     def __init__(self, address):
         self.__address__ = address
@@ -127,10 +127,10 @@ class Module(object):
     def get_join(self, nick, user, host, channel):
         '''Called every time someone joins a channel the bot is in'''
         pass
-    def get_raw(self, type, params):
+    def get_raw(self, msg_type, params):
         '''Called every time non-common data is recieved like mode changes:
-        type is set to 'CODE' when messages that corespond to a numberic code are recieved
-        type is set to 'MODE' when a mode is changed'''
+        msg_type is set to 'CODE' when messages that corespond to a numberic code are recieved
+        msg_type is set to 'MODE' when a mode is changed'''
         pass
     
     # Send
@@ -163,9 +163,9 @@ class Module(object):
         Example: self.raw('PRIVMSG #bbot :This is a raw message')
         Note: the line ending is not required'''
         self.connection.push(b'%s\r\n' % (data))
-        print 'Send: %s' % data
+        print('Send: %s' % data)
         
     # extra
     def output(self, message):
-        '''Print a message with the server name prefix'''
+        '''Print a message with the server name prefix.'''
         self.connection.output(message)

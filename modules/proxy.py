@@ -1,12 +1,13 @@
 '''This provides a two-way bridge between two channels which are on different
-IRC networks by sending messages between them'''
+IRC networks by sending messages between them.
+'''
 
 import api
 class Module(api.Module):
     commands = []
     chan1 = '#bbot' # Channel on net1
-    chan2 = '#bbot' # Channel on net2
-    net1 = 'irc.fossnet.info'
+    chan2 = '##bbot' # Channel on net2
+    net1 = 'irc.ospnet.org'
     net2 = 'irc.freenode.net'
 
     def privmsg(self, nick, data, channel):
