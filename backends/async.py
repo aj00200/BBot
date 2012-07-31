@@ -109,8 +109,8 @@ class Connection(asynchat.async_chat):
         return ret
 
     def push(self, data):
-        data = bytes(data, 'utf8')
-        super(Connection, self).push(data)
+        data = data.encode('utf8')
+        asynchat.async_chat.push(self, data)
 
     def found_terminator(self):
         data = self.get_data().decode('utf8')
