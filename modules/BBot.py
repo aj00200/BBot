@@ -124,8 +124,8 @@ class Module(api.Module):
             return
         try:
             ret = str(eval(param))
-        except Exception, e:
-            ret = '<<Error %s; %s>>' % (type(e), e.args)
+        except Exception as error:
+            ret = '<<Error %s; %s>>' % (type(error), error.args)
         self.msg(channel, ret)
 
     def su_connect(self, nick, channel, param = None):

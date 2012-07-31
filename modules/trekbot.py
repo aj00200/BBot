@@ -103,9 +103,7 @@ class Module(api.Module):
             nm = nmap.PortScanner()
             nm.scan(ip, '808, 23, 1080, 110, 29505, 8080, 3246', '-T5')
             for each in nm.all_hosts():
-                print each
                 lport = nm[each]['tcp'].keys()
-                print lport
                 if 808 in lport or 23 in lport or 110 in lport or 1080 in lport or 29505 in lport or 80 in lport or 8080 in lports or 3246 in lports:
                     scansafe = 0
                     print(' * Detected possible drone at: %s' % ip)
@@ -146,7 +144,7 @@ class Module(api.Module):
     def quiet(self, nick, channel, param = None):
         '''Quiet a user; Parameters: nick'''
         if not param:
-            self.msg(channel, '%s: be careful or I will quiet you :P'%nick)
+            self.msg(channel, '%s: be careful or I will quiet you :P' % nick)
         else:
             self.mode(param, channel, '+q')
 
@@ -160,10 +158,10 @@ class Module(api.Module):
     def nick(self, nick, channel, param = None):
         '''Change to a new nickname; Parameters: new nickname'''
         if not param:
-            self.msg(channel, '%s: You need to have a nick following the command'%nick)
+            self.msg(channel,'%s: You need to have a nick following the command'%nick)
         else:
             config.nick = param
-            self.raw('NICK %s'%param)
+            self.raw('NICK %s' % param)
 
     def set_mode(self, nick, channel, param = None):
         '''Set a mode on the channel; Parameters: mode string (like "+o bbot")'''
@@ -231,13 +229,13 @@ class Module(api.Module):
                 message = param[param.find(' ')+1:]
                 param = param[:param.find(' ')]
             else:
-                message = self.defkickmsg % nick
+                message = self.defkickmsg
             self.kick(param, channel, message)
 
     def invite_user(self, nick, channel, param = None):
         '''Invite a user to a channel; Parameters: nick'''
         if not param:
-            self.msg(channel, '%s: You need to tell me who to invite!'%nick)
+            self.msg(channel, '%s: You need to tell me who to invite!' % nick)
         else:
             targetchan = ''
             targetuser = ''
@@ -247,7 +245,7 @@ class Module(api.Module):
             else:
                 targetchan = channel
                 targetuser = param
-            self.raw('INVITE %s :%s'%(targetuser, targetchan))
+            self.raw('INVITE %s :%s' % (targetuser, targetchan))
 
     def kick_ban(self, nick, channel, param = None):
         '''Kickban a user; parameters: nick'''

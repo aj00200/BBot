@@ -1,5 +1,8 @@
 '''Reads config.conf and parses common values for access by other modules'''
-import ConfigParser
+try:
+    import ConfigParser as configparser
+except ImportError:
+    import configparser
 import sys
 import re
 import os
@@ -25,7 +28,7 @@ except IOError:
         print('    Either create it or run bbot-makeconf if you are on Linux')
 
 
-c = ConfigParser.ConfigParser()
+c = configparser.ConfigParser()
 c.readfp(config_file)
 
 nick = c.get('main', 'nick')

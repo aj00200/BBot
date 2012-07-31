@@ -162,7 +162,7 @@ class Module(object):
         '''Send raw data to the server
         Example: self.raw('PRIVMSG #bbot :This is a raw message')
         Note: the line ending is not required'''
-        self.connection.push(b'%s\r\n' % (data))
+        self.connection.push('%s\r\n' % (data))
         print('Send: %s' % data)
         
     # extra

@@ -61,8 +61,8 @@ class Module(api.Module):
         try:
             description = document['/en/%s' % query]['result']['description']
             self.msg(channel, '%s: %s' % (nick, str(description.split('. ')[0])))
-        except Exception, error:
-            print document['/en/%s' % query]
-            print 'Error: %s, %s' % (error.__repr__(), error.args)
+        except Exception as error:
+            print(document['/en/%s' % query])
+            print('Error: %s, %s' % (error.__repr__(), error.args))
             if reply_on_notfound:
                 self.msg(channel, '%s: Sorry, could not find it' % nick)

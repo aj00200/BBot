@@ -1,4 +1,4 @@
-'''An asynchat backend for BBot'''
+'''An asynchat backend for BBot.'''
 import socket
 import asynchat
 import asyncore
@@ -12,18 +12,20 @@ import config
 import api
 
 connections = {}
-class Connection(asynchat.async_chat):
+
+class Connection(asynchat.async_chat): 
+    '''Class containing the connection to each server and modules.'''
     re001 = re.compile('\.* 001')
     def __init__(self, address, port, use_ssl):
         # Setup Asynchat
         asynchat.async_chat.__init__(self)
 
-        self.data = ''
+        self.data = b''
         self.modules = {}
         self.ssl = use_ssl
         self.__address__ = address
         self.netname = address.replace('irc.', '')
-        self.set_terminator('\r\n')
+        self.set_terminator(b'\r\n')
 
         # Setup Command Hooks
         api.hooks[address] = {}
@@ -37,20 +39,20 @@ class Connection(asynchat.async_chat):
                 self.ssl_sock = ssl.wrap_socket(self.sock)
                 self.ssl_sock.connect((address, port))
                 self.set_socket(self.ssl_sock)
-            except ssl.SSLError, error:
+            except ssl.SSLError as error:
                 print('\x1B[31m')
                 print('There has been a SSL error connecting to the server')
                 print('Please make sure you are using the proper port')
                 print('For help, try #bbot on irc.ospnet.org (ssl: 6697)')
                 print('\x1B[m\x1B[m')
                 raise ssl.SSLError(error)
-            except socket.error, error:
+            except socket.error as error:
                 self.output('There was an error connecting')
                 return
         else:
             try:
                 self.sock.connect((address, port))
-            except socket.error, error:
+            except socket.error as error:
                 self.output('There was an error connecting')
                 return
             self.set_socket(self.sock)
@@ -92,21 +94,26 @@ class Connection(asynchat.async_chat):
         self.unload_module(module)
         try:
             reload(getattr(__import__('modules.'+module), module)).Module(self.__address__)
-        except ImportError, error:
+        except ImportError as error:
             reload(getattr(__import__('usermodules.'+module), module))
         self.load_module(module)
 
     def handle_connect(self):
         self.output('Connected')
-        self.push('NICK %s\r\nUSER %s 0 0 :%s\r\n'%(config.nick, config.ident, config.ircname))
+        self.push('NICK %s\r\nUSER %s 0 0 :%s\r\n' % 
+                  (config.nick, config.ident, config.ircname))
 
     def get_data(self):
         ret = self.data
-        self.data = ''
+        self.data = b''
         return ret
 
+    def push(self, data):
+        data = bytes(data, 'utf8')
+        super(Connection, self).push(data)
+
     def found_terminator(self):
-        data = self.get_data()
+        data = self.get_data().decode('utf8')
         # Check if we should ignore this message
         if re.search(config.ignore, data.lower()):
             return

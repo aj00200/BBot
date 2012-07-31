@@ -146,7 +146,7 @@ class Quad(Polygon):
     '''Base class for all quadrilaterals'''
     pass
 
-class Square(Polygon, Quad):
+class Square(Quad):
     def __init__(self, ax, ay, bx, by, cx, cy, dx, dy):
         self.coords = {'A':(ax, ay), 'B':(bx, by), 'C':(cx, cy), 'D':(dx, dy)}
         self.sides = {'ab':float(distance(ax, ay, bx, by)), 

@@ -99,7 +99,7 @@ class Module(api.Module):
             if each in ldata:
                 found += 1
         if found > self.hilight_limit:
-            print '* kicking %s out of %s' % (nick, channel)
+            print('* kicking %s out of %s' % (nick, channel))
             self.kick(nick, channel, self.masspingkickmsg)
 
     def get_join(self, nick, user, host, channel):
