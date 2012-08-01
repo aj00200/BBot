@@ -2,6 +2,7 @@
 Other functions that are shared across modules are present as well.
 '''
 import config
+from imp import reload
 backend = getattr(__import__('backends.%s' % config.backend), config.backend)
 
 def get_config_str(cat, name):
@@ -16,6 +17,9 @@ def get_config_float(cat, name):
 def get_config_bool(cat, name):
     '''Get a boolean value out of the bot's configuration file'''
     return config.c.getboolean(cat, name)
+def reload_config():
+    """Reload the configuration file."""
+    config = reload(config)
 def get_host(data):
     '''Returns the hostname (IP address) of the person who
     sent the message passed to the variable data
