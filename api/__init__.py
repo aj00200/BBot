@@ -7,45 +7,37 @@ backend = getattr(__import__('backends.%s' % config.backend), config.backend)
 def get_config_str(cat, name):
     '''Get a string out of the bot's configuration file'''
     return config.c.get(cat, name)
+
 def get_config_int(cat, name):
     '''Get an integer out of the bot's configuration file'''
     return config.c.getint(cat, name)
+
 def get_config_float(cat, name):
     '''Get a floating point number out of the bot's configuration file'''
     return config.c.getfloat(cat, name)
+
 def get_config_bool(cat, name):
     '''Get a boolean value out of the bot's configuration file'''
     return config.c.getboolean(cat, name)
-def get_host(data):
-    '''Returns the hostname (IP address) of the person who
-    sent the message passed to the variable data
-    '''
-    return data[data.find('@')+1:data.find(' ')]
-def get_nick(data):
-    '''Returns the nick of the person who sent the message passed as data'''
-    return data[1:data.find('!')]
-def get_ident(data):
-    '''Returns the ident of the person who sent the message passed as data'''
-    return data[data.find('!')+1:data.find('@')]
-def get_message(data):
-    '''Returns the actual message that was sent'''
-    return data[data.find(' :')+2:]
-def host_in_list(data, host_list):
+
+def host_in_list(host, host_list):
     '''Tells you if the host of the person who sent the message that is
     pased as the first arg is in the list of hosts which is the second arg
     '''
-    host = get_host(data)
     for each in host_list:
         if host.find(each)!= -1:
             return True
     else:
         return False
-def check_if_super_user(data, superusers = config.superusers):
+
+def check_if_super_user(host, superusers = config.superusers):
     '''Check if the person who sent the current message is a superuser'''
-    return host_in_list(data, superusers)
+    return host_in_list(host, superusers)
+
 def load_module(server, module):
     '''Tell the backend to load a module for a connection'''
     return backend.connections[server].load_module(module)
+
 def connected_to(server):
     '''Returns True if the bot is connected to server.'''
     if server in backend.connections:

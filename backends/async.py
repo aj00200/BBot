@@ -11,6 +11,8 @@ import bbot
 import config
 import api
 
+from api import messages
+
 connections = {}
 
 class Connection(asynchat.async_chat): 
@@ -21,6 +23,7 @@ class Connection(asynchat.async_chat):
         asynchat.async_chat.__init__(self)
 
         self.data = b''
+        self.nick = None
         self.modules = {}
         self.ssl = use_ssl
         self.__address__ = address
@@ -100,8 +103,9 @@ class Connection(asynchat.async_chat):
 
     def handle_connect(self):
         self.output('Connected')
-        self.push('NICK %s\r\nUSER %s 0 0 :%s\r\n' % 
+        self.push('NICK %s\r\nUSER %s 0 * :%s\r\n' % 
                   (config.nick, config.ident, config.ircname))
+        self.nick = config.nick
 
     def get_data(self):
         ret = self.data
@@ -126,12 +130,12 @@ class Connection(asynchat.async_chat):
             self.push('PONG %s\r\n' % data[5:])
 
         elif command ==  'PRIVMSG':
-            nick = data[1:data.find('!')]
-            channel = data[data.find(' PRIVMSG ')+9:data.find(' :')]
+            message = api.messages.Privmsg(self, data)
             for module in self.modules:
-                self.modules[module].privmsg(nick, data, channel)
+                self.modules[module].get_privmsg(message)
+
             # Command Hooks
-            if channel == config.nick:
+            if message.channel == config.nick:
                 channel = nick
             if ' :%s' % config.cmd_char in data:
                 prm = None
