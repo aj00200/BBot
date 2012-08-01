@@ -1,4 +1,3 @@
-
 class IRCEvent():
     def __init__(self, connection, raw):
         self.connection = connection
@@ -20,13 +19,20 @@ class Message(UserEvent):
 class Privmsg(Message):
     def __init__(self, connection, raw):
         super(Privmsg, self).__init__(connection, raw)
-        self.channel = raw[raw.index(' PRIVMSG ')+9:raw.index(' :')]
+        self.target = raw[raw.index(' PRIVMSG ')+9:raw.index(' :')]
+        if self.target == self.connection.nick: # Personal message
+            self.personal = True
+            self.channel = None
+        else:
+            self.personal = False
+            self.channel = self.target
 
     def reply(self, message):
-        if self.channel == self.connection.nick:
-            reply_to = self.nick # Message is a pm
-        else:
+        if self.personal:
+            reply_to = self.nick
+        elif self.channel:
             reply_to = self.channel
+
         connection.push('PRIVMSG %s :%s' % (reply_to, message))
 
 class Notice(Message):
