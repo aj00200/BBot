@@ -100,8 +100,14 @@ class Connection(asynchat.async_chat):
 
     def handle_connect(self):
         self.output('Connected')
-        self.push('NICK %s\r\nUSER %s 0 0 :%s\r\n' % 
-                  (config.nick, config.ident, config.ircname))
+        mode_numeric = 0
+        umodes = api.get_config_str("main", "umodes") or ''
+        if 'w' in umodes:
+            mode_numeric += 1 << 2 # Set bit 2 (rfc2812#section-3.1.3)
+        if 'i' in umodes:
+            mode_numeric += 1 << 3 # Set bit 3 (rfc2812#section-3.1.3)
+        self.push('NICK %s\r\nUSER %s %d * :%s\r\n' % 
+                  (config.nick, config.ident, mode_numeric, config.ircname))
 
     def get_data(self):
         ret = self.data
