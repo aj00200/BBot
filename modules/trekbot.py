@@ -4,16 +4,17 @@ It can be used to manage channels on networks without services.'''
 
 import api
 import config
+import os
 class Module(api.Module):
     '''A module to preform channel administration commands'''
     def __init__(self, server = config.network):
         self.blacklist = [] # Load Blacklist
-        self.blconfig = open(config.PATH+'trekbot/blacklist', 'r').readlines()
+        self.blconfig = open(os.path.join(config.PATH, 'trekbot', 'blacklist'), 'r').readlines()
         for each in self.blconfig:
             self.blacklist.append(each.strip('\r\n'))
 
         self.whitelist = [] # Load Whitelist
-        self.wlconfig = open(config.PATH+'trekbot/whitelist', 'r').readlines()
+        self.wlconfig = open(os.path.join(config.PATH, 'trekbot', 'whitelist'), 'r').readlines()
         for each in self.wlconfig:
             self.whitelist.append(each.strip('\r\n'))
         del self.blconfig, self.wlconfig
@@ -79,13 +80,13 @@ class Module(api.Module):
 
     def write_blacklist(self):
         '''Write the blacklist to the harddrive'''
-        self.blconfig = open('trekbot/blacklist', 'w')
+        self.blconfig = open(os.path.join(config.PATH, 'trekbot', 'blacklist'), 'w')
         for each in self.blacklist:
             self.blconfig.write(each+'\n')
 
     def write_whitelist(self):
         '''Write the whitelist to the harddrive'''
-        self.wlconfig = open('trekbot/whitelist', 'w')
+        self.wlconfig = open(os.path.join(config.PATH, 'trekbot', 'whitelist'), 'w')
         for each in self.whitelist:
             self.wlconfig.write(each+'\n')
 
