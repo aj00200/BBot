@@ -194,6 +194,8 @@ class Connection(asynchat.async_chat):
                     time.sleep(config.sleep_after_id)
                 for channel in config.autojoin:
                     self.push('JOIN %s\r\n' % channel)
+                umodes = set(get_config_str("main", "umodes")) - {'i', 'w'} # +i and +w should already have been handled during registration
+                self.push('MODE {} +{}'.format(config.nick, ''.join(umodes)))
 
     def collect_incoming_data(self, data):
         self.data += data
