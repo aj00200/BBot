@@ -12,7 +12,7 @@ def touch(fname, times = None):
 # Main Settings
 config.add_section('main')
 # Nickname
-print("What do you want your bot's nickname to be?")
+print('''What do you want your bot's nickname to be?''')
 config.set('main', 'nick', raw_input('nick: '))
 
 # ident/USERname
@@ -39,7 +39,8 @@ config.set('main', 'use-services', services)
 
 # Services Authentication
 if services.lower() in ('1', 'yes', 'true', 'on'):
-    print("\nWhat is name and password for services?")
+    print('''
+What are your username and password for services?''')
     config.set('main', 'username', raw_input('Username: '))
     config.set('main', 'password', raw_input('Password: '))
 
@@ -144,4 +145,5 @@ Thanks for installing BBot!''')
 with open(CONFIG_PATH, 'wb') as configfile:
     config.write(configfile)
 
-print("Done!\n")
+print('''
+Done!''')
