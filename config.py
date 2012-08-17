@@ -50,7 +50,7 @@ ignore = re.compile(c.get('main', 'ignore-re'))
 try:
     username = c.get('main', 'username')
     password = c.get('main', 'password')
-except ConfigParser.NoOptionError:
+except configparser.NoOptionError:
     username = ''
     password = ''
 
