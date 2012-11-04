@@ -33,11 +33,10 @@ class Connection(asynchat.async_chat):
         api.mode_hooks[address] = []
 
         # Setup Socket
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock = socket.create_connection((address, port))
         if use_ssl:
             try:
                 self.ssl_sock = ssl.wrap_socket(self.sock)
-                self.ssl_sock.connect((address, port))
                 self.set_socket(self.ssl_sock)
             except ssl.SSLError as error:
                 print('\x1B[31m')
@@ -50,11 +49,6 @@ class Connection(asynchat.async_chat):
                 self.output('There was an error connecting')
                 return
         else:
-            try:
-                self.sock.connect((address, port))
-            except socket.error as error:
-                self.output('There was an error connecting')
-                return
             self.set_socket(self.sock)
 
     def load_modules(self):
