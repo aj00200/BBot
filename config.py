@@ -15,7 +15,7 @@ try:
         config = os.path.join(os.getenv('HOME'), '.BBot', 'config.cfg')
         config_file = open(config, 'r')
         print('[*] Loaded config.cfg from your home directory')
-    PATH = os.path.join(os.getenv('HOME'), '.BBot')
+    PATH = os.path.join(os.getenv('HOME'), '.BBot/')
     sys.path.insert(1, PATH)
 except IOError:
     print('[*] Error loading config.cfg from your home directory')
