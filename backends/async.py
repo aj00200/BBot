@@ -33,11 +33,12 @@ class Connection(asynchat.async_chat):
         api.mode_hooks[address] = []
 
         # Setup Socket
-        self.sock = socket.create_connection((address, port))
+        self.sock = socket.socket()
         if use_ssl:
             try:
                 self.ssl_sock = ssl.wrap_socket(self.sock)
                 self.set_socket(self.ssl_sock)
+                self.connect((address, port))
             except ssl.SSLError as error:
                 print('\x1B[31m')
                 print('There has been a SSL error connecting to the server')
@@ -50,6 +51,7 @@ class Connection(asynchat.async_chat):
                 return
         else:
             self.set_socket(self.sock)
+            self.connect((address, port))
 
     def load_modules(self):
         '''Load all the modules which are set in the config.'''

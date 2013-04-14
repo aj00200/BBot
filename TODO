@@ -6,6 +6,7 @@
   * Try to reduce line length in some cases
   * Add some more whtiespace
   * More docstrings
+* Allow reloading config while bot is running
 
  === Module Changes Needed === 
 * Replace BlockBot() with Spam0
