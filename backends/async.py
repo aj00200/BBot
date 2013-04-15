@@ -4,6 +4,7 @@ import asynchat
 import asyncore
 import traceback
 import time
+import imp
 import ssl
 import re
 
@@ -33,7 +34,8 @@ class Connection(asynchat.async_chat):
         api.mode_hooks[address] = []
 
         # Setup Socket
-        self.sock = socket.socket()
+        address_info = socket.getaddrinfo(address, port)
+        self.sock = socket.socket(address_info[0][0], address_info[0][1])
         if use_ssl:
             try:
                 self.ssl_sock = ssl.wrap_socket(self.sock)
@@ -89,9 +91,9 @@ class Connection(asynchat.async_chat):
         '''
         self.unload_module(module)
         try:
-            reload(getattr(__import__('modules.'+module), module)).Module(self.__address__)
+            imp.reload(getattr(__import__('modules.'+module), module)).Module(self.__address__)
         except ImportError as error:
-            reload(getattr(__import__('usermodules.'+module), module))
+            imp.reload(getattr(__import__('usermodules.'+module), module))
         self.load_module(module)
 
     def handle_connect(self):

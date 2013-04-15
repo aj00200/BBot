@@ -128,13 +128,30 @@ config.set('trekbot', 'blacklist-kick-msg', 'You are currently blacklisted on th
 
 # Make blank trekbot files
 print(' * Creating blank whitelists and blacklists')
-os.mkdir(os.path.join(HOME_PATH, '.BBot'))
-os.mkdir(os.path.join(HOME_PATH, '.BBot', 'trekbot'))
+try:
+    os.mkdir(os.path.join(HOME_PATH, '.BBot'))
+except OSError as err:
+    if not err.errno == 17:
+        raise err
+    print('   * ~/.BBot/ already exists')
+
+try:
+    os.mkdir(os.path.join(HOME_PATH, '.BBot', 'trekbot'))
+except OSError as err:
+    if not err.errno == 17:
+        raise err
+    print('   * ~/.BBot/trekbot/ already exists')
+    
 touch(os.path.join(HOME_PATH, '.BBot', 'trekbot', 'whitelist'))
 touch(os.path.join(HOME_PATH, '.BBot', 'trekbot', 'blacklist'))
 
 print(' * Finishing with ' + os.path.join(HOME_PATH, '.BBot'))
-os.mkdir(os.path.join(HOME_PATH, '.BBot', 'storage'))
+try:
+    os.mkdir(os.path.join(HOME_PATH, '.BBot', 'storage'))
+except OSError as err:
+    if not err.errno == 17:
+        raise err
+    print('   * ~/.BBot/storage already exists')
 
 print('''
  * Now writing your config file to disk

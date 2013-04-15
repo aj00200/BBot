@@ -75,9 +75,6 @@ class Module(api.Module):
             q = ldata[ldata.find(' is ')+4:].strip('?')
             self.query(q, nick, channel)
 
-
-
-
     def query(self, query, nick, channel):
         '''Querys the database for the factoid 'query', and returns its value to the channel if it is found'''
         if query in database:
@@ -128,10 +125,12 @@ def write_dict():
     file = open(config.PATH + 'database.json', 'w')
     file.write(json.dumps(database))
     file.close()
+
 def del_factoid(query):
     '''Delete a factoid'''
     if query in database:
         del database[query]
+
 def read_dict():
     '''Read factoids from the harddrive keep in RAM'''
     f = open('database.json')

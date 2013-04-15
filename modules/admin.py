@@ -22,3 +22,4 @@ class Module(api.Module):
 
     def add_access(self, nick, channel, param):
         '''Add access permissions to a host - level 1: join/part access, level 2: raw access, level 3: py access; Parameters: host, access level'''
+        self.notice(channel, '%s: This command currently does nothing' % nick)
