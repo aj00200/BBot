@@ -152,7 +152,6 @@ class Connection(asynchat.async_chat):
         elif command ==  'NOTICE':
             nick = data[1:data.find('!')]
             channel = data[data.find(' NOTICE ')+8:data.find(' :')]
-            print('channel: "%s"' % channel)
             for module in self.modules:
                 self.modules[module].get_notice(nick, data, channel)
 
