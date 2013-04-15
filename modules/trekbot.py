@@ -8,16 +8,15 @@ import os
 class Module(api.Module):
     '''A module to preform channel administration commands'''
     def __init__(self, server = config.network):
-        self.blacklist = [] # Load Blacklist
-        self.blconfig = open(os.path.join(config.PATH, 'trekbot', 'blacklist'), 'r').readlines()
-        for each in self.blconfig:
-            self.blacklist.append(each.strip('\r\n'))
+        self.blacklist = []  # Load Blacklist
+        with open(os.path.join(config.PATH, 'trekbot', 'blacklist')) as blfile:
+            for line in blfile.readlines():
+                self.blacklist.append(line.strip('\r\n'))
 
-        self.whitelist = [] # Load Whitelist
-        self.wlconfig = open(os.path.join(config.PATH, 'trekbot', 'whitelist'), 'r').readlines()
-        for each in self.wlconfig:
-            self.whitelist.append(each.strip('\r\n'))
-        del self.blconfig, self.wlconfig
+        self.whitelist = []  # Load Whitelist
+        with open(os.path.join(config.PATH, 'trekbot', 'whitelist')) as wlfile:
+            for line in wlfile.readlines():
+                self.whitelist.append(each.strip('\r\n'))
 
         # Read config
         self.proxyscan = api.get_config_bool('trekbot', 'proxy-scan')

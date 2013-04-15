@@ -16,12 +16,8 @@ except ImportError:
 
 
 class Module(api.Module):
-    stop_words = [
-        ' a ', ' the ', ' was ', ' an '
-    ]
-    is_words = [
-        ' was ', ' are ', ' am '
-    ]
+    stop_words = (' a ', ' the ', ' was ', ' an ')
+    is_words = (' was ', ' are ', ' am ')
 
     def __init__(self, address):
         super(Module, self).__init__(address)
@@ -55,7 +51,7 @@ class Module(api.Module):
             # Normal Commands
             cmd = data[data.find(self.command_start)+self.cmd_len:]
             if ' | ' in cmd:
-                nick = cmd[cmd.find(' | ')+3:]
+                nick = cmd[cmd.find(' | ') + 3:]
                 cmd = cmd[:cmd.find(' | ')]
             self.query(cmd, nick, channel)
 
@@ -72,16 +68,17 @@ class Module(api.Module):
                 ldata = ldata.replace(word, ' ')
             for word in self.is_words:
                 ldata = ldata.replace(word, ' is ')
-            q = ldata[ldata.find(' is ')+4:].strip('?')
+            q = ldata[ldata.find(' is ') + 4:].strip('?')
             self.query(q, nick, channel)
 
     def query(self, query, nick, channel):
-        '''Querys the database for the factoid 'query', and returns its value to the channel if it is found'''
+        '''Querys the database for the factoid 'query', returning the value to the channel'''
         if query in database:
             self.msg(channel, str(database[query].replace('%n', nick)))
 
 
     def add_factoid(self, query, nick):
+        '''Update the database, adding a new factoid.'''
         tmp = query
         try:
             if '<ACTION>'in query[1]:
@@ -94,7 +91,7 @@ class Module(api.Module):
     def query(self, query, nick, channel):
         '''Querys the database for the factoid 'query', and returns its value to the channel if it is found'''
         if query in database:
-                self.msg(channel, str(database[query].replace('%n', nick)))
+            self.msg(channel, str(database[query].replace('%n', nick)))
 
     def su_writedb(self, nick, channel, param = None):
         '''Writes the factoids database to the harddrive; Parameters: None'''
@@ -122,9 +119,8 @@ class Module(api.Module):
 
 def write_dict():
     '''Write all factoids to the hard drive'''
-    file = open(config.PATH + 'database.json', 'w')
-    file.write(json.dumps(database))
-    file.close()
+    with open(config.PATH + 'database.json', 'w') as dbfile:
+        dbfile.write(json.dumps(database))
 
 def del_factoid(query):
     '''Delete a factoid'''
@@ -133,6 +129,5 @@ def del_factoid(query):
 
 def read_dict():
     '''Read factoids from the harddrive keep in RAM'''
-    f = open('database.json')
-    database = json.load(f)
-    f.close()
+    with open(config.PATH + 'database.json') as dbfile:
+        database = json.load(dbfile)
