@@ -7,3 +7,5 @@
 blockbot-config
 config
 .DS_Store
+.project
+.pydevproject
