@@ -1,9 +1,11 @@
-'''Query the Duck Duck Go one-click info API for information requested
+'''
+Query the Duck Duck Go one-click info API for information requested
 inside of an IRC channel.
 '''
 import urllib, re
 import json
 import api
+
 
 class Module(api.Module):
     '''A module for preforming web lookups of various

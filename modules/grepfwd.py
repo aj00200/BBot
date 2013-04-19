@@ -1,6 +1,7 @@
 import re
 import api
 
+
 class Module(api.Module):
     '''A module for matching regular expressions and
     forwarding the data to a nick or channel'''

@@ -1,8 +1,10 @@
-'''This provides a two-way bridge between two channels which are on different
-IRC networks by sending messages between them.
 '''
-
+This provides a two-way bridge between two channels which are on
+different IRC networks by sending messages between them.
+'''
 import api
+
+
 class Module(api.Module):
     commands = []
     chan1 = '#bbot' # Channel on net1

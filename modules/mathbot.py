@@ -4,6 +4,7 @@ import math
 import api
 import libs.mathwiz as geo
 
+
 class Module(api.Module):
     def __init__(self, server):
         super(Module, self).__init__(server)
@@ -98,9 +99,11 @@ class Module(api.Module):
         to the channel from which the command orgionated'''
         self.msg(channel, 'Error %s; Arguments %s' % (type(error), error.args))
 
+
 class Disallowed(Exception):
     def __init__(self, string):
         self.args = ['%s is not allowed!' % string]
+
 
 class num(int):
     '''A class to hold a number in decimal, hex, and octal forms'''
@@ -119,12 +122,15 @@ class num(int):
 def hex2dec(hexnum):
     '''Convert a base 16 number to base 10'''
     return int(hexnum, 16)
+
 def dec2hex(decimal):
     '''Convert a base 10 number to base 16'''
     return '%X' % decimal
+
 def dec2oct(decimal):
     '''Convert a base 10 number to base 8'''
     return '%o' % decimal
+
 def oct2dec(octal):
     '''Convert a base 8 number to base 10'''
     return int(oct(octal))

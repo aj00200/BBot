@@ -6,6 +6,7 @@ import api
 import config
 import bbot as BBot
 
+
 class Module(api.Module):
     # Settings from configuration file
     quit_message = api.get_config_str('main', 'quit-message')

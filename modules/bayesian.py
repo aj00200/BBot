@@ -3,6 +3,7 @@ import sqlite3
 import api
 import config
 
+
 class Module(api.Module):
     def __init__(self, server):
         self.db = sqlite3.connect('wordstats.sqlite')

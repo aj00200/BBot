@@ -5,6 +5,8 @@ It can be used to manage channels on networks without services.'''
 import api
 import config
 import os
+
+
 class Module(api.Module):
     '''A module to preform channel administration commands'''
     def __init__(self, server = config.network):

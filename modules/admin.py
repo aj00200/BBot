@@ -6,6 +6,7 @@ be used to set limits on what people can do such as controlling channels it
 is in. Be careful who you trust or they might just stab you in the back.'''
 import api
 
+
 class Module(api.Module):
     '''A Module for controlling the bot'''
     def __init__(self, address):

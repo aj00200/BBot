@@ -6,6 +6,7 @@ import thread
 import api
 import config
 
+
 class Module(api.Module):
     def __init__(self, server):
         super(Module, self).__init__(server)

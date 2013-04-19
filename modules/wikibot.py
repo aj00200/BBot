@@ -2,8 +2,10 @@
 import re
 import api
 
+
 class Module(api.Module):
-    '''Send SSL Wikipedia links to a channel when someone puts the "link"
+    '''
+    Send SSL Wikipedia links to a channel when someone puts the "link"
     brackets around some words.
     '''
     wiki_url = 'https://en.wikipedia.org/wiki/%s'

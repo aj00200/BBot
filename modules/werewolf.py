@@ -8,6 +8,7 @@ import api
 import config
 import libs.wolflib
 
+
 class Module(api.Module):
     '''This module is responsible for most of the game, however, some aspects
     are located within libs.wolflib'''

@@ -2,6 +2,7 @@
 import api
 import config
 
+
 class Module(api.Module):
     '''Send a message to the list of channels the bot joins automatically.'''
     commands = ['global']
