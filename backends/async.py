@@ -14,7 +14,7 @@ import api
 
 connections = {}
 
-class Connection(asynchat.async_chat): 
+class Connection(asynchat.async_chat):
     '''Class containing the connection to each server and modules.'''
     re001 = re.compile('\.* 001')
     def __init__(self, address, port, use_ssl):
@@ -67,11 +67,11 @@ class Connection(asynchat.async_chat):
     def load_module(self, module):
         '''Load a module for the network.'''
         try:
-            self.modules[module] = getattr(__import__('modules.'+module), module).Module(self.__address__)
+            self.modules[module] = getattr(__import__('modules.' + module), module).Module(self.__address__)
             return True
         except ImportError:
             try:
-                self.modules[module] = getattr(__import__('usermodules.'+module), module).Module(self.__address__)
+                self.modules[module] = getattr(__import__('usermodules.' + module), module).Module(self.__address__)
                 return True
             except ImportError:
                 self.output('ImportError loading %s' % module)
@@ -91,14 +91,14 @@ class Connection(asynchat.async_chat):
         '''
         self.unload_module(module)
         try:
-            imp.reload(getattr(__import__('modules.'+module), module)).Module(self.__address__)
+            imp.reload(getattr(__import__('modules.' + module), module)).Module(self.__address__)
         except ImportError as error:
-            imp.reload(getattr(__import__('usermodules.'+module), module))
+            imp.reload(getattr(__import__('usermodules.' + module), module))
         self.load_module(module)
 
     def handle_connect(self):
         self.output('Connected')
-        self.push('NICK %s\r\nUSER %s 0 0 :%s\r\n' % 
+        self.push('NICK %s\r\nUSER %s 0 0 :%s\r\n' %
                   (config.nick, config.ident, config.ircname))
 
     def get_data(self):
@@ -123,9 +123,9 @@ class Connection(asynchat.async_chat):
         if data[:4] == 'PING':
             self.push('PONG %s\r\n' % data[5:])
 
-        elif command ==  'PRIVMSG':
+        elif command == 'PRIVMSG':
             nick = data[1:data.find('!')]
-            channel = data[data.find(' PRIVMSG ')+9:data.find(' :')]
+            channel = data[data.find(' PRIVMSG ') + 9:data.find(' :')]
             for module in self.modules:
                 self.modules[module].privmsg(nick, data, channel)
             # Command Hooks
@@ -134,12 +134,12 @@ class Connection(asynchat.async_chat):
             if ' :%s' % config.cmd_char in data:
                 prm = None
                 msg = api.get_message(data)
-                cmd = msg[msg.find(config.cmd_char)+1:]
+                cmd = msg[msg.find(config.cmd_char) + 1:]
                 user = User(nick)
                 user.ident = api.get_ident(data)
                 user.host = api.get_host(data)
                 if ' ' in cmd:
-                    prm = cmd[cmd.find(' ')+1:]
+                    prm = cmd[cmd.find(' ') + 1:]
                     cmd = cmd[:cmd.find(' ')]
 
                 if cmd in api.hooks[self.__address__]:
@@ -149,17 +149,17 @@ class Connection(asynchat.async_chat):
                     if cmd in api.su_hooks[self.__address__]:
                         api.su_hooks[self.__address__][cmd](user, channel, prm)
 
-        elif command ==  'NOTICE':
+        elif command == 'NOTICE':
             nick = data[1:data.find('!')]
-            channel = data[data.find(' NOTICE ')+8:data.find(' :')]
+            channel = data[data.find(' NOTICE ') + 8:data.find(' :')]
             for module in self.modules:
                 self.modules[module].get_notice(nick, data, channel)
 
-        elif command ==  'JOIN':
+        elif command == 'JOIN':
             nick = data.split('!')[0][1:]
             if nick.find('#') == -1:
-                channel = data[data.find(' :#')+2:]
-                host = data[data.find('@')+1:data.find(' JOIN ')]
+                channel = data[data.find(' :#') + 2:]
+                host = data[data.find('@') + 1:data.find(' JOIN ')]
                 user1 = data[data.find('!'):data.find('@')]
                 user = user1.replace("!", "")
                 for module in self.modules:
@@ -167,8 +167,8 @@ class Connection(asynchat.async_chat):
 
         elif command == 'MODE':
             nick = api.get_nick(data)
-            channel = data[data.find(' MODE ')+6:]
-            mode = channel[channel.find(' ')+1:]
+            channel = data[data.find(' MODE ') + 6:]
+            mode = channel[channel.find(' ') + 1:]
             channel = channel[:channel.find(' ')]
             for hook in api.mode_hooks[self.__address__]:
                 hook(nick, channel, mode)
@@ -177,7 +177,7 @@ class Connection(asynchat.async_chat):
             code = data.split()[1]
             for module in self.modules:
                 self.modules[module].get_raw('CODE', (code, data))
-            
+
             if code == '001':
                 if bbot.api.get_config_bool('main', 'use-services'):
                     self.push('PRIVMSG NickServ :IDENTIFY %s %s\r\n' %
@@ -188,12 +188,12 @@ class Connection(asynchat.async_chat):
 
     def collect_incoming_data(self, data):
         self.data += data
-        
+
     def output(self, message):
         '''Print a message and display the network name.'''
         print('[%s] %s' % (self.netname, message))
 
-def connect(address, port = 6667, use_ssl = False):
+def connect(address, port=6667, use_ssl=False):
     '''Connect to an IRC network:
     address - The network address of the IRC network
     port - On optional argument that specifies the port to connect on

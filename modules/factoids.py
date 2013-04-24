@@ -22,22 +22,22 @@ class Module(api.Module):
     def __init__(self, address):
         super(Module, self).__init__(address)
         self.command_list = []
-        self.command_start = ':'+config.cmd_char
+        self.command_start = ':' + config.cmd_char
         self.cmd_len = len(self.command_start)
 
         # Hook commands
-        api.hook_command('writedb', self.su_writedb, address, su = True)
-        api.hook_command('add', self.su_add, address, su = True)
-        api.hook_command('del', self.su_del, address, su = True)
+        api.hook_command('writedb', self.su_writedb, address, su=True)
+        api.hook_command('add', self.su_add, address, su=True)
+        api.hook_command('del', self.su_del, address, su=True)
 
     def privmsg(self, nick, data, channel):
-        if '#' not in channel: # if message is a pm
+        if '#' not in channel:  # if message is a pm
             channel = nick
         ldata = data.lower()
 
         # Check if message is a command
         if self.command_start in data:
-            cmd = data[data.find(self.command_start)+len(self.command_start):]
+            cmd = data[data.find(self.command_start) + len(self.command_start):]
             cmd = cmd.lower()
             if ' ' in cmd:
                 cmd = cmd[:cmd.find(' ')]
@@ -45,23 +45,23 @@ class Module(api.Module):
             # Superuser Commands
             if api.check_if_super_user(data):
                 if ' > ' in data:
-                    channel = data[data.find(' > ')+3:]
+                    channel = data[data.find(' > ') + 3:]
                     data = data[:data.find(' > ')]
 
             # Normal Commands
-            cmd = data[data.find(self.command_start)+self.cmd_len:]
+            cmd = data[data.find(self.command_start) + self.cmd_len:]
             if ' | ' in cmd:
                 nick = cmd[cmd.find(' | ') + 3:]
                 cmd = cmd[:cmd.find(' | ')]
             self.query(cmd, nick, channel)
 
         # Check if I've been pinged
-        if (' :%s: '%config.nick.lower() in ldata) or (' :%s, '%config.nick.lower() in ldata):
+        if (' :%s: ' % config.nick.lower() in ldata) or (' :%s, ' % config.nick.lower() in ldata):
             msg = api.get_message(data).lower()
-            q = msg[msg.find(config.nick.lower()) + len(config.nick.lower())+2:]
+            q = msg[msg.find(config.nick.lower()) + len(config.nick.lower()) + 2:]
             self.query(q, nick, channel)
 
-        # Answer basic questions               
+        # Answer basic questions
         ldata = ldata.replace('whats', 'what is')
         if re.search('(what|where|who) (is|was|are|am)', ldata):
             for word in self.stop_words:
@@ -82,7 +82,7 @@ class Module(api.Module):
         tmp = query
         try:
             if '<ACTION>'in query[1]:
-                tmp[1] = str(tmp[1].replace('<ACTION>', '\x01ACTION ')+'\x01')
+                tmp[1] = str(tmp[1].replace('<ACTION>', '\x01ACTION ') + '\x01')
             database[query[0].lower()] = query[1]
             return True
         except IndexError:
@@ -93,12 +93,12 @@ class Module(api.Module):
         if query in database:
             self.msg(channel, str(database[query].replace('%n', nick)))
 
-    def su_writedb(self, nick, channel, param = None):
+    def su_writedb(self, nick, channel, param=None):
         '''Writes the factoids database to the harddrive; Parameters: None'''
         write_dict()
         self.notice(channel, '<<Wrote Database>>')
 
-    def su_add(self, nick, channel, param = None):
+    def su_add(self, nick, channel, param=None):
         '''Add a factoid; Parameters: a factoid name and a factoid body seperated by ":::" - For example, ?add test:::%n: it works!'''
         if param:
             query = param.split(':::', 1)
@@ -107,9 +107,9 @@ class Module(api.Module):
             else:
                 self.msg(channel, '%s: Adding of the factoid failed. Make sure you are using the proper syntax.' % nick)
         else:
-            self.msg(channel,'%s: you must specify a factoid to add' % nick)
+            self.msg(channel, '%s: you must specify a factoid to add' % nick)
 
-    def su_del(self, nick, channel, param = None):
+    def su_del(self, nick, channel, param=None):
         '''Delete a factoid; Parameters: factoid'''
         if param:
             del_factoid(param)

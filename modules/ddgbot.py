@@ -29,15 +29,15 @@ class Module(api.Module):
             ldata = ldata.replace(' was ', ' ')
             ldata = ldata.replace(' an ', ' ')
             ldata = ldata.replace(' are ', ' is ')
-            query = ldata[ldata.find(' is ')+4:]
-            self.ddg(nick, channel, query, reply_on_notfound = False)
-            #self.freebase(nick, data, channel, qu, reply_on_notfound = True)
+            query = ldata[ldata.find(' is ') + 4:]
+            self.ddg(nick, channel, query, reply_on_notfound=False)
+            # self.freebase(nick, data, channel, qu, reply_on_notfound = True)
 
-    def ddg_define(self, nick, channel, param = None):
+    def ddg_define(self, nick, channel, param=None):
         '''Look up a definition of a word.'''
-        self.ddg(nick, channel, 'define %s' % param, reply_on_notfound = True)
+        self.ddg(nick, channel, 'define %s' % param, reply_on_notfound=True)
 
-    def ddg(self, nick, channel, param = None, reply_on_notfound = True):
+    def ddg(self, nick, channel, param=None, reply_on_notfound=True):
         '''Preform a DDG lookup of a query; Parameters: query'''
         if not param:
             self.msg(channel, '%s: you must include a query.' % nick)
@@ -55,7 +55,7 @@ class Module(api.Module):
             elif reply_on_notfound:
                 self.msg(channel, '%s: Sorry, but I could not find what %s is.' % (nick, param))
 
-    def freebase(self, nick, channel, query, reply_on_notfound = True):
+    def freebase(self, nick, channel, query, reply_on_notfound=True):
         '''Query Freebase for the query'''
         query = query.replace(' ', '_').replace('what_is_', '')
         data = urllib.urlopen(self.freebase % urllib.quote_plus(query))

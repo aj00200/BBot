@@ -12,7 +12,7 @@ if ('--help') in sys.argv:
 
 # Tests to Run
 if ('--test' in sys.argv):
-    tests = sys.argv[sys.argv.find('--test')+1].split(', ')
+    tests = sys.argv[sys.argv.find('--test') + 1].split(', ')
 else:
     tests = ['api', 'backends_async']
 
@@ -24,5 +24,5 @@ if ('backends_async' in tests):
     print('tests for backends_async do not exist yet')
 
 # Run the loaded tests
-if (__name__ ==  '__main__'):
+if (__name__ == '__main__'):
     unittest.main()

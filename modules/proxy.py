@@ -7,8 +7,8 @@ import api
 
 class Module(api.Module):
     commands = []
-    chan1 = '#bbot' # Channel on net1
-    chan2 = '##bbot' # Channel on net2
+    chan1 = '#bbot'  # Channel on net1
+    chan2 = '##bbot'  # Channel on net2
     net1 = 'irc.ospnet.org'
     net2 = 'irc.freenode.net'
 

@@ -13,10 +13,10 @@ class Module(api.Module):
         super(Module, self).__init__(address)
 
         # Hook Superuser Commands
-        api.hook_command('join', self.join_cmd, address, su = True)
-        api.hook_command('addaccess', self.add_access, address, su = True)
+        api.hook_command('join', self.join_cmd, address, su=True)
+        api.hook_command('addaccess', self.add_access, address, su=True)
 
-    def join_cmd(self, nick, channel, param = None):
+    def join_cmd(self, nick, channel, param=None):
         '''Has the bot join a channel; Parameters: channel name'''
         if param:
             self.join(param)

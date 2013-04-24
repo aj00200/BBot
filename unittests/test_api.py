@@ -54,7 +54,7 @@ class TestAPI(unittest.TestCase):
                                          {'blah':self.null_callback}})
 
     # Misc
-    def null_callback(self, a01 = None, a02 = None, a03 = None, a04 = None):
+    def null_callback(self, a01=None, a02=None, a03=None, a04=None):
         '''A null callback for use for anything that requires a callback
         but does not need the data returned by the callback'''
         pass

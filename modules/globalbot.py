@@ -10,6 +10,6 @@ class Module(api.Module):
     def privmsg(self, nick, data, channel):
         if api.check_if_super_user(data, config.superusers):
             if ':?global ' in data:
-                broadcast = data[data.find('global ')+8:]
+                broadcast = data[data.find('global ') + 8:]
                 for each in config.autojoin:
                     self.msg(each, broadcast)

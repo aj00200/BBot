@@ -12,7 +12,7 @@ class Module(api.Module):
         api.hook_command('status', self.status, server)
         api.hook_command('whereis', self.whereis, server)
 
-    def status(self, nick, channel, param = None):
+    def status(self, nick, channel, param=None):
         '''Set your status for other people to see'''
         nick = nick.lower()
         if param:
@@ -22,7 +22,7 @@ class Module(api.Module):
             del self.statuses[nick]
             self.msg(channel, '%s: status cleared.' % nick)
 
-    def whereis(self, nick, channel, param = None):
+    def whereis(self, nick, channel, param=None):
         '''Check the status of someone; Parameters: None'''
         param = param.lower()
         if param and ' ' in param:

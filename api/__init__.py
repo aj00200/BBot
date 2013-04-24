@@ -20,27 +20,27 @@ def get_host(data):
     '''Returns the hostname (IP address) of the person who
     sent the message passed to the variable data
     '''
-    return data[data.find('@')+1:data.find(' ')]
+    return data[data.find('@') + 1:data.find(' ')]
 def get_nick(data):
     '''Returns the nick of the person who sent the message passed as data'''
     return data[1:data.find('!')]
 def get_ident(data):
     '''Returns the ident of the person who sent the message passed as data'''
-    return data[data.find('!')+1:data.find('@')]
+    return data[data.find('!') + 1:data.find('@')]
 def get_message(data):
     '''Returns the actual message that was sent'''
-    return data[data.find(' :')+2:]
+    return data[data.find(' :') + 2:]
 def host_in_list(data, host_list):
     '''Tells you if the host of the person who sent the message that is
     pased as the first arg is in the list of hosts which is the second arg
     '''
     host = get_host(data)
     for each in host_list:
-        if host.find(each)!= -1:
+        if host.find(each) != -1:
             return True
     else:
         return False
-def check_if_super_user(data, superusers = config.superusers):
+def check_if_super_user(data, superusers=config.superusers):
     '''Check if the person who sent the current message is a superuser'''
     return host_in_list(data, superusers)
 def load_module(server, module):
@@ -55,7 +55,7 @@ def connected_to(server):
 # Hooks
 hooks = {}
 su_hooks = {}
-def hook_command(name, callback, server, su = False):
+def hook_command(name, callback, server, su=False):
     '''Hook a command for use by the backend, using this when possible will
     increase the speed of the bot and your module
     '''
@@ -71,7 +71,7 @@ def hook_command(name, callback, server, su = False):
     except IndexError:
         return False
 
-def get_command_list(address, su = False):
+def get_command_list(address, su=False):
     '''Get a list of commands which are hooked for a specfic server'''
     try:
         if not su:
@@ -113,7 +113,7 @@ class Module(object):
         '''This is called when the module is unloaded, or possibly when the
         bot is shut down.'''
         pass
-    
+
     # Receive
     def privmsg(self, nick, data, channel):
         '''Called every time a PRIVMSG is recieved.
@@ -132,9 +132,9 @@ class Module(object):
         msg_type is set to 'CODE' when messages that corespond to a numberic code are recieved
         msg_type is set to 'MODE' when a mode is changed'''
         pass
-    
+
     # Send
-    def msg(self, channel, data = ' '):
+    def msg(self, channel, data=' '):
         '''Send a message, data, to channel
         Example: self.msg('#bbot', 'Hello world!')'''
         self.raw('PRIVMSG %s :%s\r\n' % (channel, data))
@@ -145,26 +145,26 @@ class Module(object):
     def join(self, channel):
         '''Have BBot join a channel:
         Example: self.join('#bbot')'''
-        self.raw('JOIN %s\r\n'%channel)
-    def part(self, channel, message = 'BBot the IRC Bot'):
+        self.raw('JOIN %s\r\n' % channel)
+    def part(self, channel, message='BBot the IRC Bot'):
         '''Have BBot part a channel
         Example: self.part('#bbot')'''
         self.raw('PART %s :%s\r\n' % (channel, message))
-    def kick(self, nick, channel, message = ''):
+    def kick(self, nick, channel, message=''):
         '''Kick a person out of a channel
         Example: self.kick('spammer', '#bbot', 'Spam is forbidden')'''
-        self.raw('KICK '+channel+' '+nick+' :'+message+'\r\n')
+        self.raw('KICK ' + channel + ' ' + nick + ' :' + message + '\r\n')
     def mode(self, nick, channel, mode):
         '''Set the mode, mode, on nick in channel.
         If you want to set a normal channel mode, set nick to ''.'''
-        self.raw('MODE '+channel+' '+mode+' '+nick+'\r\n')
+        self.raw('MODE ' + channel + ' ' + mode + ' ' + nick + '\r\n')
     def raw(self, data):
         '''Send raw data to the server
         Example: self.raw('PRIVMSG #bbot :This is a raw message')
         Note: the line ending is not required'''
         self.connection.push('%s\r\n' % (data))
         print('Send: %s' % data)
-        
+
     # extra
     def output(self, message):
         '''Print a message with the server name prefix.'''

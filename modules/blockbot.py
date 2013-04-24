@@ -12,7 +12,7 @@ class Module(api.Module):
         super(Module, self).__init__(server)
 
         # Hook Commands
-        api.hook_command(';', self.set_spam_string, server, su = True)
+        api.hook_command(';', self.set_spam_string, server, su=True)
 
         # Load/Set Settings
         self.hilight_limit = api.get_config_int('BlockBot', 'highlight-limit')
@@ -21,12 +21,12 @@ class Module(api.Module):
         self.storage_time = 25
         self.repeat_limit = 3
         self.repeat_1word = 4
-        self.blacklistkickmsg = api.get_config_str('BlockBot','blacklist-kick-msg')
+        self.blacklistkickmsg = api.get_config_str('BlockBot', 'blacklist-kick-msg')
         self.floodkickmsg = api.get_config_str('BlockBot', 'flood-kick-msg')
         self.repeatkickmsg = api.get_config_str('BlockBot', 'repeat-kick-msg')
         self.masspingkickmsg = api.get_config_str('BlockBot', 'mass-ping-kick-msg')
 
-        # Compile Spam Strings        
+        # Compile Spam Strings
         self.findlist = []
         if findlist:
             for each in findlist.split('^^^@@@^^^'):
@@ -69,7 +69,7 @@ class Module(api.Module):
                     strings.append(msg[2])
                 else:
                     repeats += 1
-            if repeats > self.repeat_limit-1:
+            if repeats > self.repeat_limit - 1:
                 self.kick(nick, channel, self.repeatkickmsg)
                 self.msglist.pop(0)
 
@@ -85,13 +85,13 @@ class Module(api.Module):
     def get_mps(self, user_msgs):
         '''Count the number of messages sent per second'''
         time_range = user_msgs[0][3] - user_msgs[-1][3]
-        mps =  len(user_msgs) / time_range
+        mps = len(user_msgs) / time_range
         return mps
-                
+
 
     def check_hilight(self, nick, data, channel):
         '''Check if nick has pinged more than self.hilight_limit people, and if so, kick them'''
-        ldata = data[data.find(' :')+2:].lower()
+        ldata = data[data.find(' :') + 2:].lower()
         if channel not in self.nicklists:
             self.nicklists[channel] = [nick.lower()]
 
@@ -121,13 +121,13 @@ class Module(api.Module):
                 self.mode(nick, channel, '+b')
 
     def get_raw(self, type, data):
-        if type == 'PART' or type == 'KICK': # Kick or Part
+        if type == 'PART' or type == 'KICK':  # Kick or Part
             try:
                 if data[0] in self.nicklists[data[2]]:
                     self.nicklists[data[2]].pop(self.nicklists[data[2]].index(data[0]))
             except Exception:
                 pass
-        elif type == 'QUIT': # Quit
+        elif type == 'QUIT':  # Quit
             try:
                 for channel in self.nicklists:
                     if data[0] in self.nicklists[channel]:
@@ -136,8 +136,8 @@ class Module(api.Module):
                 pass
 
         elif type == 'CODE' and data[0] == '353':
-            channel = data[1][data[1].find(' = ')+3:data[1].find(' :')]
-            names = data[1][data[1].find(' :')+2:].split()
+            channel = data[1][data[1].find(' = ') + 3:data[1].find(' :')]
+            names = data[1][data[1].find(' :') + 2:].split()
             safe_names = []
             for each in names:
                 safe_names.append(each.strip('@+%~').lower())
@@ -147,7 +147,7 @@ class Module(api.Module):
                 self.nicklists[channel].append(each)
 
     # Supueruser Commands
-    def set_spam_string(self, nick, channel, param = None):
+    def set_spam_string(self, nick, channel, param=None):
         '''Set a spam string to automatically kick on'''
         if param:
             try:

@@ -15,9 +15,9 @@ class Module(api.Module):
     def __init__(self, server):
         super(Module, self).__init__(server)
         self.vars = {
-            'main_channel':api.get_config_str('werewolf', 'main-channel'), 
-            'wolf_channel':api.get_config_str('werewolf', 'wolf-channel'), 
-            'seer_channel':api.get_config_str('werewolf', 'seer-channel'), 
+            'main_channel':api.get_config_str('werewolf', 'main-channel'),
+            'wolf_channel':api.get_config_str('werewolf', 'wolf-channel'),
+            'seer_channel':api.get_config_str('werewolf', 'seer-channel'),
         }
         # Setup type counts
         self.seers = 0
