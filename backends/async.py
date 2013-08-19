@@ -158,7 +158,7 @@ class Connection(asynchat.async_chat):
         elif command == 'JOIN':
             nick = data.split('!')[0][1:]
             if nick.find('#') == -1:
-                channel = data[data.find(' :#') + 2:]
+                channel = data[data.find('#'):]
                 host = data[data.find('@') + 1:data.find(' JOIN ')]
                 user1 = data[data.find('!'):data.find('@')]
                 user = user1.replace("!", "")
